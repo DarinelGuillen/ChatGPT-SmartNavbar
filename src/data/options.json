@@ -1,0 +1,12 @@
+[
+  {"id": "Explain Code", "option": "Dado el código dentro de las comillas, quiero que me expliques de manera simple paso por paso el código:"},
+  {"id": "Optimize Code", "option": "Por favor, optimiza el siguiente código y explica las mejoras realizadas:"},
+  {"id": "Debug Code", "option": "Ayúdame a encontrar y corregir errores en el siguiente código:"},
+  {"id": "Refactor Code", "option": "Refactoriza el siguiente código para mejorar su legibilidad y mantenibilidad:"},
+  {"id": "Add Comments", "option": "Agrega comentarios detallados al siguiente código para explicar su funcionamiento:"},
+  {"id": "Convert to TypeScript", "option": "Convierte el siguiente código JavaScript a TypeScript y explica los cambios:"},
+  {"id": "Implement Feature", "option": "Implementa la siguiente característica en el código proporcionado:"},
+  {"id": "Write Unit Tests", "option": "Escribe pruebas unitarias para el siguiente código:"},
+  {"id": "Secure Code", "option": "Revisa el siguiente código en busca de vulnerabilidades de seguridad y sugiere mejoras:"},
+  {"id": "Explaint Performance Analysis", "option": "Analiza el rendimiento del siguiente código y sugiere optimizaciones:"}
+]

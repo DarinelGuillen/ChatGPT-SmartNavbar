@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* styles.css */
+
+#custom-dropdown {
+  @apply fixed bg-white border border-gray-300 shadow-lg rounded-md z-50;
+}
+
+#custom-dropdown div {
+  @apply px-4 py-2 cursor-pointer text-gray-700 hover:bg-gray-100;
+}
