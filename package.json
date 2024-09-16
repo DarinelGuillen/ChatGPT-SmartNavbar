@@ -5,13 +5,16 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:css": "postcss src/css/styles.css -o dist/css/styles.css"
+    "build:css": "npx tailwindcss -i ./src/css/styles.css -o ./dist/css/styles.css --minify",
+    "build:copy": "copyfiles -u 1 src/**/* dist",
+    "build": "npm run build:css && npm run build:copy"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "autoprefixer": "^10.4.20",
+    "copyfiles": "^2.4.1",
     "postcss": "^8.4.47",
     "postcss-cli": "^11.0.0",
     "tailwindcss": "^3.4.11"
