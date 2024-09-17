@@ -1,12 +1,58 @@
 [
-  {"id": "Explain Code", "option": "Dado el código dentro de las comillas, quiero que me expliques de manera simple paso por paso el código:"},
-  {"id": "Optimize Code", "option": "Por favor, optimiza el siguiente código y explica las mejoras realizadas:"},
-  {"id": "Debug Code", "option": "Ayúdame a encontrar y corregir errores en el siguiente código:"},
-  {"id": "Refactor Code", "option": "Refactoriza el siguiente código para mejorar su legibilidad y mantenibilidad:"},
-  {"id": "Add Comments", "option": "Agrega comentarios detallados al siguiente código para explicar su funcionamiento:"},
-  {"id": "Convert to TypeScript", "option": "Convierte el siguiente código JavaScript a TypeScript y explica los cambios:"},
-  {"id": "Implement Feature", "option": "Implementa la siguiente característica en el código proporcionado:"},
-  {"id": "Write Unit Tests", "option": "Escribe pruebas unitarias para el siguiente código:"},
-  {"id": "Secure Code", "option": "Revisa el siguiente código en busca de vulnerabilidades de seguridad y sugiere mejoras:"},
-  {"id": "Explaint Performance Analysis", "option": "Analiza el rendimiento del siguiente código y sugiere optimizaciones:"}
+  {
+    "id": 1,
+    "nombre": "dev",
+    "opciones": [
+      { "name": "Debug", "value": "Opción 1 de dev: Ayuda con depuración de código" },
+      { "name": "Explain Optimize", "value": "Opción 2 de dev: Optimización de código" }
+    ]
+  },
+  {
+    "id": 2,
+    "nombre": "EnhanceCodePlus",
+    "opciones": [
+      { "name": "Add Comments", "value": "Opción 1 de EnhanceCodePlus: Agregar comentarios" },
+      { "name": "Explain TypeScript", "value": "Opción 2 de EnhanceCodePlus: Convertir a TypeScript" }
+    ]
+  },
+  {
+    "id": 3,
+    "nombre": "OPTION 3",
+    "opciones": [
+      { "name": "Explain Code", "value": "Opción 1 de OPTION 3: Explicación de código" },
+      { "name": "Write Unit Tests", "value": "Opción 2 de OPTION 3: Escribir pruebas unitarias" }
+    ]
+  },
+  {
+    "id": 4,
+    "nombre": "Performance",
+    "opciones": [
+      { "name": "Explain Performance", "value": "Opción 1 de Performance: Análisis de rendimiento" },
+      { "name": "Profiling", "value": "Opción 2 de Performance: Perfil de rendimiento" }
+    ]
+  },
+  {
+    "id": 5,
+    "nombre": "Architecture",
+    "opciones": [
+      { "name": "Design Patterns", "value": "Opción 1 de Architecture: Patrones de diseño" },
+      { "name": "Explain Modularization", "value": "Opción 2 de Architecture: Modularización" }
+    ]
+  },
+  {
+    "id": 6,
+    "nombre": "Documentation",
+    "opciones": [
+      { "name": "API Documentation", "value": "Opción 1 de Documentation: Documentación de API" },
+      { "name": "Explain User Guide", "value": "Opción 2 de Documentation: Guía de usuario" }
+    ]
+  },
+  {
+    "id": 7,
+    "nombre": "Integration",
+    "opciones": [
+      { "name": "Explain Third-party", "value": "Opción 1 de Integration: Integración con terceros" },
+      { "name": "Database Integration", "value": "Opción 2 de Integration: Integración de base de datos" }
+    ]
+  }
 ]
