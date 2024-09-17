@@ -52,8 +52,8 @@ ChatGPT-SmartNavbar/
 │   └── js/
 │       └── contentScript.js  # Main content script for the extension
 │   └── data/
-│       └── options.json  # Data file for dropdown menu options
-├── manifest.json  # Chrome extension manifest (Version 3)
+│  |    └── options.json  # Data file for dropdown menu options
+   |----── manifest.json  # Chrome extension manifest (Version 3)
 ├── tailwind.config.js  # Tailwind CSS configuration
 ├── postcss.config.js  # PostCSS configuration for processing CSS
 └── package.json  # Project metadata and dependencies

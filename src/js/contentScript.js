@@ -6,6 +6,20 @@
   const response = await fetch(chrome.runtime.getURL('data/options.json'));
   const categories = await response.json();
 
+  // Agregar categoría 'Todos' al inicio
+  categories.unshift({
+    category: 'Todos',
+    opciones: [] // Esto se llenará con las opciones de todas las categorías
+  });
+
+  // Combinar todas las opciones en la categoría 'Todos' sin usar flatMap
+  categories[0].opciones = categories.slice(1).reduce((acc, cat) => {
+    if (Array.isArray(cat.opciones)) {
+      return acc.concat(cat.opciones);
+    }
+    return acc;
+  }, []);
+
   // Categoría seleccionada por defecto
   let selectedCategoryIndex = 0;
   let selectedCategory = categories[selectedCategoryIndex];
@@ -43,29 +57,33 @@
     navbar.classList.add(
       'fixed',
       'top-0',
-      'left-0',
+      'left-1/2',
+      'transform',
+      '-translate-x-1/2',
       'w-full',
-      'bg-white',
+      'max-w-2xl',
+      'bg-gray-800',
       'flex',
       'justify-center',
       'items-center',
-      'z-50'
+      'z-50',
+      'rounded-b-lg'
     );
 
     // Crear pestañas para cada categoría
     categories.forEach((category, index) => {
       const tab = document.createElement('div');
-      tab.textContent = category.nombre;
+      tab.textContent = category.category;
       tab.classList.add(
         'px-4',
         'py-2',
         'cursor-pointer',
-        'text-gray-700',
-        'hover:bg-gray-100'
+        'text-gray-200',
+        'hover:bg-gray-700'
       );
 
       if (index === selectedCategoryIndex) {
-        tab.classList.add('bg-gray-200');
+        tab.classList.add('bg-gray-700');
       }
 
       tab.addEventListener('click', () => {
@@ -78,16 +96,15 @@
       navbar.appendChild(tab);
     });
 
-    // Agregar el navbar al cuerpo del documento
     document.body.appendChild(navbar);
 
     function updateNavbarSelection() {
       const tabs = navbar.querySelectorAll('div');
       tabs.forEach((tab, idx) => {
         if (idx === selectedCategoryIndex) {
-          tab.classList.add('bg-gray-200');
+          tab.classList.add('bg-gray-700');
         } else {
-          tab.classList.remove('bg-gray-200');
+          tab.classList.remove('bg-gray-700');
         }
       });
     }
@@ -97,9 +114,9 @@
     dropdown.id = 'custom-dropdown';
     dropdown.classList.add(
       'fixed',
-      'bg-white',
+      'bg-gray-800',
       'border',
-      'border-gray-300',
+      'border-gray-700',
       'shadow-lg',
       'rounded-md',
       'z-50',
@@ -130,9 +147,17 @@
 
       const searchText = match[1].toLowerCase();
 
-      // Obtener opciones de la categoría seleccionada
-      currentOptions = selectedCategory.opciones.filter((item) =>
-        item.name.toLowerCase().includes(searchText)
+      // Verificar que selectedCategory.opciones es un arreglo
+      if (!Array.isArray(selectedCategory.opciones)) {
+        console.error('selectedCategory.opciones no es un arreglo');
+        dropdown.classList.add('hidden');
+        selectedIndex = -1;
+        return;
+      }
+
+      // Obtener opciones de la categoría seleccionada y filtrar elementos válidos
+      currentOptions = selectedCategory.opciones.filter(
+        (item) => item && item.id && item.id.toLowerCase().includes(searchText)
       );
 
       // Limitar el número de opciones a 10
@@ -143,17 +168,17 @@
 
         currentOptions.forEach((item, index) => {
           const optionDiv = document.createElement('div');
-          optionDiv.textContent = item.name;
+          optionDiv.textContent = item.id;
           optionDiv.classList.add(
             'px-4',
             'py-2',
             'cursor-pointer',
-            'text-gray-700',
-            'hover:bg-gray-100'
+            'text-gray-200',
+            'hover:bg-gray-700'
           );
 
           if (index === selectedIndex) {
-            optionDiv.classList.add('bg-gray-200');
+            optionDiv.classList.add('bg-gray-700');
           }
 
           optionDiv.addEventListener('mouseenter', () => {
@@ -162,7 +187,7 @@
           });
 
           optionDiv.addEventListener('click', () => {
-            replaceTextInDiv(div, item.value);
+            replaceTextInDiv(div, item.option);
             dropdown.classList.add('hidden');
           });
           dropdown.appendChild(optionDiv);
@@ -172,6 +197,7 @@
 
         const divRect = div.getBoundingClientRect();
         const dropdownHeight = dropdown.offsetHeight;
+
         dropdown.style.left = `${divRect.left}px`;
         dropdown.style.top = `${divRect.top - dropdownHeight - 5}px`;
         dropdown.style.minWidth = '150px';
@@ -189,9 +215,9 @@
       const optionDivs = dropdown.querySelectorAll('div');
       optionDivs.forEach((optionDiv, index) => {
         if (index === selectedIndex) {
-          optionDiv.classList.add('bg-gray-200');
+          optionDiv.classList.add('bg-gray-700');
         } else {
-          optionDiv.classList.remove('bg-gray-200');
+          optionDiv.classList.remove('bg-gray-700');
         }
       });
     }
@@ -204,6 +230,11 @@
     document.addEventListener(
       'keydown',
       function (e) {
+        // Verificar si el foco está en el textarea o en el cuerpo del documento
+        if (e.target !== div && e.target !== document.body) {
+          return; // Ignorar si el foco no está en el área relevante
+        }
+
         if (e.key === 'ArrowLeft') {
           // Cambiar a la pestaña anterior
           selectedCategoryIndex =
@@ -243,7 +274,7 @@
             } else if (e.key === 'Enter') {
               if (selectedIndex >= 0 && selectedIndex < currentOptions.length) {
                 const selectedItem = currentOptions[selectedIndex];
-                replaceTextInDiv(div, selectedItem.value);
+                replaceTextInDiv(div, selectedItem.option);
                 dropdown.classList.add('hidden');
               }
             } else if (e.key === 'Escape') {
