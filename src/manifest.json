@@ -3,11 +3,14 @@
   "name": "ChatGPT Extension",
   "version": "1.0",
   "description": "Agrega un navbar y un menú desplegable interactivo en chat.openai.com",
+  "action": {
+    "default_popup": "popup.html"
+  },
   "content_scripts": [
     {
       "matches": ["https://chatgpt.com/*"],
       "js": ["js/contentScript.js"],
-      "css": ["css/styles.css"]
+      "type": "module"
     }
   ],
   "web_accessible_resources": [
