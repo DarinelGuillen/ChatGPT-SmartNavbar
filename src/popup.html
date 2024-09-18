@@ -1,13 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Popup</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ChatGPT Extension Popup</title>
+  <!-- Incluye Tailwind CSS desde CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Puedes agregar estilos personalizados aquí o en un archivo CSS separado -->
 </head>
 <body class="min-w-[200px] min-h-[100px] font-sans p-4">
-  <h1 class="text-lg mb-2">Popup Title</h1>
-  <p class="text-sm">This is a paragraph inside the popup.</p>
+  <h1 class="text-lg mb-2">Título del Popup</h1>
+  <p class="text-sm">Este es un párrafo dentro del popup.</p>
+
+  <!-- Botón de ejemplo -->
+  <button id="miBoton" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Haz clic aquí</button>
+
+  <!-- Incluir el script de popup.js -->
+  <script src="js/popup.js"></script>
 </body>
 </html>

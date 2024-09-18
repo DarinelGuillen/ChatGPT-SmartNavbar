@@ -1,6 +1,9 @@
-// popup.js
-
 document.addEventListener('DOMContentLoaded', () => {
-  // Añade funcionalidad al popup aquí
   console.log('Popup cargado.');
+
+  // Ejemplo: Añadir funcionalidad al botón
+  const boton = document.getElementById('miBoton');
+  boton.addEventListener('click', () => {
+    alert('¡Botón clickeado!');
+  });
 });

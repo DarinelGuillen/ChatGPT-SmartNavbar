@@ -4,7 +4,12 @@
   "version": "1.0",
   "description": "Agrega un navbar y un menú desplegable interactivo en chat.openai.com",
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon1.png",
+      "48": "icons/icon2.png",
+      "128": "icons/icon3.png"
+    }
   },
   "content_scripts": [
     {
