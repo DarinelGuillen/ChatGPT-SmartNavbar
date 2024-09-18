@@ -5,6 +5,7 @@ import { loadCategories } from './dataLoader.js';
 import { createNavbar, updateNavbarSelection } from './navbar.js';
 import { createDropdown } from './dropdown.js';
 import { initializeEventHandlers } from './eventHandlers.js';
+import '../css/styles.css';
 
 (async function() {
   const triggerKey = '<<'; // Cambia esto si es necesario

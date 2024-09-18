@@ -1,0 +1,9 @@
+/* Estilos personalizados adicionales */
+
+/* Por ejemplo, centrar el contenido verticalmente */
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}

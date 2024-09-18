@@ -1,3 +1,7 @@
+import '../css/popup.css';
+import '../css/tailwind.css';
+
+
 document.addEventListener('DOMContentLoaded', () => {
   console.log('Popup cargado.');
 

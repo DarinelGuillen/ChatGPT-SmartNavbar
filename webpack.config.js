@@ -60,7 +60,7 @@ module.exports = {
   plugins: [
     // Plugin para extraer CSS en archivos separados
     new MiniCssExtractPlugin({
-      filename: 'css/styles.css', // Archivo de estilos principal
+      filename: 'css/[name].css', 
     }),
 
     // Plugin para manejar popup.html y la inclusión automática de scripts
