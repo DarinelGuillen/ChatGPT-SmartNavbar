@@ -10,6 +10,18 @@ ChatGPT-SmartNavbar is a Chrome extension that adds an interactive navbar and sm
 - **Keyboard Navigation**: Navigate through dropdown options using arrow keys and select with 'Enter'.
 - **Styling with Tailwind CSS**: Clean, modern, and customizable styling using Tailwind CSS.
 - **Optimized for Performance**: Fast and responsive interactions using efficient DOM observers.
+- **Create and Manage Prompts**: Users can create their own prompts and save them into custom categories for quick access.
+- **Custom Categories for Prompts**: Users can create, rename, and delete their own prompt categories. Prompts can be easily moved between categories.
+- **Prompt Management**: Users can add, edit, and delete prompts in any category, making organization a breeze.
+- **Seamless Category Assignment**: Facilitates prompt assignment and reassignment between different categories with an intuitive interface.
+- **User Preferences**: The extension saves user preferences such as prompt categories, prompt order, and other customizations, ensuring a personalized experience across sessions.
+
+## Future Improvements
+
+- **Enhanced User Interface**: Streamlining the process of category assignment and prompt management to reduce clicks and make accessing prompts even faster.
+- **Improved Storage Options**: Explore better ways to store user preferences and prompt data, ensuring data is secure and easily retrievable across different devices.
+- **Advanced Search Functionality**: Adding a search bar to quickly find prompts within categories, especially useful for users with large prompt collections.
+
 
 ## Installation
 
