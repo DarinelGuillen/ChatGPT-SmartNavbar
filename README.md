@@ -6,22 +6,36 @@ ChatGPT-SmartNavbar is a Chrome extension that adds an interactive navbar and sm
 ## Features
 
 - **Dynamic Navbar**: Adds a responsive, interactive navbar to ChatGPT's UI.
-- **Smart Dropdown Menu**: Dynamically generates a dropdown based on user input after typing `//`.
+- **Smart Dropdown Menu**: Dynamically generates a dropdown based on user input after typing a customizable key (default is `<<`).
 - **Keyboard Navigation**: Navigate through dropdown options using arrow keys and select with 'Enter'.
-- **Styling with Tailwind CSS**: Clean, modern, and customizable styling using Tailwind CSS.
-- **Optimized for Performance**: Fast and responsive interactions using efficient DOM observers.
 - **Create and Manage Prompts**: Users can create their own prompts and save them into custom categories for quick access.
 - **Custom Categories for Prompts**: Users can create, rename, and delete their own prompt categories. Prompts can be easily moved between categories.
 - **Prompt Management**: Users can add, edit, and delete prompts in any category, making organization a breeze.
 - **Seamless Category Assignment**: Facilitates prompt assignment and reassignment between different categories with an intuitive interface.
+- **Tailwind CSS Styling**: Clean, modern, and customizable styling using Tailwind CSS.
+- **Optimized for Performance**: Fast and responsive interactions using efficient DOM observers, ensuring that performance remains smooth as more prompts and categories are added.
 - **User Preferences**: The extension saves user preferences such as prompt categories, prompt order, and other customizations, ensuring a personalized experience across sessions.
+
+## New Features and Improvements
+
+- **Enhanced Search Functionality**: The search engine now supports more flexible and intuitive searches. Users can search for IDs with multiple words, spaces, and incomplete terms. For example, if a prompt category is named "Explain Code", the user can find it by typing:
+  - `Explain`
+  - `Exp C`
+  - `Expl Code`
+  - `Code`
+  - `Ex C`
+  - And similar variations
+  This makes it easier to search for prompt categories with multi-word names or partial matches.
+
+- **Improved Text Insertion**: After selecting an option from the dropdown menu, the inserted text now automatically includes a newline at the end, improving readability and formatting within the ChatGPT prompt box.
+
+- **Customizable Dropdown Activation Key**: The default key to activate the dropdown is `<<`, but users can now customize this key in the extension's popup menu. This provides flexibility for users to choose a shortcut that best fits their workflow or preferences.
 
 ## Future Improvements
 
-- **Enhanced User Interface**: Streamlining the process of category assignment and prompt management to reduce clicks and make accessing prompts even faster.
+- **Advanced Search Options**: Continue refining the search to handle even more variations and typos, making it as user-friendly as possible.
+- **Streamlined User Interface**: Further simplify category and prompt management by reducing clicks and improving overall usability.
 - **Improved Storage Options**: Explore better ways to store user preferences and prompt data, ensuring data is secure and easily retrievable across different devices.
-- **Advanced Search Functionality**: Adding a search bar to quickly find prompts within categories, especially useful for users with large prompt collections.
-
 
 ## Installation
 
