@@ -54,6 +54,20 @@
 
   <!-- Incluir el script de popup.js -->
   <!-- <script src="js/popup.bundle.js"></script> -->
-  <script src="js/popup.js"></script>
+  <script type="module" src="js/popup.js"></script>
+
+  <!-- Modal -->
+  <div id="modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white rounded-lg p-6 w-96">
+      <h2 id="modal-title" class="text-xl font-semibold mb-4">Título del Modal</h2>
+      <div id="modal-content">
+        <!-- Contenido dinámico -->
+      </div>
+      <div class="mt-4 text-right">
+        <button id="modal-cancel-button" class="btn bg-gray-500 text-white mr-2">Cancelar</button>
+        <button id="modal-save-button" class="btn bg-blue-500 text-white">Guardar</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

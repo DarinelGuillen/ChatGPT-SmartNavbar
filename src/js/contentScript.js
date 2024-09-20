@@ -1,10 +1,11 @@
 // contentScript.js
 
-import { waitForElement } from './utils.js';
+import { waitForElement, escapeRegExp } from './utils.js';
 import { loadCategories } from './dataLoader.js';
 import { createNavbar, updateNavbarSelection } from './navbar.js';
 import { createDropdown } from './dropdown.js';
 import { initializeEventHandlers } from './eventHandlers.js';
+import { getTriggerKey } from './storage.js';
 import '../css/styles.css';
 
 (async function() {
@@ -21,7 +22,7 @@ import '../css/styles.css';
 
   let navbar;
   let dropdownManager;
-  let state; // Mover la declaración de 'state' aquí
+  let state;
 
   function initializeExtension(div) {
     state = {
@@ -49,9 +50,8 @@ import '../css/styles.css';
   }
 
   // Esperar al elemento 'prompt-textarea'
-  waitForElement('#prompt-textarea', (div) => {
-    initializeExtension(div);
-  });
+  const div = await waitForElement('#prompt-textarea');
+  initializeExtension(div);
 
   // Listener para el mensaje de actualización de datos de usuario
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -84,15 +84,4 @@ import '../css/styles.css';
     }
   });
 
-  function getTriggerKey() {
-    return new Promise((resolve) => {
-      chrome.storage.local.get(['triggerKey'], (result) => {
-        resolve(result.triggerKey || '<<');
-      });
-    });
-  }
-
-  function escapeRegExp(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  }
 })();

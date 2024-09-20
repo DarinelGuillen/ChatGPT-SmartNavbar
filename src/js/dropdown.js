@@ -30,7 +30,7 @@ export function createDropdown(div, triggerKey) {
     // Obtener el texto después del triggerKey
     const textContent = div.innerText;
     const regex = new RegExp(escapedTriggerKey + '(.*)$', 'i');
-    
+
     const match = textContent.match(regex);
 
     if (!match) {
@@ -78,9 +78,12 @@ export function createDropdown(div, triggerKey) {
         });
 
         optionDiv.addEventListener('click', () => {
-          replaceTextInDiv(div, item.option + '\n', state.triggerKey);
+          replaceTextInDiv(div, item.option, state.triggerKey);
           dropdown.classList.add('hidden');
+          currentOptions = [];
+          selectedIndex = -1;
         });
+
         dropdown.appendChild(optionDiv);
       });
 
@@ -146,6 +149,7 @@ export function createDropdown(div, triggerKey) {
     updateDropdown,
     updateDropdownSelection,
     handleInput,
+
     getCurrentOptions() {
       return currentOptions;
     },
@@ -155,6 +159,10 @@ export function createDropdown(div, triggerKey) {
     setSelectedIndex(index) {
       selectedIndex = index;
       updateDropdownSelection();
+    },
+    clearOptions() {
+      currentOptions = [];
+      selectedIndex = -1;
     },
     dropdownElement: dropdown
   };

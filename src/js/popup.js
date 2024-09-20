@@ -1,8 +1,9 @@
 // popup.js
 
-import '../css/popup.css';
+import '../css/popup.css'; 
 import '../css/tailwind.css';
 import { getCategories, saveCategories, getTriggerKey, saveTriggerKey } from './storage.js';
+
 
 document.addEventListener('DOMContentLoaded', async () => {
   const categoriesList = document.getElementById('categories-list');
@@ -22,6 +23,42 @@ document.addEventListener('DOMContentLoaded', async () => {
         chrome.tabs.sendMessage(tabs[0].id, { type: 'USER_DATA_UPDATED' });
       }
     });
+  }
+
+  function showModal(title, contentHTML, onSave) {
+    const modal = document.getElementById('modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalContent = document.getElementById('modal-content');
+    const modalSaveButton = document.getElementById('modal-save-button');
+    const modalCancelButton = document.getElementById('modal-cancel-button');
+
+    modalTitle.textContent = title;
+    modalContent.innerHTML = contentHTML;
+
+    modalSaveButton.onclick = () => {
+      onSave();
+      hideModal();
+    };
+
+    modalCancelButton.onclick = hideModal;
+
+    modal.classList.add('show');
+  }
+
+  function hideModal() {
+    const modal = document.getElementById('modal');
+    modal.classList.remove('show');
+  }
+
+  function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+      notification.remove();
+    }, 3000);
   }
 
   function renderCategories() {
@@ -109,6 +146,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       notifyContentScript();
       renderCategories();
       document.getElementById('new-category-name').value = '';
+      showNotification('Categoría agregada exitosamente');
     } else {
       alert('El nombre de la categoría es inválido o ya existe.');
     }
@@ -132,6 +170,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           renderCategories();
           document.getElementById('new-prompt-id').value = '';
           document.getElementById('new-prompt-text').value = '';
+          showNotification('Prompt agregado exitosamente');
         } else {
           alert('Ya existe un prompt con ese ID en esta categoría.');
         }
@@ -144,25 +183,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   function editPrompt(categoryIndex, promptIndex) {
     const currentPrompt = categories[categoryIndex].opciones[promptIndex];
 
-    // Mostrar un diálogo para editar el prompt
-    const updatedPromptId = window.prompt(
-      'Editar ID del Prompt:',
-      currentPrompt.id
-    );
-    const updatedPromptText = window.prompt(
-      'Editar Texto del Prompt:',
-      currentPrompt.option
-    );
+    showModal('Editar Prompt', `
+      <input id="edit-prompt-id" type="text" value="${currentPrompt.id}" class="w-full mb-2 p-2 border rounded" />
+      <textarea id="edit-prompt-text" class="w-full p-2 border rounded">${currentPrompt.option}</textarea>
+    `, () => {
+      const updatedPromptId = document.getElementById('edit-prompt-id').value.trim();
+      const updatedPromptText = document.getElementById('edit-prompt-text').value.trim();
 
-    if (updatedPromptId && updatedPromptText) {
-      currentPrompt.id = updatedPromptId;
-      currentPrompt.option = updatedPromptText;
-      saveCategories(categories);
-      notifyContentScript();
-      renderCategories();
-    } else {
-      alert('La edición fue cancelada o los campos están vacíos.');
-    }
+      if (updatedPromptId && updatedPromptText) {
+        currentPrompt.id = updatedPromptId;
+        currentPrompt.option = updatedPromptText;
+        saveCategories(categories);
+        notifyContentScript();
+        renderCategories();
+        showNotification('Prompt editado exitosamente');
+      } else {
+        alert('Los campos no pueden estar vacíos.');
+      }
+    });
   }
 
   function deletePrompt(categoryIndex, promptIndex) {
@@ -171,20 +209,26 @@ document.addEventListener('DOMContentLoaded', async () => {
       saveCategories(categories);
       notifyContentScript();
       renderCategories();
+      showNotification('Prompt eliminado exitosamente');
     }
   }
 
   function editCategory(categoryIndex) {
     const category = categories[categoryIndex];
-    const newCategoryName = prompt('Editar nombre de la categoría:', category.category);
-    if (newCategoryName && !categories.find(cat => cat.category === newCategoryName)) {
-      category.category = newCategoryName;
-      saveCategories(categories);
-      notifyContentScript();
-      renderCategories();
-    } else {
-      alert('El nombre es inválido o ya existe otra categoría con ese nombre.');
-    }
+    showModal('Editar Categoría', `
+      <input id="edit-category-name" type="text" value="${category.category}" class="w-full p-2 border rounded" />
+    `, () => {
+      const newCategoryName = document.getElementById('edit-category-name').value.trim();
+      if (newCategoryName && !categories.find(cat => cat.category === newCategoryName)) {
+        category.category = newCategoryName;
+        saveCategories(categories);
+        notifyContentScript();
+        renderCategories();
+        showNotification('Categoría editada exitosamente');
+      } else {
+        alert('El nombre es inválido o ya existe otra categoría con ese nombre.');
+      }
+    });
   }
 
   function deleteCategory(categoryIndex) {
@@ -193,6 +237,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       saveCategories(categories);
       notifyContentScript();
       renderCategories();
+      showNotification('Categoría eliminada exitosamente');
     }
   }
 
@@ -204,12 +249,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (newTriggerKey) {
       saveTriggerKey(newTriggerKey);
       notifyContentScript();
-      alert('Tecla de activación guardada.');
+      showNotification('Tecla de activación guardada.');
     } else {
-      alert('Por favor, ingresa una tecla de activación válida.');
+      showNotification('Por favor, ingresa una tecla de activación válida.');
     }
   });
-
   // Renderizar categorías inicialmente
   renderCategories();
 });
