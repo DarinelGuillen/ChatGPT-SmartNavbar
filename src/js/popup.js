@@ -2,7 +2,7 @@
 
 import '../css/popup.css';
 import '../css/tailwind.css';
-import { getUserCategories, saveUserCategories } from './storage.js';
+import { getCategories, saveCategories } from './storage.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const categoriesList = document.getElementById('categories-list');
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const addCategoryButton = document.getElementById('add-category-button');
   const addPromptButton = document.getElementById('add-prompt-button');
 
-  let userCategories = await getUserCategories();
+  let categories = await getCategories();
 
   function notifyContentScript() {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     categoriesList.innerHTML = '';
     categorySelect.innerHTML = '';
 
-    userCategories.forEach((category, index) => {
+    categories.forEach((category, index) => {
       // Crear elemento de categoría
       const categoryDiv = document.createElement('div');
       categoryDiv.className = 'category-item';
@@ -96,12 +96,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function addCategory() {
     const newCategoryName = document.getElementById('new-category-name').value.trim();
-    if (newCategoryName && !userCategories.find(cat => cat.category === newCategoryName)) {
-      userCategories.push({
+    if (newCategoryName && !categories.find(cat => cat.category === newCategoryName)) {
+      categories.push({
         category: newCategoryName,
         opciones: []
       });
-      saveUserCategories(userCategories);
+      saveCategories(categories);
       notifyContentScript();
       renderCategories();
       document.getElementById('new-category-name').value = '';
@@ -116,14 +116,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const newPromptText = document.getElementById('new-prompt-text').value.trim();
 
     if (selectedCategoryName && newPromptId && newPromptText) {
-      const category = userCategories.find(cat => cat.category === selectedCategoryName);
+      const category = categories.find(cat => cat.category === selectedCategoryName);
       if (category) {
         if (!category.opciones.find(prompt => prompt.id === newPromptId)) {
           category.opciones.push({
             id: newPromptId,
             option: newPromptText
           });
-          saveUserCategories(userCategories);
+          saveCategories(categories);
           notifyContentScript();
           renderCategories();
           document.getElementById('new-prompt-id').value = '';
@@ -138,35 +138,46 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function editPrompt(categoryIndex, promptIndex) {
-    // Implementar funcionalidad para editar prompt
-    const prompt = userCategories[categoryIndex].opciones[promptIndex];
+    const prompt = categories[categoryIndex].opciones[promptIndex];
     const newPromptId = prompt.id;
     const newPromptText = prompt.option;
 
-    const updatedPromptId = prompt.id = prompt.id + " (Editado)"; // Ejemplo de edición
-    const updatedPromptText = prompt.option = prompt.option + " (Editado)";
+    // Mostrar un diálogo para editar el prompt
+    const updatedPromptId = prompt(
+      'Editar ID del Prompt:',
+      prompt.id
+    );
+    const updatedPromptText = prompt(
+      'Editar Texto del Prompt:',
+      prompt.option
+    );
 
-    saveUserCategories(userCategories);
-    notifyContentScript();
-    renderCategories();
+    if (updatedPromptId && updatedPromptText) {
+      prompt.id = updatedPromptId;
+      prompt.option = updatedPromptText;
+      saveCategories(categories);
+      notifyContentScript();
+      renderCategories();
+    } else {
+      alert('La edición fue cancelada o los campos están vacíos.');
+    }
   }
 
   function deletePrompt(categoryIndex, promptIndex) {
     if (confirm('¿Estás seguro de que deseas eliminar este prompt?')) {
-      userCategories[categoryIndex].opciones.splice(promptIndex, 1);
-      saveUserCategories(userCategories);
+      categories[categoryIndex].opciones.splice(promptIndex, 1);
+      saveCategories(categories);
       notifyContentScript();
       renderCategories();
     }
   }
 
   function editCategory(categoryIndex) {
-    // Implementar funcionalidad para editar categoría
-    const category = userCategories[categoryIndex];
+    const category = categories[categoryIndex];
     const newCategoryName = prompt('Editar nombre de la categoría:', category.category);
-    if (newCategoryName && !userCategories.find(cat => cat.category === newCategoryName)) {
+    if (newCategoryName && !categories.find(cat => cat.category === newCategoryName)) {
       category.category = newCategoryName;
-      saveUserCategories(userCategories);
+      saveCategories(categories);
       notifyContentScript();
       renderCategories();
     } else {
@@ -176,8 +187,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function deleteCategory(categoryIndex) {
     if (confirm('¿Estás seguro de que deseas eliminar esta categoría?')) {
-      userCategories.splice(categoryIndex, 1);
-      saveUserCategories(userCategories);
+      categories.splice(categoryIndex, 1);
+      saveCategories(categories);
       notifyContentScript();
       renderCategories();
     }

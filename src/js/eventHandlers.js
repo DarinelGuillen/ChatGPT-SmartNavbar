@@ -2,7 +2,7 @@
 
 import { replaceTextInDiv } from './utils.js';
 
-export function initializeEventHandlers(div, dropdownManager, categories, state) {
+export function initializeEventHandlers(div, dropdownManager, state) {
   div.addEventListener('input', () => {
     dropdownManager.handleInput(state.selectedCategory, state.escapedTriggerKey);
   });
@@ -10,13 +10,9 @@ export function initializeEventHandlers(div, dropdownManager, categories, state)
   document.addEventListener(
     'keydown',
     function (e) {
-      // Eliminamos la condición del e.target si aún existe
-      // if (e.target !== div && e.target !== document.body) {
-      //     return;
-      // }
-
       if (e.key === 'ArrowLeft') {
         // Cambiar a la pestaña anterior
+        const categories = state.categories;
         state.selectedCategoryIndex =
           (state.selectedCategoryIndex - 1 + categories.length) % categories.length;
         state.selectedCategory = categories[state.selectedCategoryIndex];
@@ -26,6 +22,7 @@ export function initializeEventHandlers(div, dropdownManager, categories, state)
         e.stopPropagation();
       } else if (e.key === 'ArrowRight') {
         // Cambiar a la siguiente pestaña
+        const categories = state.categories;
         state.selectedCategoryIndex =
           (state.selectedCategoryIndex + 1) % categories.length;
         state.selectedCategory = categories[state.selectedCategoryIndex];
