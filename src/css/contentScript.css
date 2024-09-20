@@ -1,0 +1,17 @@
+/* src/css/contentScript.css */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Estilos personalizados para el content script */
+
+.fixed {
+  position: fixed;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Agrega otros estilos necesarios aquí */

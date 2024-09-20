@@ -21,7 +21,7 @@ ChatGPT-SmartNavbar is a Chrome extension designed to streamline and accelerate 
 - **Enhanced Search Functionality**: The search engine now supports more flexible and intuitive searches. Users can search for IDs even if they contain spaces, partial words, or multiple word fragments. For example, if a prompt category is named "Design Patterns" or "Database Integration", users can now search using:
   - `Design`
   - `Pat`
-  - `Dari`
+  - `Dark`
   - `Code`
   This improves the search experience by narrowing down results based on more flexible matching logic. The dropdown will also highlight the closest match to the user's query, allowing for faster selection.
 

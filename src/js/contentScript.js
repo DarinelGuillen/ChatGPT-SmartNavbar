@@ -6,7 +6,7 @@ import { createNavbar, updateNavbarSelection } from './navbar.js';
 import { createDropdown } from './dropdown.js';
 import { initializeEventHandlers } from './eventHandlers.js';
 import { getTriggerKey } from './storage.js';
-import '../css/styles.css';
+// import '../css/styles.css';
 
 function createModal() {
   const modal = document.createElement('div');
