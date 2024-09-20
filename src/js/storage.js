@@ -22,3 +22,17 @@ export function getCategories() {
     });
   });
 }
+
+export function saveTriggerKey(triggerKey) {
+  chrome.storage.local.set({ triggerKey }, () => {
+    console.log('Trigger key guardada.');
+  });
+}
+
+export function getTriggerKey() {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(['triggerKey'], (result) => {
+      resolve(result.triggerKey || '<<'); // Valor por defecto
+    });
+  });
+}

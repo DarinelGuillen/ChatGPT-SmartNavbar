@@ -13,6 +13,16 @@
   <div id="app" class="flex flex-col items-center">
     <h1 class="text-xl font-semibold mb-4 text-gray-800">Gestionar Prompts y Categorías</h1>
 
+    <!-- Sección para configurar el trigger key -->
+    <div class="mb-4 w-full">
+      <label for="trigger-key" class="block text-gray-700 mb-2">Tecla de activación del menú:</label>
+      <input type="text" id="trigger-key" placeholder="Ejemplo: &lt;&lt;" class="input-field w-full mb-2 p-2 border rounded"
+        maxlength="5" />
+      <button id="save-trigger-key-button" class="w-full px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600">
+        Guardar Tecla de Activación
+      </button>
+    </div>
+
     <!-- Sección para agregar una nueva categoría -->
     <div class="mb-4 w-full">
       <input type="text" id="new-category-name" placeholder="Nombre de la nueva categoría"

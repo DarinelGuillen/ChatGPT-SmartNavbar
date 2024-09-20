@@ -8,8 +8,9 @@ import { initializeEventHandlers } from './eventHandlers.js';
 import '../css/styles.css';
 
 (async function() {
-  const triggerKey = '<<'; // Cambia esto si es necesario
-  const escapedTriggerKey = triggerKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  // Obtener el triggerKey desde el almacenamiento
+  let triggerKey = await getTriggerKey();
+  let escapedTriggerKey = escapeRegExp(triggerKey);
 
   // Cargar categorías desde el JSON
   let categories = await loadCategories();
@@ -28,7 +29,7 @@ import '../css/styles.css';
       selectedCategory,
       triggerKey,
       escapedTriggerKey,
-      categories, // Añadir 'categories' al estado
+      categories,
       updateNavbarSelection: () => updateNavbarSelection(navbar, state.selectedCategoryIndex)
     };
 
@@ -41,10 +42,10 @@ import '../css/styles.css';
     });
 
     // Crear dropdown
-    dropdownManager = createDropdown(div, triggerKey);
+    dropdownManager = createDropdown(div, state);
 
     // Inicializar manejadores de eventos
-    initializeEventHandlers(div, dropdownManager, state); // Pasar 'state' actualizado
+    initializeEventHandlers(div, dropdownManager, state);
   }
 
   // Esperar al elemento 'prompt-textarea'
@@ -55,21 +56,43 @@ import '../css/styles.css';
   // Listener para el mensaje de actualización de datos de usuario
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.type === 'USER_DATA_UPDATED') {
+      // Si el triggerKey ha cambiado, actualizarlo
+      getTriggerKey().then((newTriggerKey) => {
+        if (newTriggerKey !== triggerKey) {
+          triggerKey = newTriggerKey;
+          escapedTriggerKey = escapeRegExp(triggerKey);
+          state.triggerKey = triggerKey;
+          state.escapedTriggerKey = escapedTriggerKey;
+        }
+      });
+
       // Recargar categorías
       loadCategories().then((newCategories) => {
         categories = newCategories;
-        state.categories = newCategories; // Actualizar 'state.categories'
+        state.categories = newCategories;
         // Actualizar la barra de navegación
         navbar.update(categories);
         // Actualizar selección si es necesario
         state.selectedCategoryIndex = 0; // Por ejemplo, volver a 'Todos'
         state.selectedCategory = categories[state.selectedCategoryIndex];
         state.updateNavbarSelection();
-        // Si tienes un dropdownManager, actualiza también las opciones
+        // Actualizar el dropdown
         if (dropdownManager) {
           dropdownManager.updateDropdown(state.selectedCategory, state.escapedTriggerKey);
         }
       });
     }
   });
+
+  function getTriggerKey() {
+    return new Promise((resolve) => {
+      chrome.storage.local.get(['triggerKey'], (result) => {
+        resolve(result.triggerKey || '<<');
+      });
+    });
+  }
+
+  function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
 })();

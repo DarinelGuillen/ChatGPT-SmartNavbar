@@ -29,7 +29,8 @@ export function createDropdown(div, triggerKey) {
 
     // Obtener el texto después del triggerKey
     const textContent = div.innerText;
-    const regex = new RegExp(escapedTriggerKey + '(\\S*)$', 'i');
+    const regex = new RegExp(escapedTriggerKey + '(.*)$', 'i');
+    
     const match = textContent.match(regex);
 
     if (!match) {
@@ -38,7 +39,7 @@ export function createDropdown(div, triggerKey) {
       return;
     }
 
-    const searchText = match[1].toLowerCase();
+    const searchText = match[1].toLowerCase().trim();
 
     if (!Array.isArray(selectedCategory.opciones)) {
       console.error('selectedCategory.opciones no es un arreglo');
@@ -48,7 +49,7 @@ export function createDropdown(div, triggerKey) {
     }
 
     currentOptions = selectedCategory.opciones.filter(
-      (item) => item && item.id && item.id.toLowerCase().includes(searchText)
+      (item) => item && item.id && matchSearchText(item.id.toLowerCase(), searchText)
     );
 
     currentOptions = currentOptions.slice(0, 10);
@@ -77,7 +78,7 @@ export function createDropdown(div, triggerKey) {
         });
 
         optionDiv.addEventListener('click', () => {
-          replaceTextInDiv(div, item.option, triggerKey);
+          replaceTextInDiv(div, item.option + '\n', state.triggerKey);
           dropdown.classList.add('hidden');
         });
         dropdown.appendChild(optionDiv);
@@ -122,6 +123,24 @@ export function createDropdown(div, triggerKey) {
   }
 
   document.addEventListener('click', handleDocumentClick);
+
+  function matchSearchText(idText, searchText) {
+    const idWords = idText.split(/\s+/);
+    const searchWords = searchText.split(/\s+/);
+
+    // Coincidencia por prefijos
+    const allWordsMatch = searchWords.every(sw => {
+      return idWords.some(iw => iw.startsWith(sw));
+    });
+
+    // Coincidencia por iniciales
+    const idInitials = idWords.map(word => word[0]).join('').toLowerCase();
+    const searchInitials = searchWords.map(word => word[0]).join('').toLowerCase();
+
+    const initialsMatch = idInitials.startsWith(searchInitials);
+
+    return allWordsMatch || initialsMatch;
+  }
 
   return {
     updateDropdown,

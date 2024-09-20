@@ -54,7 +54,7 @@ export function initializeEventHandlers(div, dropdownManager, state) {
           } else if (e.key === 'Enter') {
             if (selectedIndex >= 0 && selectedIndex < currentOptions.length) {
               const selectedItem = currentOptions[selectedIndex];
-              replaceTextInDiv(div, selectedItem.option, state.triggerKey);
+              replaceTextInDiv(div, selectedItem.option + '\n', state.triggerKey);
               dropdownManager.dropdownElement.classList.add('hidden');
             }
           } else if (e.key === 'Escape') {

@@ -2,15 +2,19 @@
 
 import '../css/popup.css';
 import '../css/tailwind.css';
-import { getCategories, saveCategories } from './storage.js';
+import { getCategories, saveCategories, getTriggerKey, saveTriggerKey } from './storage.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const categoriesList = document.getElementById('categories-list');
   const categorySelect = document.getElementById('category-select');
   const addCategoryButton = document.getElementById('add-category-button');
   const addPromptButton = document.getElementById('add-prompt-button');
+  const triggerKeyInput = document.getElementById('trigger-key');
+  const saveTriggerKeyButton = document.getElementById('save-trigger-key-button');
 
   let categories = await getCategories();
+  const triggerKey = await getTriggerKey();
+  triggerKeyInput.value = triggerKey;
 
   function notifyContentScript() {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -138,23 +142,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function editPrompt(categoryIndex, promptIndex) {
-    const prompt = categories[categoryIndex].opciones[promptIndex];
-    const newPromptId = prompt.id;
-    const newPromptText = prompt.option;
+    const currentPrompt = categories[categoryIndex].opciones[promptIndex];
 
     // Mostrar un diálogo para editar el prompt
-    const updatedPromptId = prompt(
+    const updatedPromptId = window.prompt(
       'Editar ID del Prompt:',
-      prompt.id
+      currentPrompt.id
     );
-    const updatedPromptText = prompt(
+    const updatedPromptText = window.prompt(
       'Editar Texto del Prompt:',
-      prompt.option
+      currentPrompt.option
     );
 
     if (updatedPromptId && updatedPromptText) {
-      prompt.id = updatedPromptId;
-      prompt.option = updatedPromptText;
+      currentPrompt.id = updatedPromptId;
+      currentPrompt.option = updatedPromptText;
       saveCategories(categories);
       notifyContentScript();
       renderCategories();
@@ -196,6 +198,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   addCategoryButton.addEventListener('click', addCategory);
   addPromptButton.addEventListener('click', addPrompt);
+
+  saveTriggerKeyButton.addEventListener('click', () => {
+    const newTriggerKey = triggerKeyInput.value.trim();
+    if (newTriggerKey) {
+      saveTriggerKey(newTriggerKey);
+      notifyContentScript();
+      alert('Tecla de activación guardada.');
+    } else {
+      alert('Por favor, ingresa una tecla de activación válida.');
+    }
+  });
 
   // Renderizar categorías inicialmente
   renderCategories();
