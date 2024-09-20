@@ -1,9 +1,9 @@
 [
   {
     "id": 1,
-    "category": "dev",
+    "category": "TEST",
     "opciones": [
-      { "id": "Debug", "option": "Opción 1 de dev: Ayuda con depuración de código" },
+      { "id": "Extension", "option": "Opción 1 de dev: Ayuda con depuración de código" },
       { "id": "Explain Optimize", "option": "Opción 2 de dev: Optimización de código" }
     ]
   },
