@@ -2,7 +2,7 @@
 
 import { replaceTextInDiv } from './utils.js';
 
-export function createDropdown(div, triggerKey) {
+export function createDropdown(div, state) {
   const dropdown = document.createElement('div');
   dropdown.id = 'custom-dropdown';
   dropdown.classList.add(
@@ -24,10 +24,8 @@ export function createDropdown(div, triggerKey) {
   let selectedIndex = -1;
 
   function updateDropdown(selectedCategory, escapedTriggerKey) {
-    // Limpiar el menú
     dropdown.innerHTML = '';
 
-    // Obtener el texto después del triggerKey
     const textContent = div.innerText;
     const regex = new RegExp(escapedTriggerKey + '(.*)$', 'i');
 
@@ -48,11 +46,22 @@ export function createDropdown(div, triggerKey) {
       return;
     }
 
-    currentOptions = selectedCategory.opciones.filter(
-      (item) => item && item.id && matchSearchText(item.id.toLowerCase(), searchText)
-    );
+    // Calcular puntuaciones y filtrar opciones
+    const scoredOptions = selectedCategory.opciones
+      .map(item => {
+        if (item && item.id) {
+          const score = matchSearchText(item.id.toLowerCase(), searchText);
+          return { item, score };
+        }
+        return null;
+      })
+      .filter(entry => entry && entry.score > 0);
 
-    currentOptions = currentOptions.slice(0, 10);
+    // Ordenar opciones por puntuación descendente
+    scoredOptions.sort((a, b) => b.score - a.score);
+
+    // Obtener solo los items
+    currentOptions = scoredOptions.slice(0, 10).map(entry => entry.item);
 
     if (currentOptions.length > 0) {
       selectedIndex = 0;
@@ -128,28 +137,36 @@ export function createDropdown(div, triggerKey) {
   document.addEventListener('click', handleDocumentClick);
 
   function matchSearchText(idText, searchText) {
+    let score = 0;
+
+    if (idText === searchText) {
+      score += 100;
+    } else if (idText.startsWith(searchText)) {
+      score += 50;
+    } else if (idText.includes(searchText)) {
+      score += 20;
+    }
+
     const idWords = idText.split(/\s+/);
     const searchWords = searchText.split(/\s+/);
 
-    // Coincidencia por prefijos
-    const allWordsMatch = searchWords.every(sw => {
-      return idWords.some(iw => iw.startsWith(sw));
-    });
+    const prefixMatches = searchWords.filter(sw => idWords.some(iw => iw.startsWith(sw))).length;
+    score += prefixMatches * 10;
 
-    // Coincidencia por iniciales
     const idInitials = idWords.map(word => word[0]).join('').toLowerCase();
     const searchInitials = searchWords.map(word => word[0]).join('').toLowerCase();
 
-    const initialsMatch = idInitials.startsWith(searchInitials);
+    if (idInitials.startsWith(searchInitials)) {
+      score += 5;
+    }
 
-    return allWordsMatch || initialsMatch;
+    return score;
   }
 
   return {
     updateDropdown,
     updateDropdownSelection,
     handleInput,
-
     getCurrentOptions() {
       return currentOptions;
     },

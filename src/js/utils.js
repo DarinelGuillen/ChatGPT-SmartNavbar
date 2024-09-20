@@ -14,8 +14,8 @@ export function replaceTextInDiv(el, option, triggerKey) {
     const before = text.substring(0, match.index);
     const after = text.substring(match.index + match[0].length);
 
-    // Actualizar el contenido del elemento
-    el.innerText = before + option + '\n' + after;
+    // Actualizar el contenido del elemento usando innerHTML y agregando <br>
+    el.innerHTML = before + option.replace(/\n/g, '<br>') + '<br>' + after;
 
     // Colocar el cursor al final del texto insertado
     el.focus();
@@ -23,9 +23,12 @@ export function replaceTextInDiv(el, option, triggerKey) {
 
     // Obtener el último nodo de texto
     const textNode = el.lastChild;
-    const offset = textNode.length;
-
-    newRange.setStart(textNode, offset);
+    if (textNode.nodeType === Node.TEXT_NODE) {
+      const offset = textNode.length;
+      newRange.setStart(textNode, offset);
+    } else {
+      newRange.setStartAfter(textNode);
+    }
     newRange.collapse(true);
 
     sel.removeAllRanges();
