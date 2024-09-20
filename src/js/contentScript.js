@@ -8,21 +8,47 @@ import { initializeEventHandlers } from './eventHandlers.js';
 import { getTriggerKey } from './storage.js';
 import '../css/styles.css';
 
+function createModal() {
+  const modal = document.createElement('div');
+  modal.id = 'custom-extension-modal';
+  modal.classList.add('fixed', 'inset-0', 'bg-black', 'bg-opacity-50', 'flex', 'justify-center', 'items-center', 'hidden', 'z-1000');
+
+  const modalContent = document.createElement('div');
+  modalContent.classList.add('bg-white', 'p-6', 'rounded-lg', 'w-3/4', 'h-3/4', 'overflow-auto');
+
+  modalContent.innerHTML = `
+    <h2 class="text-2xl mb-4">Ventana Extendida</h2>
+    <p>Contenido de tu extensión...</p>
+    <button id="close-modal-button" class="mt-4 px-4 py-2 bg-red-500 text-white rounded">Cerrar</button>
+  `;
+
+  modal.appendChild(modalContent);
+  document.body.appendChild(modal);
+
+  document.getElementById('close-modal-button').addEventListener('click', () => {
+    modal.classList.add('hidden');
+  });
+
+  return modal;
+}
+
+function openModal(modal) {
+  modal.classList.remove('hidden');
+}
+
 (async function() {
-  // Obtener el triggerKey desde el almacenamiento
   let triggerKey = await getTriggerKey();
   let escapedTriggerKey = escapeRegExp(triggerKey);
 
-  // Cargar categorías desde el JSON
   let categories = await loadCategories();
 
-  // Categoría seleccionada por defecto
   let selectedCategoryIndex = 0;
   let selectedCategory = categories[selectedCategoryIndex];
 
   let navbar;
   let dropdownManager;
   let state;
+  let modal;
 
   function initializeExtension(div) {
     state = {
@@ -34,7 +60,6 @@ import '../css/styles.css';
       updateNavbarSelection: () => updateNavbarSelection(navbar, state.selectedCategoryIndex)
     };
 
-    // Crear navbar
     navbar = createNavbar(categories, selectedCategoryIndex, (index) => {
       state.selectedCategoryIndex = index;
       state.selectedCategory = categories[state.selectedCategoryIndex];
@@ -42,21 +67,18 @@ import '../css/styles.css';
       dropdownManager.updateDropdown(state.selectedCategory, state.escapedTriggerKey);
     });
 
-    // Crear dropdown
     dropdownManager = createDropdown(div, state);
 
-    // Inicializar manejadores de eventos
     initializeEventHandlers(div, dropdownManager, state);
+
+    modal = createModal();
   }
 
-  // Esperar al elemento 'prompt-textarea'
   const div = await waitForElement('#prompt-textarea');
   initializeExtension(div);
 
-  // Listener para el mensaje de actualización de datos de usuario
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.type === 'USER_DATA_UPDATED') {
-      // Si el triggerKey ha cambiado, actualizarlo
       getTriggerKey().then((newTriggerKey) => {
         if (newTriggerKey !== triggerKey) {
           triggerKey = newTriggerKey;
@@ -66,21 +88,19 @@ import '../css/styles.css';
         }
       });
 
-      // Recargar categorías
       loadCategories().then((newCategories) => {
         categories = newCategories;
         state.categories = newCategories;
-        // Actualizar la barra de navegación
         navbar.update(categories);
-        // Actualizar selección si es necesario
-        state.selectedCategoryIndex = 0; // Por ejemplo, volver a 'Todos'
+        state.selectedCategoryIndex = 0;
         state.selectedCategory = categories[state.selectedCategoryIndex];
         state.updateNavbarSelection();
-        // Actualizar el dropdown
         if (dropdownManager) {
           dropdownManager.updateDropdown(state.selectedCategory, state.escapedTriggerKey);
         }
       });
+    } else if (message.type === 'OPEN_MODAL') {
+      openModal(modal);
     }
   });
 

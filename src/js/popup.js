@@ -1,6 +1,6 @@
 // popup.js
 
-import '../css/popup.css'; 
+import '../css/popup.css';
 import '../css/tailwind.css';
 import { getCategories, saveCategories, getTriggerKey, saveTriggerKey } from './storage.js';
 
@@ -65,8 +65,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Limpiar elementos existentes
     categoriesList.innerHTML = '';
     categorySelect.innerHTML = '';
-
+    console.log('Renderizando categorías...');
     categories.forEach((category, index) => {
+      console.log(`Renderizando categoría: ${category.category}`);
       // Crear elemento de categoría
       const categoryDiv = document.createElement('div');
       categoryDiv.className = 'category-item';
@@ -79,6 +80,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       // Crear lista de prompts
       const promptsList = document.createElement('ul');
       category.opciones.forEach((prompt, promptIndex) => {
+        console.log(`Renderizando prompt: ${prompt.id}`);
         const promptItem = document.createElement('li');
         promptItem.className = 'prompt-item';
 
@@ -257,3 +259,29 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Renderizar categorías inicialmente
   renderCategories();
 });
+
+// document.addEventListener('DOMContentLoaded', () => {
+//   const openWindowButton = document.getElementById('open-window-button');
+
+//   openWindowButton.addEventListener('click', () => {
+//     chrome.windows.create({
+//       url: chrome.runtime.getURL('window.html'),
+//       type: 'popup',
+//       width: 1000,
+//       height: 800
+//     });
+//   });
+// });
+
+document.addEventListener('DOMContentLoaded', () => {
+  const openModalButton = document.getElementById('open-modal-button');
+
+  openModalButton.addEventListener('click', () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0].id) {
+        chrome.tabs.sendMessage(tabs[0].id, { type: 'OPEN_MODAL' });
+      }
+    });
+  });
+});
+

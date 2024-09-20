@@ -4,14 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ChatGPT Extension Popup</title>
-  <!-- Enlaza Tailwind CSS localmente -->
   <link href="css/tailwind.css" rel="stylesheet">
-  <!-- Enlaza tu CSS personalizado -->
   <link href="css/popup.css" rel="stylesheet">
+
+  <style>
+    body {
+      width: 1000px;
+      height: 800px;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+  </style>
 </head>
 <body class="min-w-[200px] min-h-[100px] font-sans p-4 bg-gray-50">
   <div id="app" class="flex flex-col items-center">
     <h1 class="text-xl font-semibold mb-4 text-gray-800">Gestionar Prompts y Categorías</h1>
+
+    <!-- Botón para abrir el modal -->
+    <button id="open-modal-button" class="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 mb-4">
+      Abrir Ventana Extendida
+    </button>
 
     <!-- Sección para configurar el trigger key -->
     <div class="mb-4 w-full">

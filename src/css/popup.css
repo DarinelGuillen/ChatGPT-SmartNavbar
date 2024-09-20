@@ -20,6 +20,13 @@
   opacity: 0.9;
 }
 
+/* Puedes agregar estilos específicos para tamaños */
+.btn-sm {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+
 /* Estilos para la lista de categorías y prompts */
 .category-item {
   border: 1px solid #ddd;
@@ -42,3 +49,5 @@
 #modal.show {
   display: flex;
 }
+
+
