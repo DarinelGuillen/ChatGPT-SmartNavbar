@@ -25,5 +25,5 @@
       "matches": ["https://chatgpt.com/*"]
     }
   ],
-  "permissions": []
+  "permissions": ["storage"]
 }

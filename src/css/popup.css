@@ -1,9 +1,35 @@
-/* Estilos personalizados adicionales */
+/* popup.css */
 
-/* Por ejemplo, centrar el contenido verticalmente */
-body {
+/* Estilos para campos de entrada */
+.input-field {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 14px;
+}
+
+/* Estilos para botones */
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+/* Estilos para la lista de categorías y prompts */
+.category-item {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+.prompt-item {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  
+  justify-content: space-between;
+  padding: 4px 0;
 }

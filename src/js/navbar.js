@@ -19,27 +19,39 @@ export function createNavbar(categories, selectedCategoryIndex, onSelectCategory
     'rounded-b-lg'
   );
 
-  categories.forEach((category, index) => {
-    const tab = document.createElement('div');
-    tab.textContent = category.category;
-    tab.classList.add(
-      'px-4',
-      'py-2',
-      'cursor-pointer',
-      'text-gray-200',
-      'hover:bg-gray-700'
-    );
+  function createTabs(categories) {
+    categories.forEach((category, index) => {
+      const tab = document.createElement('div');
+      tab.textContent = category.category;
+      tab.classList.add(
+        'px-4',
+        'py-2',
+        'cursor-pointer',
+        'text-gray-200',
+        'hover:bg-gray-700'
+      );
 
-    if (index === selectedCategoryIndex) {
-      tab.classList.add('bg-gray-700');
-    }
+      if (index === selectedCategoryIndex) {
+        tab.classList.add('bg-gray-700');
+      }
 
-    tab.addEventListener('click', () => {
-      onSelectCategory(index);
+      tab.addEventListener('click', () => {
+        onSelectCategory(index);
+      });
+
+      navbar.appendChild(tab);
     });
+  }
 
-    navbar.appendChild(tab);
-  });
+  createTabs(categories);
+
+  navbar.update = (newCategories) => {
+    // Remover pestañas existentes
+    navbar.innerHTML = '';
+
+    // Crear nuevas pestañas
+    createTabs(newCategories);
+  };
 
   document.body.appendChild(navbar);
 

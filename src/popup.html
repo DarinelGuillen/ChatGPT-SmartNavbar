@@ -10,17 +10,40 @@
   <link href="css/popup.css" rel="stylesheet">
 </head>
 <body class="min-w-[200px] min-h-[100px] font-sans p-4 bg-gray-50">
-  <div class="flex flex-col items-center">
-    <h1 class="text-xl font-semibold mb-4 text-gray-800">IM HERE</h1>
-    <p class="text-sm text-gray-600 mb-6">Este es un párrafo dentro del popup.</p>
+  <div id="app" class="flex flex-col items-center">
+    <h1 class="text-xl font-semibold mb-4 text-gray-800">Gestionar Prompts y Categorías</h1>
 
-    <!-- Botón de ejemplo -->
-    <button id="miBoton" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
-      Haz clic aquí
-    </button>
+    <!-- Sección para agregar una nueva categoría -->
+    <div class="mb-4 w-full">
+      <input type="text" id="new-category-name" placeholder="Nombre de la nueva categoría"
+        class="input-field w-full mb-2 p-2 border rounded" />
+      <button id="add-category-button" class="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+        Agregar Categoría
+      </button>
+    </div>
+
+    <!-- Sección para agregar un nuevo prompt -->
+    <div class="mb-4 w-full">
+      <select id="category-select" class="input-field w-full mb-2 p-2 border rounded">
+        <!-- Opciones dinámicas -->
+      </select>
+      <input type="text" id="new-prompt-id" placeholder="ID del Prompt"
+        class="input-field w-full mb-2 p-2 border rounded" />
+      <textarea id="new-prompt-text" placeholder="Texto del Prompt"
+        class="input-field w-full mb-2 p-2 border rounded"></textarea>
+      <button id="add-prompt-button" class="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+        Agregar Prompt
+      </button>
+    </div>
+
+    <!-- Lista de categorías y prompts -->
+    <div id="categories-list" class="w-full">
+      <!-- Contenido dinámico -->
+    </div>
   </div>
 
   <!-- Incluir el script de popup.js -->
+  <!-- <script src="js/popup.bundle.js"></script> -->
   <script src="js/popup.js"></script>
 </body>
 </html>

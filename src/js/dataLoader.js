@@ -1,8 +1,15 @@
 // dataLoader.js
 
 export async function loadCategories() {
+  // Cargar categorías predeterminadas desde options.json
   const response = await fetch(chrome.runtime.getURL('data/options.json'));
-  const categories = await response.json();
+  const defaultCategories = await response.json();
+
+  // Cargar categorías del usuario desde chrome.storage.local
+  const userCategories = await getUserCategories();
+
+  // Combinar categorías predeterminadas y del usuario
+  let categories = defaultCategories.concat(userCategories);
 
   // Agregar categoría 'Todos' al inicio
   categories.unshift({
@@ -19,4 +26,13 @@ export async function loadCategories() {
   }, []);
 
   return categories;
+}
+
+// Función para obtener categorías del usuario
+async function getUserCategories() {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(['userCategories'], (result) => {
+      resolve(result.userCategories || []);
+    });
+  });
 }
