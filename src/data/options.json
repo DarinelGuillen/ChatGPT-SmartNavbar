@@ -2,57 +2,57 @@
   {
     "id": 1,
     "category": "TEST",
-    "opciones": [
-      { "id": "Extension", "option": "Opción 1 de dev: Ayuda con depuración de código" },
-      { "id": "Explain Optimize", "option": "Opción 2 de dev: Optimización de código" }
+    "options": [
+      { "id": "Extension", "option": "Option 1 of dev: Help with code debugging" },
+      { "id": "Explain Optimize", "option": "Option 2 of dev: Code optimization" }
     ]
   },
   {
     "id": 2,
     "category": "EnhanceCodePlus",
-    "opciones": [
-      { "id": "Add Comments", "option": "Opción 1 de EnhanceCodePlus: Agregar comentarios" },
-      { "id": "Explain TypeScript", "option": "Opción 2 de EnhanceCodePlus: Convertir a TypeScript" }
+    "options": [
+      { "id": "Add Comments", "option": "Option 1 of EnhanceCodePlus: Add comments" },
+      { "id": "Explain TypeScript", "option": "Option 2 of EnhanceCodePlus: Convert to TypeScript" }
     ]
   },
   {
     "id": 3,
     "category": "OPTION 3",
-    "opciones": [
-      { "id": "Explain Code", "option": "Opción 1 de OPTION 3: Explicación de código" },
-      { "id": "Write Unit Tests", "option": "Opción 2 de OPTION 3: Escribir pruebas unitarias" }
+    "options": [
+      { "id": "Explain Code", "option": "Option 1 of OPTION 3: Code explanation" },
+      { "id": "Write Unit Tests", "option": "Option 2 of OPTION 3: Write unit tests" }
     ]
   },
   {
     "id": 4,
     "category": "Performance",
-    "opciones": [
-      { "id": "Explain Performance", "option": "Opción 1 de Performance: Análisis de rendimiento" },
-      { "id": "Profiling", "option": "Opción 2 de Performance: Perfil de rendimiento" }
+    "options": [
+      { "id": "Explain Performance", "option": "Option 1 of Performance: Performance analysis" },
+      { "id": "Profiling", "option": "Option 2 of Performance: Performance profiling" }
     ]
   },
   {
     "id": 5,
     "category": "Architecture",
-    "opciones": [
-      { "id": "Design Patterns", "option": "Opción 1 de Architecture: Patrones de diseño" },
-      { "id": "Explain Modularization", "option": "Opción 2 de Architecture: Modularización" }
+    "options": [
+      { "id": "Design Patterns", "option": "Option 1 of Architecture: Design patterns" },
+      { "id": "Explain Modularization", "option": "Option 2 of Architecture: Modularization" }
     ]
   },
   {
     "id": 6,
     "category": "Documentation",
-    "opciones": [
-      { "id": "API Documentation", "option": "Opción 1 de Documentation: Documentación de API" },
-      { "id": "Explain User Guide", "option": "Opción 2 de Documentation: Guía de usuario" }
+    "options": [
+      { "id": "API Documentation", "option": "Option 1 of Documentation: API documentation" },
+      { "id": "Explain User Guide", "option": "Option 2 of Documentation: User guide" }
     ]
   },
   {
     "id": 7,
     "category": "Integration",
-    "opciones": [
-      { "id": "Explain Third-party", "option": "Opción 1 de Integration: Integración con terceros" },
-      { "id": "Database Integration", "option": "Opción 2 de Integration: Integración de base de datos" }
+    "options": [
+      { "id": "Explain Third-party", "option": "Option 1 of Integration: Third-party integration" },
+      { "id": "Database Integration", "option": "Option 2 of Integration: Database integration" }
     ]
   }
 ]

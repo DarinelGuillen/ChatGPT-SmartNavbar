@@ -10,28 +10,33 @@ export function initializeEventHandlers(div, dropdownManager, state) {
   document.addEventListener(
     'keydown',
     function (e) {
-      if (e.key === 'ArrowLeft') {
-        // Cambiar a la pestaña anterior
-        const categories = state.categories;
-        state.selectedCategoryIndex =
-          (state.selectedCategoryIndex - 1 + categories.length) % categories.length;
-        state.selectedCategory = categories[state.selectedCategoryIndex];
-        state.updateNavbarSelection();
-        dropdownManager.updateDropdown(state.selectedCategory, state.escapedTriggerKey);
-        e.preventDefault();
-        e.stopPropagation();
-      } else if (e.key === 'ArrowRight') {
-        // Cambiar a la siguiente pestaña
-        const categories = state.categories;
-        state.selectedCategoryIndex =
-          (state.selectedCategoryIndex + 1) % categories.length;
-        state.selectedCategory = categories[state.selectedCategoryIndex];
-        state.updateNavbarSelection();
-        dropdownManager.updateDropdown(state.selectedCategory, state.escapedTriggerKey);
-        e.preventDefault();
-        e.stopPropagation();
-      } else if (!dropdownManager.dropdownElement.classList.contains('hidden')) {
-        // Navegación dentro del dropdown
+      // Handle Navbar Navigation
+      if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+        if (e.key === 'ArrowLeft') {
+          // Navigate to the previous tab
+          const categories = state.categories;
+          state.selectedCategoryIndex =
+            (state.selectedCategoryIndex - 1 + categories.length) % categories.length;
+          state.selectedCategory = categories[state.selectedCategoryIndex];
+          state.updateNavbarSelection();
+          dropdownManager.updateDropdown(state.selectedCategory, state.escapedTriggerKey);
+          e.preventDefault();
+          e.stopPropagation();
+        } else if (e.key === 'ArrowRight') {
+          // Navigate to the next tab
+          const categories = state.categories;
+          state.selectedCategoryIndex =
+            (state.selectedCategoryIndex + 1) % categories.length;
+          state.selectedCategory = categories[state.selectedCategoryIndex];
+          state.updateNavbarSelection();
+          dropdownManager.updateDropdown(state.selectedCategory, state.escapedTriggerKey);
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }
+
+      // Handle Dropdown Navigation
+      if (!dropdownManager.dropdownElement.classList.contains('hidden')) {
         if (
           e.key === 'ArrowDown' ||
           e.key === 'ArrowUp' ||
