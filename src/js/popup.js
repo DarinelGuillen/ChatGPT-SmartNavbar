@@ -260,18 +260,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderCategories();
 });
 
-// document.addEventListener('DOMContentLoaded', () => {
-//   const openWindowButton = document.getElementById('open-window-button');
-
-//   openWindowButton.addEventListener('click', () => {
-//     chrome.windows.create({
-//       url: chrome.runtime.getURL('window.html'),
-//       type: 'popup',
-//       width: 1000,
-//       height: 800
-//     });
-//   });
-// });
 
 document.addEventListener('DOMContentLoaded', () => {
   const openModalButton = document.getElementById('open-modal-button');

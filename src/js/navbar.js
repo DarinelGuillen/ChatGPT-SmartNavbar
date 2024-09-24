@@ -1,10 +1,5 @@
 // navbar.js
 
-export function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
-  // This function is now integrated into contentScript.js
-  // See the createNavbar function in contentScript.js
-}
-
 export function updateNavbarSelection(navbarElements, selectedCategoryIndex) {
   const { buttonsContainer, indicator } = navbarElements;
   const buttons = buttonsContainer.querySelectorAll('.nav-button');
@@ -14,8 +9,7 @@ export function updateNavbarSelection(navbarElements, selectedCategoryIndex) {
     button.classList.add('bg-hover');
     if (idx === selectedCategoryIndex) {
       button.classList.remove('bg-hover');
-      button.classList.add('bg-selected-bt');
-      button.classList.add('active-button');
+      button.classList.add('bg-selected-bt', 'active-button');
     }
   });
 
@@ -23,7 +17,7 @@ export function updateNavbarSelection(navbarElements, selectedCategoryIndex) {
   updateIndicator(indicator, activeButton);
 }
 
-function updateIndicator(indicator, button) {
+export function updateIndicator(indicator, button) {
   const left = button.offsetLeft;
   const width = button.offsetWidth;
   const indicatorWidth = width * 0.8;

@@ -4,6 +4,8 @@ import { waitForElement, escapeRegExp } from './utils.js';
 import { loadCategories } from './dataLoader.js';
 import { getTriggerKey } from './storage.js';
 import { initializeEventHandlers } from './eventHandlers.js';
+import { initializeDropdown } from './dropdown.js';
+import { updateNavbarSelection } from './navbar.js';
 import '../css/contentScript.css';
 
 function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
@@ -121,6 +123,12 @@ function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
         }
       });
 
+      function openExtendedWindow() {
+        // Implementa la lógica para abrir la ventana extendida
+        // Por ejemplo, puedes crear un modal o redirigir a una nueva página
+        alert('Ventana extendida abierta'); // Ejemplo simple
+      }
+
       loadCategories().then((newCategories) => {
         categories = newCategories;
         state.categories = newCategories;
@@ -167,22 +175,6 @@ function updateNavbar(navbarElements, categories) {
   buttonsContainer.appendChild(indicator);
 }
 
-function updateNavbarSelection(navbarElements, selectedCategoryIndex) {
-  const { buttonsContainer, indicator } = navbarElements;
-  const buttons = buttonsContainer.querySelectorAll('.nav-button');
-
-  buttons.forEach((button, idx) => {
-    button.classList.remove('bg-selected-bt', 'active-button');
-    button.classList.add('bg-hover');
-    if (idx === selectedCategoryIndex) {
-      button.classList.remove('bg-hover');
-      button.classList.add('bg-selected-bt', 'active-button');
-    }
-  });
-
-  const activeButton = buttons[selectedCategoryIndex];
-  updateIndicator(indicator, activeButton);
-}
 
 function updateIndicator(indicator, button) {
   const left = button.offsetLeft;

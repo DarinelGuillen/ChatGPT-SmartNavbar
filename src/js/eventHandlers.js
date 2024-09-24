@@ -12,9 +12,10 @@ export function initializeEventHandlers(div, dropdownManager, state) {
     function (e) {
       // Handle Navbar Navigation
       if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+        const categories = state.categories;
+
         if (e.key === 'ArrowLeft') {
           // Navigate to the previous tab
-          const categories = state.categories;
           state.selectedCategoryIndex =
             (state.selectedCategoryIndex - 1 + categories.length) % categories.length;
           state.selectedCategory = categories[state.selectedCategoryIndex];
@@ -24,7 +25,6 @@ export function initializeEventHandlers(div, dropdownManager, state) {
           e.stopPropagation();
         } else if (e.key === 'ArrowRight') {
           // Navigate to the next tab
-          const categories = state.categories;
           state.selectedCategoryIndex =
             (state.selectedCategoryIndex + 1) % categories.length;
           state.selectedCategory = categories[state.selectedCategoryIndex];
