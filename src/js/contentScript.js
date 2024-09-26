@@ -71,6 +71,7 @@ function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
   const targetDiv = await waitForElement(targetDivSelector);
 
   let dropdownManager;
+  let dropdownManager;
 
   const inputDiv = await waitForElement('#prompt-textarea');
   const dropdownElements = createDropdown(inputDiv);
@@ -153,7 +154,7 @@ function updateNavbar(navbarElements, categories) {
     }
 
     button.addEventListener('click', () => {
-
+      // Add functionality if needed
     });
 
     buttonsContainer.appendChild(button);
