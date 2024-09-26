@@ -1,4 +1,4 @@
-// contentScript.js
+
 
 import { waitForElement, escapeRegExp } from './utils.js';
 import { loadCategories } from './dataLoader.js';
@@ -9,14 +9,14 @@ import { updateNavbarSelection } from './navbar.js';
 import '../css/contentScript.css';
 
 function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
-  // Create the navbar container
+
   const navbar = document.createElement('div');
   navbar.classList.add(
     'relative', 'flex', 'justify-center', 'items-center', 'bg-navbar', 'text-white',
     'rounded-2xl', 'p-1', 'overflow-hidden', 'navbar-animate', 'flex-grow'
   );
 
-  // Buttons container
+
   const buttonsContainer = document.createElement('div');
   buttonsContainer.classList.add(
     'relative', 'flex', 'items-center', 'gap-x-4', 'no-scrollbar', 'overflow-x-hidden',
@@ -25,7 +25,7 @@ function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
   buttonsContainer.id = 'buttons-container';
   buttonsContainer.setAttribute('tabindex', '0');
 
-  // Create buttons dynamically
+
   categories.forEach((category, index) => {
     const button = document.createElement('button');
     button.classList.add(
@@ -48,7 +48,7 @@ function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
     buttonsContainer.appendChild(button);
   });
 
-  // Indicator
+
   const indicator = document.createElement('div');
   indicator.id = 'indicator';
   indicator.classList.add('indicator');
@@ -72,11 +72,11 @@ function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
   let selectedCategoryIndex = 0;
   let selectedCategory = categories[selectedCategoryIndex];
 
-  // Wait for the specific div to be available
+
   const targetDivSelector = '.draggable.no-draggable-children.sticky.top-0.p-3.mb-1\\.5.flex.items-center.justify-between.z-10.h-header-height.font-semibold.bg-token-main-surface-primary.max-md\\:hidden';
   const targetDiv = await waitForElement(targetDivSelector);
 
-  // Insert Navbar into the specified location
+
   const navbarElements = createNavbar(categories, selectedCategoryIndex, (index) => {
     selectedCategoryIndex = index;
     selectedCategory = categories[selectedCategoryIndex];
@@ -84,7 +84,7 @@ function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
     dropdownManager.updateDropdown(selectedCategory, escapedTriggerKey);
   });
 
-  // Insert the navbar between the specified divs
+
   const children = targetDiv.children;
   if (children.length >= 3) {
     targetDiv.insertBefore(navbarElements.navbar, children[2]);
@@ -92,10 +92,10 @@ function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
     targetDiv.appendChild(navbarElements.navbar);
   }
 
-  // Adjust the navbar to flex-grow
+
   navbarElements.navbar.style.flexGrow = '1';
 
-  // Initialize the rest of the extension
+
   const inputDiv = await waitForElement('#prompt-textarea');
   const dropdownElements = createDropdown(inputDiv);
 
@@ -124,9 +124,9 @@ function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
       });
 
       function openExtendedWindow() {
-        // Implementa la lógica para abrir la ventana extendida
-        // Por ejemplo, puedes crear un modal o redirigir a una nueva página
-        alert('Ventana extendida abierta'); // Ejemplo simple
+
+
+        alert('Ventana extendida abierta');
       }
 
       loadCategories().then((newCategories) => {
@@ -147,7 +147,7 @@ function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
 })();
 
 function updateNavbar(navbarElements, categories) {
-  const { buttonsContainer } = navbarElements;
+  const { buttonsContainer, indicator } = navbarElements;
   buttonsContainer.innerHTML = '';
   categories.forEach((category, index) => {
     const button = document.createElement('button');
@@ -159,22 +159,20 @@ function updateNavbar(navbarElements, categories) {
     button.style.animationDelay = `${0.2 + index * 0.2}s`;
     button.textContent = category.category;
 
-    if (index === state.selectedCategoryIndex) {
+    if (index === 0) {
       button.classList.remove('bg-hover');
       button.classList.add('bg-selected-bt', 'active-button');
     }
 
     button.addEventListener('click', () => {
-      onSelectCategory(index);
+
     });
 
     buttonsContainer.appendChild(button);
   });
 
-  const indicator = document.getElementById('indicator');
   buttonsContainer.appendChild(indicator);
 }
-
 
 function updateIndicator(indicator, button) {
   const left = button.offsetLeft;
@@ -186,16 +184,16 @@ function updateIndicator(indicator, button) {
 }
 
 function createDropdown(div) {
-  // Dropdown container
+
   const dropdownContainer = document.createElement('div');
   dropdownContainer.classList.add('dropdown-menu', 'hidden');
   dropdownContainer.id = 'dropdown-menu';
 
-  // Buttons container
+
   const buttonsContainer = document.createElement('div');
   buttonsContainer.classList.add('dropdown-buttons-container', 'm-1');
 
-  // Indicator
+
   const dropdownIndicator = document.createElement('div');
   dropdownIndicator.id = 'dropdown-indicator';
   dropdownIndicator.classList.add('indicator');
@@ -203,8 +201,8 @@ function createDropdown(div) {
   buttonsContainer.appendChild(dropdownIndicator);
   dropdownContainer.appendChild(buttonsContainer);
 
-  // Append to the same parent as the input field
-  div.parentElement.appendChild(dropdownContainer);
+
+  document.body.appendChild(dropdownContainer);
 
   return {
     dropdownContainer,
