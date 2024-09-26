@@ -1,10 +1,7 @@
-
-
 import { replaceTextInDiv } from './utils.js';
 
 export function initializeDropdown(div, dropdownElements, state) {
   const { dropdownContainer, buttonsContainer, dropdownIndicator } = dropdownElements;
-
 
   document.body.appendChild(dropdownContainer);
 
@@ -22,7 +19,6 @@ export function initializeDropdown(div, dropdownElements, state) {
     if (buttonsContainer.children.length > 0) {
       selectedIndex = 0;
       selectDropdownButton(selectedIndex);
-
     }
     dropdownVisible = true;
   }
@@ -67,14 +63,13 @@ export function initializeDropdown(div, dropdownElements, state) {
 
     const searchText = match[1].toLowerCase().trim();
 
-    if (!Array.isArray(selectedCategory.opciones)) {
-      console.error('selectedCategory.opciones no es un arreglo');
+    if (!Array.isArray(selectedCategory.options)) {
+      console.error('selectedCategory.options is not an array');
       hideDropdown();
       return;
     }
 
-
-    const scoredOptions = selectedCategory.opciones
+    const scoredOptions = selectedCategory.options
       .map((item) => {
         if (item && item.id) {
           const score = matchSearchText(item.id.toLowerCase(), searchText);
@@ -84,9 +79,7 @@ export function initializeDropdown(div, dropdownElements, state) {
       })
       .filter((entry) => entry && entry.score > 0);
 
-
     scoredOptions.sort((a, b) => b.score - a.score);
-
 
     currentOptions = scoredOptions.slice(0, 10).map((entry) => entry.item);
 
@@ -110,7 +103,6 @@ export function initializeDropdown(div, dropdownElements, state) {
 
       showDropdown();
 
-
       const rect = div.getBoundingClientRect();
       dropdownContainer.style.left = `${rect.left + window.scrollX}px`;
       dropdownContainer.style.top = `${rect.top + window.scrollY - dropdownContainer.offsetHeight}px`;
@@ -118,7 +110,6 @@ export function initializeDropdown(div, dropdownElements, state) {
 
       dropdownContainer.style.position = 'fixed';
       dropdownContainer.style.zIndex = '1000';
-
 
       window.addEventListener('resize', handleWindowChange);
       window.addEventListener('scroll', handleWindowChange);

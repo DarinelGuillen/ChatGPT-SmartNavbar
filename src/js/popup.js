@@ -1,4 +1,4 @@
-// popup.js
+
 
 import '../css/popup.css';
 import '../css/tailwind.css';
@@ -62,13 +62,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function renderCategories() {
-    // Limpiar elementos existentes
+
     categoriesList.innerHTML = '';
     categorySelect.innerHTML = '';
     console.log('Renderizando categorías...');
     categories.forEach((category, index) => {
       console.log(`Renderizando categoría: ${category.category}`);
-      // Crear elemento de categoría
+
       const categoryDiv = document.createElement('div');
       categoryDiv.className = 'category-item';
 
@@ -77,9 +77,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       title.className = 'text-lg font-bold mb-2';
       categoryDiv.appendChild(title);
 
-      // Crear lista de prompts
+
       const promptsList = document.createElement('ul');
-      category.opciones.forEach((prompt, promptIndex) => {
+      category.options.forEach((prompt, promptIndex) => {
         console.log(`Renderizando prompt: ${prompt.id}`);
         const promptItem = document.createElement('li');
         promptItem.className = 'prompt-item';
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         promptText.textContent = prompt.id;
         promptItem.appendChild(promptText);
 
-        // Botones de editar y eliminar
+
         const buttonsDiv = document.createElement('div');
 
         const editButton = document.createElement('button');
@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       categoryDiv.appendChild(promptsList);
 
-      // Botones de editar y eliminar categoría
+
       const categoryButtonsDiv = document.createElement('div');
       categoryButtonsDiv.className = 'mt-2';
 
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       categoriesList.appendChild(categoryDiv);
 
-      // Añadir opción al select de categorías
+
       const option = document.createElement('option');
       option.value = category.category;
       option.textContent = category.category;
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (newCategoryName && !categories.find(cat => cat.category === newCategoryName)) {
       categories.push({
         category: newCategoryName,
-        opciones: []
+        options: []
       });
       saveCategories(categories);
       notifyContentScript();
@@ -162,8 +162,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (selectedCategoryName && newPromptId && newPromptText) {
       const category = categories.find(cat => cat.category === selectedCategoryName);
       if (category) {
-        if (!category.opciones.find(prompt => prompt.id === newPromptId)) {
-          category.opciones.push({
+        if (!category.options.find(prompt => prompt.id === newPromptId)) {
+          category.options.push({
             id: newPromptId,
             option: newPromptText
           });
@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function editPrompt(categoryIndex, promptIndex) {
-    const currentPrompt = categories[categoryIndex].opciones[promptIndex];
+    const currentPrompt = categories[categoryIndex].options[promptIndex];
 
     showModal('Editar Prompt', `
       <input id="edit-prompt-id" type="text" value="${currentPrompt.id}" class="w-full mb-2 p-2 border rounded" />
@@ -207,7 +207,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function deletePrompt(categoryIndex, promptIndex) {
     if (confirm('¿Estás seguro de que deseas eliminar este prompt?')) {
-      categories[categoryIndex].opciones.splice(promptIndex, 1);
+      categories[categoryIndex].options.splice(promptIndex, 1);
       saveCategories(categories);
       notifyContentScript();
       renderCategories();
@@ -256,7 +256,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       showNotification('Por favor, ingresa una tecla de activación válida.');
     }
   });
-  // Renderizar categorías inicialmente
+
   renderCategories();
 });
 
@@ -272,4 +272,3 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
-

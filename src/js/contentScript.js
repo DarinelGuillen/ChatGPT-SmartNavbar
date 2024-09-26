@@ -1,5 +1,3 @@
-
-
 import { waitForElement, escapeRegExp } from './utils.js';
 import { loadCategories } from './dataLoader.js';
 import { getTriggerKey } from './storage.js';
@@ -16,7 +14,6 @@ function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
     'rounded-2xl', 'p-1', 'overflow-hidden', 'navbar-animate', 'flex-grow'
   );
 
-
   const buttonsContainer = document.createElement('div');
   buttonsContainer.classList.add(
     'relative', 'flex', 'items-center', 'gap-x-4', 'no-scrollbar', 'overflow-x-hidden',
@@ -24,7 +21,6 @@ function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
   );
   buttonsContainer.id = 'buttons-container';
   buttonsContainer.setAttribute('tabindex', '0');
-
 
   categories.forEach((category, index) => {
     const button = document.createElement('button');
@@ -47,7 +43,6 @@ function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
 
     buttonsContainer.appendChild(button);
   });
-
 
   const indicator = document.createElement('div');
   indicator.id = 'indicator';
@@ -72,29 +67,10 @@ function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
   let selectedCategoryIndex = 0;
   let selectedCategory = categories[selectedCategoryIndex];
 
-
   const targetDivSelector = '.draggable.no-draggable-children.sticky.top-0.p-3.mb-1\\.5.flex.items-center.justify-between.z-10.h-header-height.font-semibold.bg-token-main-surface-primary.max-md\\:hidden';
   const targetDiv = await waitForElement(targetDivSelector);
 
-
-  const navbarElements = createNavbar(categories, selectedCategoryIndex, (index) => {
-    selectedCategoryIndex = index;
-    selectedCategory = categories[selectedCategoryIndex];
-    updateNavbarSelection(navbarElements, selectedCategoryIndex);
-    dropdownManager.updateDropdown(selectedCategory, escapedTriggerKey);
-  });
-
-
-  const children = targetDiv.children;
-  if (children.length >= 3) {
-    targetDiv.insertBefore(navbarElements.navbar, children[2]);
-  } else {
-    targetDiv.appendChild(navbarElements.navbar);
-  }
-
-
-  navbarElements.navbar.style.flexGrow = '1';
-
+  let dropdownManager;
 
   const inputDiv = await waitForElement('#prompt-textarea');
   const dropdownElements = createDropdown(inputDiv);
@@ -108,7 +84,25 @@ function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
     updateNavbarSelection: () => updateNavbarSelection(navbarElements, selectedCategoryIndex),
   };
 
-  const dropdownManager = initializeDropdown(inputDiv, dropdownElements, state);
+  dropdownManager = initializeDropdown(inputDiv, dropdownElements, state);
+
+  const navbarElements = createNavbar(categories, selectedCategoryIndex, (index) => {
+    selectedCategoryIndex = index;
+    selectedCategory = categories[selectedCategoryIndex];
+    updateNavbarSelection(navbarElements, selectedCategoryIndex);
+    if (dropdownManager) {
+      dropdownManager.updateDropdown(selectedCategory.options, escapedTriggerKey); // Use options here
+    }
+  });
+
+  const children = targetDiv.children;
+  if (children.length >= 3) {
+    targetDiv.insertBefore(navbarElements.navbar, children[2]);
+  } else {
+    targetDiv.appendChild(navbarElements.navbar);
+  }
+
+  navbarElements.navbar.style.flexGrow = '1';
 
   initializeEventHandlers(inputDiv, dropdownManager, state);
 
@@ -123,12 +117,6 @@ function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
         }
       });
 
-      function openExtendedWindow() {
-
-
-        alert('Ventana extendida abierta');
-      }
-
       loadCategories().then((newCategories) => {
         categories = newCategories;
         state.categories = newCategories;
@@ -139,7 +127,7 @@ function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
         state.selectedCategory = selectedCategory;
         state.updateNavbarSelection();
         if (dropdownManager) {
-          dropdownManager.updateDropdown(selectedCategory, escapedTriggerKey);
+          dropdownManager.updateDropdown(selectedCategory.options, escapedTriggerKey); // Use options here
         }
       });
     }
@@ -165,7 +153,7 @@ function updateNavbar(navbarElements, categories) {
     }
 
     button.addEventListener('click', () => {
-
+      // Add functionality if needed
     });
 
     buttonsContainer.appendChild(button);
@@ -189,10 +177,8 @@ function createDropdown(div) {
   dropdownContainer.classList.add('dropdown-menu', 'hidden');
   dropdownContainer.id = 'dropdown-menu';
 
-
   const buttonsContainer = document.createElement('div');
   buttonsContainer.classList.add('dropdown-buttons-container', 'm-1');
-
 
   const dropdownIndicator = document.createElement('div');
   dropdownIndicator.id = 'dropdown-indicator';
@@ -200,7 +186,6 @@ function createDropdown(div) {
 
   buttonsContainer.appendChild(dropdownIndicator);
   dropdownContainer.appendChild(buttonsContainer);
-
 
   document.body.appendChild(dropdownContainer);
 
