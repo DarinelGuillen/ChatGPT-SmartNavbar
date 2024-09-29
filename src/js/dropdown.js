@@ -10,7 +10,10 @@ export function initializeDropdown(div, dropdownElements, state) {
   let dropdownVisible = false;
 
   function updateDropdownIndicator(button) {
-
+    const top = button.offsetTop;
+    const height = button.offsetHeight;
+    dropdownIndicator.style.top = `${top}px`;
+    dropdownIndicator.style.height = `${height}px`;
   }
 
   function showDropdown() {
@@ -45,6 +48,7 @@ export function initializeDropdown(div, dropdownElements, state) {
     button.classList.add('active-dropdown-button');
     selectedIndex = index;
     button.scrollIntoView({ block: 'nearest' });
+    updateDropdownIndicator(button);
   }
 
   function updateDropdown(selectedCategory, escapedTriggerKey) {

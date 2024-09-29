@@ -81,17 +81,17 @@ function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
     triggerKey,
     escapedTriggerKey,
     categories,
-    updateNavbarSelection: () => updateNavbarSelection(navbarElements, selectedCategoryIndex),
+    updateNavbarSelection: () => updateNavbarSelection(navbarElements, state.selectedCategoryIndex),
   };
 
   dropdownManager = initializeDropdown(inputDiv, dropdownElements, state);
 
   const navbarElements = createNavbar(categories, selectedCategoryIndex, (index) => {
-    selectedCategoryIndex = index;
-    selectedCategory = categories[selectedCategoryIndex];
-    updateNavbarSelection(navbarElements, selectedCategoryIndex);
+    state.selectedCategoryIndex = index;
+    state.selectedCategory = categories[state.selectedCategoryIndex];
+    state.updateNavbarSelection();
     if (dropdownManager) {
-      dropdownManager.updateDropdown(selectedCategory.options, escapedTriggerKey); // Use options here
+      dropdownManager.updateDropdown(state.selectedCategory, escapedTriggerKey);
     }
   });
 
@@ -127,7 +127,7 @@ function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
         state.selectedCategory = selectedCategory;
         state.updateNavbarSelection();
         if (dropdownManager) {
-          dropdownManager.updateDropdown(selectedCategory.options, escapedTriggerKey); // Use options here
+          dropdownManager.updateDropdown(selectedCategory.options, escapedTriggerKey);
         }
       });
     }
@@ -153,7 +153,7 @@ function updateNavbar(navbarElements, categories) {
     }
 
     button.addEventListener('click', () => {
-      // Add functionality if needed
+
     });
 
     buttonsContainer.appendChild(button);
@@ -195,3 +195,4 @@ function createDropdown(div) {
     dropdownIndicator,
   };
 }
+const navbarElements = createNavbar
