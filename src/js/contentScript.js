@@ -154,7 +154,7 @@ function updateNavbar(navbarElements, categories) {
     }
 
     button.addEventListener('click', () => {
-      // Add functionality if needed
+
     });
 
     buttonsContainer.appendChild(button);
