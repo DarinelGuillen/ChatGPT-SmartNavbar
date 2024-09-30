@@ -1,42 +1,64 @@
-// contentScript.js
-
 import { waitForElement, escapeRegExp } from './utils.js';
 import { loadCategories } from './dataLoader.js';
-import { createNavbar, updateNavbarSelection } from './navbar.js';
-import { createDropdown } from './dropdown.js';
-import { initializeEventHandlers } from './eventHandlers.js';
 import { getTriggerKey } from './storage.js';
-// import '../css/styles.css';
+import { initializeEventHandlers } from './eventHandlers.js';
+import { initializeDropdown } from './dropdown.js';
+import { updateNavbarSelection } from './navbar.js';
+import '../css/contentScript.css';
 
-function createModal() {
-  const modal = document.createElement('div');
-  modal.id = 'custom-extension-modal';
-  modal.classList.add('fixed', 'inset-0', 'bg-black', 'bg-opacity-50', 'flex', 'justify-center', 'items-center', 'hidden', 'z-1000');
+function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
 
-  const modalContent = document.createElement('div');
-  modalContent.classList.add('bg-white', 'p-6', 'rounded-lg', 'w-3/4', 'h-3/4', 'overflow-auto');
+  const navbar = document.createElement('div');
+  navbar.classList.add(
+    'relative', 'flex', 'justify-center', 'items-center', 'bg-navbar', 'text-white',
+    'rounded-2xl', 'p-1', 'overflow-hidden', 'navbar-animate', 'flex-grow'
+  );
 
-  modalContent.innerHTML = `
-    <h2 class="text-2xl mb-4">Ventana Extendida</h2>
-    <p>Contenido de tu extensión...</p>
-    <button id="close-modal-button" class="mt-4 px-4 py-2 bg-red-500 text-white rounded">Cerrar</button>
-  `;
+  const buttonsContainer = document.createElement('div');
+  buttonsContainer.classList.add(
+    'relative', 'flex', 'items-center', 'gap-x-4', 'no-scrollbar', 'overflow-x-hidden',
+    'buttons-container'
+  );
+  buttonsContainer.id = 'buttons-container';
+  buttonsContainer.setAttribute('tabindex', '0');
 
-  modal.appendChild(modalContent);
-  document.body.appendChild(modal);
+  categories.forEach((category, index) => {
+    const button = document.createElement('button');
+    button.classList.add(
+      'nav-button', 'bg-hover', 'rounded-2xl', 'px-4', 'py-1', 'text-center',
+      'text-white', 'text-sm', 'font-medium', 'focus:outline-none', 'transition-colors',
+      'duration-700', 'ease-in-out', 'transform', 'button-animate', 'flex-shrink-0'
+    );
+    button.style.animationDelay = `${0.2 + index * 0.2}s`;
+    button.textContent = category.category;
 
-  document.getElementById('close-modal-button').addEventListener('click', () => {
-    modal.classList.add('hidden');
+    if (index === selectedCategoryIndex) {
+      button.classList.remove('bg-hover');
+      button.classList.add('bg-selected-bt', 'active-button');
+    }
+
+    button.addEventListener('click', () => {
+      onSelectCategory(index);
+    });
+
+    buttonsContainer.appendChild(button);
   });
 
-  return modal;
+  const indicator = document.createElement('div');
+  indicator.id = 'indicator';
+  indicator.classList.add('indicator');
+
+  buttonsContainer.appendChild(indicator);
+  navbar.appendChild(buttonsContainer);
+
+  return {
+    navbar,
+    buttonsContainer,
+    indicator,
+  };
 }
 
-function openModal(modal) {
-  modal.classList.remove('hidden');
-}
-
-(async function() {
+(async function () {
   let triggerKey = await getTriggerKey();
   let escapedTriggerKey = escapeRegExp(triggerKey);
 
@@ -45,37 +67,44 @@ function openModal(modal) {
   let selectedCategoryIndex = 0;
   let selectedCategory = categories[selectedCategoryIndex];
 
-  let navbar;
+  const targetDivSelector = '.draggable.no-draggable-children.sticky.top-0.p-3.mb-1\\.5.flex.items-center.justify-between.z-10.h-header-height.font-semibold.bg-token-main-surface-primary.max-md\\:hidden';
+  const targetDiv = await waitForElement(targetDivSelector);
+
   let dropdownManager;
-  let state;
-  let modal;
 
-  function initializeExtension(div) {
-    state = {
-      selectedCategoryIndex,
-      selectedCategory,
-      triggerKey,
-      escapedTriggerKey,
-      categories,
-      updateNavbarSelection: () => updateNavbarSelection(navbar, state.selectedCategoryIndex)
-    };
+  const inputDiv = await waitForElement('#prompt-textarea');
+  const dropdownElements = createDropdown(inputDiv);
 
-    navbar = createNavbar(categories, selectedCategoryIndex, (index) => {
-      state.selectedCategoryIndex = index;
-      state.selectedCategory = categories[state.selectedCategoryIndex];
-      state.updateNavbarSelection();
-      dropdownManager.updateDropdown(state.selectedCategory, state.escapedTriggerKey);
-    });
+  const state = {
+    selectedCategoryIndex,
+    selectedCategory,
+    triggerKey,
+    escapedTriggerKey,
+    categories,
+    updateNavbarSelection: () => updateNavbarSelection(navbarElements, state.selectedCategoryIndex),
+  };
 
-    dropdownManager = createDropdown(div, state);
+  dropdownManager = initializeDropdown(inputDiv, dropdownElements, state);
 
-    initializeEventHandlers(div, dropdownManager, state);
+  const navbarElements = createNavbar(categories, selectedCategoryIndex, (index) => {
+    state.selectedCategoryIndex = index;
+    state.selectedCategory = categories[state.selectedCategoryIndex];
+    state.updateNavbarSelection();
+    if (dropdownManager) {
+      dropdownManager.updateDropdown(state.selectedCategory, escapedTriggerKey);
+    }
+  });
 
-    modal = createModal();
+  const children = targetDiv.children;
+  if (children.length >= 3) {
+    targetDiv.insertBefore(navbarElements.navbar, children[2]);
+  } else {
+    targetDiv.appendChild(navbarElements.navbar);
   }
 
-  const div = await waitForElement('#prompt-textarea');
-  initializeExtension(div);
+  navbarElements.navbar.style.flexGrow = '1';
+
+  initializeEventHandlers(inputDiv, dropdownManager, state);
 
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.type === 'USER_DATA_UPDATED') {
@@ -91,17 +120,84 @@ function openModal(modal) {
       loadCategories().then((newCategories) => {
         categories = newCategories;
         state.categories = newCategories;
-        navbar.update(categories);
-        state.selectedCategoryIndex = 0;
-        state.selectedCategory = categories[state.selectedCategoryIndex];
+        updateNavbar(navbarElements, categories);
+        selectedCategoryIndex = 0;
+        selectedCategory = categories[selectedCategoryIndex];
+        state.selectedCategoryIndex = selectedCategoryIndex;
+        state.selectedCategory = selectedCategory;
         state.updateNavbarSelection();
         if (dropdownManager) {
-          dropdownManager.updateDropdown(state.selectedCategory, state.escapedTriggerKey);
+          dropdownManager.updateDropdown(selectedCategory.options, escapedTriggerKey);
         }
       });
-    } else if (message.type === 'OPEN_MODAL') {
-      openModal(modal);
     }
   });
-
 })();
+
+function updateNavbar(navbarElements, categories) {
+  const { buttonsContainer, indicator } = navbarElements;
+  buttonsContainer.innerHTML = '';
+  categories.forEach((category, index) => {
+    const button = document.createElement('button');
+    button.classList.add(
+      'nav-button', 'bg-hover', 'rounded-2xl', 'px-4', 'py-1', 'text-center',
+      'text-white', 'text-sm', 'font-medium', 'focus:outline-none', 'transition-colors',
+      'duration-700', 'ease-in-out', 'transform', 'button-animate', 'flex-shrink-0'
+    );
+    button.style.animationDelay = `${0.2 + index * 0.2}s`;
+    button.textContent = category.category;
+
+    if (index === 0) {
+      button.classList.remove('bg-hover');
+      button.classList.add('bg-selected-bt', 'active-button');
+    }
+
+    button.addEventListener('click', () => {
+
+    });
+
+    buttonsContainer.appendChild(button);
+  });
+
+  buttonsContainer.appendChild(indicator);
+}
+
+function updateIndicator(indicator, button) {
+  const left = button.offsetLeft;
+  const width = button.offsetWidth;
+  const indicatorWidth = width * 0.8;
+  const indicatorLeft = left + width * 0.1;
+  indicator.style.left = `${indicatorLeft}px`;
+  indicator.style.width = `${indicatorWidth}px`;
+}
+
+function createDropdown(div) {
+  const dropdownContainer = document.createElement('div');
+  dropdownContainer.classList.add('dropdown-menu', 'hidden');
+  dropdownContainer.id = 'dropdown-menu';
+
+  const buttonsContainer = document.createElement('div');
+  buttonsContainer.classList.add('dropdown-buttons-container', 'm-1');
+
+  const optionsContainer = document.createElement('div');
+  optionsContainer.classList.add('options-container');
+
+  const dropdownIndicator = document.createElement('div');
+  dropdownIndicator.id = 'dropdown-indicator';
+  dropdownIndicator.classList.add('dropdown-indicator');
+
+  buttonsContainer.appendChild(dropdownIndicator);
+  buttonsContainer.appendChild(optionsContainer);
+  dropdownContainer.appendChild(buttonsContainer);
+
+
+  return {
+    dropdownContainer,
+    buttonsContainer,
+    optionsContainer,
+    dropdownIndicator,
+  };
+}
+
+
+const navbarElements = createNavbar

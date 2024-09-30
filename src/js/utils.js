@@ -1,7 +1,7 @@
-// utils.js
+
 
 export function replaceTextInDiv(el, option, triggerKey) {
-  const escapedTriggerKey = triggerKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const escapedTriggerKey = escapeRegExp(triggerKey);
   const sel = window.getSelection();
   if (sel.rangeCount === 0) return;
 
@@ -14,37 +14,42 @@ export function replaceTextInDiv(el, option, triggerKey) {
     const before = text.substring(0, match.index);
     const after = text.substring(match.index + match[0].length);
 
-    // Actualizar el contenido del elemento usando innerHTML y agregando <br>
+
     el.innerHTML = before + option.replace(/\n/g, '<br>') + '<br>' + after;
 
-    // Colocar el cursor al final del texto insertado
+
     el.focus();
     const newRange = document.createRange();
 
-    // Obtener el último nodo de texto
-    const textNode = el.lastChild;
-    if (textNode.nodeType === Node.TEXT_NODE) {
-      const offset = textNode.length;
-      newRange.setStart(textNode, offset);
-    } else {
-      newRange.setStartAfter(textNode);
-    }
-    newRange.collapse(true);
 
-    sel.removeAllRanges();
-    sel.addRange(newRange);
+    const lastNode = el.lastChild;
+    if (lastNode) {
+      if (lastNode.nodeType === Node.TEXT_NODE) {
+        const offset = lastNode.length;
+        newRange.setStart(lastNode, offset);
+      } else {
+
+        newRange.setStartAfter(lastNode);
+      }
+      newRange.collapse(true);
+
+      sel.removeAllRanges();
+      sel.addRange(newRange);
+    }
   }
 }
 
 export function waitForElement(selector) {
   return new Promise(resolve => {
-    if (document.querySelector(selector)) {
-      return resolve(document.querySelector(selector));
+    const element = document.querySelector(selector);
+    if (element) {
+      return resolve(element);
     }
 
     const observer = new MutationObserver(mutations => {
-      if (document.querySelector(selector)) {
-        resolve(document.querySelector(selector));
+      const el = document.querySelector(selector);
+      if (el) {
+        resolve(el);
         observer.disconnect();
       }
     });

@@ -1,21 +1,21 @@
-// dataLoader.js
+
 
 import { getCategories } from './storage.js';
 
 export async function loadCategories() {
   let categories = await getCategories();
 
-  // Agregar categoría 'Todos' al inicio
-  categories = JSON.parse(JSON.stringify(categories)); // Clonar para evitar mutaciones inesperadas
+
+  categories = JSON.parse(JSON.stringify(categories));
   categories.unshift({
     category: 'Todos',
-    opciones: []
+    options: []
   });
 
-  // Combinar todas las opciones en la categoría 'Todos'
-  categories[0].opciones = categories.slice(1).reduce((acc, cat) => {
-    if (Array.isArray(cat.opciones)) {
-      return acc.concat(cat.opciones);
+
+  categories[0].options = categories.slice(1).reduce((acc, cat) => {
+    if (Array.isArray(cat.options)) {
+      return acc.concat(cat.options);
     }
     return acc;
   }, []);

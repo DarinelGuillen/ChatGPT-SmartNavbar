@@ -1,30 +1,62 @@
-// dropdown.js
-
 import { replaceTextInDiv } from './utils.js';
 
-export function createDropdown(div, state) {
-  const dropdown = document.createElement('div');
-  dropdown.id = 'custom-dropdown';
-  dropdown.classList.add(
-    'fixed',
-    'bg-white',
-    'border',
-    'border-gray-300',
-    'shadow-lg',
-    'rounded-md',
-    'z-50',
-    'hidden',
-    'max-h-60',
-    'overflow-auto'
-  );
+export function initializeDropdown(div, dropdownElements, state) {
+  const { dropdownContainer, buttonsContainer, optionsContainer, dropdownIndicator } = dropdownElements;
 
-  document.body.appendChild(dropdown);
+  document.body.appendChild(dropdownContainer);
 
   let currentOptions = [];
   let selectedIndex = -1;
+  let dropdownVisible = false;
+
+  function updateDropdownIndicator(button) {
+    const top = button.offsetTop + optionsContainer.offsetTop;
+    const height = button.offsetHeight;
+    dropdownIndicator.style.top = `${top + 2.5}px`;
+    dropdownIndicator.style.height = `${height - 5}px`;
+  }
+
+  function showDropdown() {
+    dropdownContainer.classList.remove('hidden');
+    dropdownContainer.classList.add('dropdown-menu-show');
+    if (optionsContainer.children.length > 0) {
+      selectedIndex = 0;
+      selectDropdownButton(selectedIndex);
+      updateDropdownIndicator(optionsContainer.children[selectedIndex]);
+    }
+    dropdownVisible = true;
+  }
+
+  function hideDropdown() {
+    dropdownContainer.classList.add('hidden');
+    dropdownContainer.classList.remove('dropdown-menu-show');
+    Array.from(optionsContainer.children).forEach((btn) =>
+      btn.classList.remove('active-dropdown-button')
+    );
+    dropdownIndicator.style.height = `0.1rem`;
+    dropdownVisible = false;
+    selectedIndex = -1;
+
+    window.removeEventListener('resize', handleWindowChange);
+    window.removeEventListener('scroll', handleWindowChange);
+  }
+
+  function selectDropdownButton(index) {
+    const buttons = optionsContainer.children;
+    if (index < 0 || index >= buttons.length) return;
+    Array.from(buttons).forEach((btn) =>
+      btn.classList.remove('active-dropdown-button')
+    );
+    const button = buttons[index];
+    button.classList.add('active-dropdown-button');
+    selectedIndex = index;
+    button.scrollIntoView({ block: 'nearest' });
+    updateDropdownIndicator(button);
+  }
 
   function updateDropdown(selectedCategory, escapedTriggerKey) {
-    dropdown.innerHTML = '';
+    optionsContainer.innerHTML = '';
+    currentOptions = [];
 
     const textContent = div.innerText;
     const regex = new RegExp(escapedTriggerKey + '(.*)$', 'i');
@@ -32,109 +64,74 @@ export function createDropdown(div, state) {
     const match = textContent.match(regex);
 
     if (!match) {
-      dropdown.classList.add('hidden');
-      selectedIndex = -1;
+      hideDropdown();
       return;
     }
 
     const searchText = match[1].toLowerCase().trim();
 
-    if (!Array.isArray(selectedCategory.opciones)) {
-      console.error('selectedCategory.opciones no es un arreglo');
-      dropdown.classList.add('hidden');
-      selectedIndex = -1;
+    if (!Array.isArray(selectedCategory.options)) {
+      console.error('selectedCategory.options is not an array');
+      hideDropdown();
       return;
     }
 
-    // Calcular puntuaciones y filtrar opciones
-    const scoredOptions = selectedCategory.opciones
-      .map(item => {
+    const scoredOptions = selectedCategory.options
+      .map((item) => {
         if (item && item.id) {
           const score = matchSearchText(item.id.toLowerCase(), searchText);
           return { item, score };
         }
         return null;
       })
-      .filter(entry => entry && entry.score > 0);
+      .filter((entry) => entry && entry.score > 0);
 
-    // Ordenar opciones por puntuación descendente
     scoredOptions.sort((a, b) => b.score - a.score);
 
-    // Obtener solo los items
-    currentOptions = scoredOptions.slice(0, 10).map(entry => entry.item);
+    currentOptions = scoredOptions.slice(0, 10).map((entry) => entry.item);
 
     if (currentOptions.length > 0) {
-      selectedIndex = 0;
-
       currentOptions.forEach((item, index) => {
-        const optionDiv = document.createElement('div');
-        optionDiv.textContent = item.id;
-        optionDiv.classList.add(
-          'px-4',
-          'py-2',
-          'cursor-pointer',
-          'text-gray-700',
-          'hover:bg-gray-100'
+        const button = document.createElement('button');
+        button.classList.add(
+          'dropdown-button', 'bg-hover', 'rounded', 'px-2', 'py-1', 'text-white',
+          'text-sm', 'font-medium', 'focus:outline-none', 'transition-colors', 'duration-700',
+          'ease-in-out', 'transform', 'dropdown-button-animate'
         );
+        button.textContent = item.id;
 
-        if (index === selectedIndex) {
-          optionDiv.classList.add('bg-gray-200');
-        }
-
-        optionDiv.addEventListener('mouseenter', () => {
-          selectedIndex = index;
-          updateDropdownSelection();
-        });
-
-        optionDiv.addEventListener('click', () => {
+        button.addEventListener('click', () => {
           replaceTextInDiv(div, item.option, state.triggerKey);
-          dropdown.classList.add('hidden');
-          currentOptions = [];
-          selectedIndex = -1;
+          hideDropdown();
         });
 
-        dropdown.appendChild(optionDiv);
+        optionsContainer.appendChild(button);
       });
 
-      dropdown.classList.remove('hidden');
+      showDropdown();
 
-      const divRect = div.getBoundingClientRect();
-      const dropdownHeight = dropdown.offsetHeight;
+      const rect = div.getBoundingClientRect();
+      dropdownContainer.style.left = `${rect.left + window.scrollX}px`;
+      dropdownContainer.style.top = `${rect.top + window.scrollY - dropdownContainer.offsetHeight}px`;
+      dropdownContainer.style.minWidth = `${rect.width}px`;
 
-      dropdown.style.left = `${divRect.left}px`;
-      dropdown.style.top = `${divRect.top - dropdownHeight - 5}px`;
-      dropdown.style.minWidth = '150px';
-      dropdown.style.zIndex = '1000';
+      dropdownContainer.style.position = 'fixed';
+      dropdownContainer.style.zIndex = '1000';
 
-      updateDropdownSelection();
+      window.addEventListener('resize', handleWindowChange);
+      window.addEventListener('scroll', handleWindowChange);
     } else {
-      dropdown.classList.add('hidden');
-      selectedIndex = -1;
+      hideDropdown();
     }
   }
 
-  function updateDropdownSelection() {
-    const optionDivs = dropdown.querySelectorAll('div');
-    optionDivs.forEach((optionDiv, index) => {
-      if (index === selectedIndex) {
-        optionDiv.classList.add('bg-gray-200');
-      } else {
-        optionDiv.classList.remove('bg-gray-200');
-      }
-    });
-  }
-
-  function handleInput(selectedCategory, escapedTriggerKey) {
-    updateDropdown(selectedCategory, escapedTriggerKey);
-  }
-
-  function handleDocumentClick(e) {
-    if (!dropdown.contains(e.target) && e.target !== div) {
-      dropdown.classList.add('hidden');
+  function handleWindowChange() {
+    if (dropdownVisible) {
+      const rect = div.getBoundingClientRect();
+      dropdownContainer.style.left = `${rect.left + window.scrollX}px`;
+      dropdownContainer.style.top = `${rect.top + window.scrollY - dropdownContainer.offsetHeight}px`;
     }
   }
-
-  document.addEventListener('click', handleDocumentClick);
 
   function matchSearchText(idText, searchText) {
     let score = 0;
@@ -150,11 +147,13 @@ export function createDropdown(div, state) {
     const idWords = idText.split(/\s+/);
     const searchWords = searchText.split(/\s+/);
 
-    const prefixMatches = searchWords.filter(sw => idWords.some(iw => iw.startsWith(sw))).length;
+    const prefixMatches = searchWords.filter((sw) =>
+      idWords.some((iw) => iw.startsWith(sw))
+    ).length;
     score += prefixMatches * 10;
 
-    const idInitials = idWords.map(word => word[0]).join('').toLowerCase();
-    const searchInitials = searchWords.map(word => word[0]).join('').toLowerCase();
+    const idInitials = idWords.map((word) => word[0]).join('').toLowerCase();
+    const searchInitials = searchWords.map((word) => word[0]).join('').toLowerCase();
 
     if (idInitials.startsWith(searchInitials)) {
       score += 5;
@@ -163,9 +162,20 @@ export function createDropdown(div, state) {
     return score;
   }
 
+  function handleInput(selectedCategory, escapedTriggerKey) {
+    updateDropdown(selectedCategory, escapedTriggerKey);
+  }
+
+  function handleDocumentClick(e) {
+    if (!dropdownContainer.contains(e.target) && e.target !== div) {
+      hideDropdown();
+    }
+  }
+
+  document.addEventListener('click', handleDocumentClick);
+
   return {
     updateDropdown,
-    updateDropdownSelection,
     handleInput,
     getCurrentOptions() {
       return currentOptions;
@@ -175,12 +185,12 @@ export function createDropdown(div, state) {
     },
     setSelectedIndex(index) {
       selectedIndex = index;
-      updateDropdownSelection();
+      selectDropdownButton(index);
     },
     clearOptions() {
       currentOptions = [];
       selectedIndex = -1;
     },
-    dropdownElement: dropdown
+    dropdownElement: dropdownContainer,
   };
 }
