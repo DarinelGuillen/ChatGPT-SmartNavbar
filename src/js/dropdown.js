@@ -1,7 +1,7 @@
 import { replaceTextInDiv } from './utils.js';
 
 export function initializeDropdown(div, dropdownElements, state) {
-  const { dropdownContainer, buttonsContainer, dropdownIndicator } = dropdownElements;
+  const { dropdownContainer, buttonsContainer, optionsContainer, dropdownIndicator } = dropdownElements;
 
   document.body.appendChild(dropdownContainer);
 
@@ -10,18 +10,19 @@ export function initializeDropdown(div, dropdownElements, state) {
   let dropdownVisible = false;
 
   function updateDropdownIndicator(button) {
-    const top = button.offsetTop;
+    const top = button.offsetTop + optionsContainer.offsetTop;
     const height = button.offsetHeight;
-    dropdownIndicator.style.top = `${top}px`;
-    dropdownIndicator.style.height = `${height}px`;
+    dropdownIndicator.style.top = `${top + 2.5}px`;
+    dropdownIndicator.style.height = `${height - 5}px`;
   }
 
   function showDropdown() {
     dropdownContainer.classList.remove('hidden');
     dropdownContainer.classList.add('dropdown-menu-show');
-    if (buttonsContainer.children.length > 0) {
+    if (optionsContainer.children.length > 0) {
       selectedIndex = 0;
       selectDropdownButton(selectedIndex);
+      updateDropdownIndicator(optionsContainer.children[selectedIndex]);
     }
     dropdownVisible = true;
   }
@@ -29,9 +30,10 @@ export function initializeDropdown(div, dropdownElements, state) {
   function hideDropdown() {
     dropdownContainer.classList.add('hidden');
     dropdownContainer.classList.remove('dropdown-menu-show');
-    Array.from(buttonsContainer.children).forEach((btn) =>
+    Array.from(optionsContainer.children).forEach((btn) =>
       btn.classList.remove('active-dropdown-button')
     );
+    dropdownIndicator.style.height = `0.1rem`;
     dropdownVisible = false;
     selectedIndex = -1;
 
@@ -40,11 +42,12 @@ export function initializeDropdown(div, dropdownElements, state) {
   }
 
   function selectDropdownButton(index) {
-    if (index < 0 || index >= buttonsContainer.children.length) return;
-    Array.from(buttonsContainer.children).forEach((btn) =>
+    const buttons = optionsContainer.children;
+    if (index < 0 || index >= buttons.length) return;
+    Array.from(buttons).forEach((btn) =>
       btn.classList.remove('active-dropdown-button')
     );
-    const button = buttonsContainer.children[index];
+    const button = buttons[index];
     button.classList.add('active-dropdown-button');
     selectedIndex = index;
     button.scrollIntoView({ block: 'nearest' });
@@ -52,7 +55,7 @@ export function initializeDropdown(div, dropdownElements, state) {
   }
 
   function updateDropdown(selectedCategory, escapedTriggerKey) {
-    buttonsContainer.innerHTML = '';
+    optionsContainer.innerHTML = '';
     currentOptions = [];
 
     const textContent = div.innerText;
@@ -102,7 +105,7 @@ export function initializeDropdown(div, dropdownElements, state) {
           hideDropdown();
         });
 
-        buttonsContainer.appendChild(button);
+        optionsContainer.appendChild(button);
       });
 
       showDropdown();

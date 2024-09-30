@@ -25,7 +25,7 @@
 .bg-inactive { background-color: rgba(164, 159, 157, 0.12); }
 
 .indicator {
-    transition: left 1s ease, width 1s ease, bottom 1s ease;
+    transition: left 0.3s ease, width 0.3s ease, bottom 0.3s ease;
     height: 1px;
     background-color: #28a745;
     position: absolute;
@@ -95,9 +95,8 @@
     border-radius: 6px;
 }
 
-#dropdown-indicator {
-    transition: top 1s ease, height 1s ease;
-
+.dropdown-indicator {
+    transition: top 0.3s ease, height 0.3s ease;
     width: 1px;
     background-color: #ffeb3b;
     position: absolute;
@@ -107,6 +106,7 @@
     border-radius: 1px;
     z-index: 20;
 }
+
 
 @keyframes dropdownEnter {
     0% { opacity: 0; transform: scaleY(0.8); }

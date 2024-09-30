@@ -71,7 +71,6 @@ function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
   const targetDiv = await waitForElement(targetDivSelector);
 
   let dropdownManager;
-  let dropdownManager;
 
   const inputDiv = await waitForElement('#prompt-textarea');
   const dropdownElements = createDropdown(inputDiv);
@@ -173,7 +172,6 @@ function updateIndicator(indicator, button) {
 }
 
 function createDropdown(div) {
-
   const dropdownContainer = document.createElement('div');
   dropdownContainer.classList.add('dropdown-menu', 'hidden');
   dropdownContainer.id = 'dropdown-menu';
@@ -181,19 +179,25 @@ function createDropdown(div) {
   const buttonsContainer = document.createElement('div');
   buttonsContainer.classList.add('dropdown-buttons-container', 'm-1');
 
+  const optionsContainer = document.createElement('div');
+  optionsContainer.classList.add('options-container');
+
   const dropdownIndicator = document.createElement('div');
   dropdownIndicator.id = 'dropdown-indicator';
-  dropdownIndicator.classList.add('indicator');
+  dropdownIndicator.classList.add('dropdown-indicator');
 
   buttonsContainer.appendChild(dropdownIndicator);
+  buttonsContainer.appendChild(optionsContainer);
   dropdownContainer.appendChild(buttonsContainer);
 
-  document.body.appendChild(dropdownContainer);
 
   return {
     dropdownContainer,
     buttonsContainer,
+    optionsContainer,
     dropdownIndicator,
   };
 }
+
+
 const navbarElements = createNavbar
