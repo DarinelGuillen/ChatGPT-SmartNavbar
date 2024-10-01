@@ -15,10 +15,14 @@ export function getCategories() {
       if (result.categories) {
         resolve(result.categories);
       } else {
-
         fetch(chrome.runtime.getURL('data/options.json'))
           .then((response) => response.json())
           .then((defaultCategories) => {
+            defaultCategories.forEach((cat, index) => {
+              cat.id = cat.id || index + 1;
+              cat.isPredefined = true;
+              cat.isVisible = cat.isVisible !== false;
+            });
             resolve(defaultCategories);
           });
       }

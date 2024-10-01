@@ -1,5 +1,3 @@
-
-
 import { waitForElement, escapeRegExp } from './utils.js';
 import { loadCategories } from './dataLoader.js';
 import { getTriggerKey } from './storage.js';
@@ -62,7 +60,6 @@ import '../css/contentScript.css';
     if (message.type === 'OPEN_MODAL') {
       openModal(state);
     } else if (message.type === 'TRIGGER_KEY_UPDATED') {
-
       getTriggerKey().then((newTriggerKey) => {
         if (newTriggerKey !== triggerKey) {
           triggerKey = newTriggerKey;
@@ -101,7 +98,9 @@ import '../css/contentScript.css';
     const { navbar, buttonsContainer, indicator } = navbarElements;
     buttonsContainer.innerHTML = '';
 
-    state.categories.forEach((category, index) => {
+    const visibleCategories = state.categories.filter(cat => cat.isVisible);
+
+    visibleCategories.forEach((category, index) => {
       const button = document.createElement('button');
       button.classList.add(
         'nav-button', 'bg-hover', 'rounded-2xl', 'px-4', 'py-1', 'text-center',
@@ -118,7 +117,7 @@ import '../css/contentScript.css';
 
       button.addEventListener('click', () => {
         state.selectedCategoryIndex = index;
-        state.selectedCategory = state.categories[state.selectedCategoryIndex];
+        state.selectedCategory = visibleCategories[state.selectedCategoryIndex];
         state.updateNavbarSelection();
         if (dropdownManager) {
           dropdownManager.updateDropdown(state.selectedCategory, state.escapedTriggerKey);

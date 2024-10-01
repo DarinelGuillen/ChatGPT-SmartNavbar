@@ -7,18 +7,23 @@ export async function loadCategories() {
 
 
   categories = JSON.parse(JSON.stringify(categories));
-  categories.unshift({
+
+
+  const visibleCategories = categories.filter(cat => cat.isVisible);
+
+
+  visibleCategories.unshift({
     category: 'Todos',
     options: []
   });
 
 
-  categories[0].options = categories.slice(1).reduce((acc, cat) => {
+  visibleCategories[0].options = visibleCategories.slice(1).reduce((acc, cat) => {
     if (Array.isArray(cat.options)) {
       return acc.concat(cat.options);
     }
     return acc;
   }, []);
 
-  return categories;
+  return visibleCategories;
 }

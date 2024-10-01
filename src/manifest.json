@@ -20,7 +20,10 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["data/options.json"],
+      "resources": [
+        "data/options.json",
+        "icons/*.svg"
+      ],
       "matches": ["https://chatgpt.com/*"]
     }
   ],
