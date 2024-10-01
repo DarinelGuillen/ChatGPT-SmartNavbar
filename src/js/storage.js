@@ -1,8 +1,11 @@
-// storage.js
+
 
 export function saveCategories(categories) {
-  chrome.storage.local.set({ categories }, () => {
-    console.log('Categorías guardadas.');
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.set({ categories }, () => {
+      console.log('Categorías guardadas.');
+      resolve();
+    });
   });
 }
 
@@ -12,7 +15,7 @@ export function getCategories() {
       if (result.categories) {
         resolve(result.categories);
       } else {
-        // Si no hay categorías guardadas, cargar las predeterminadas
+
         fetch(chrome.runtime.getURL('data/options.json'))
           .then((response) => response.json())
           .then((defaultCategories) => {
@@ -32,7 +35,7 @@ export function saveTriggerKey(triggerKey) {
 export function getTriggerKey() {
   return new Promise((resolve) => {
     chrome.storage.local.get(['triggerKey'], (result) => {
-      resolve(result.triggerKey || '<<'); // Valor por defecto
+      resolve(result.triggerKey || '<<');
     });
   });
 }

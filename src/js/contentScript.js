@@ -1,62 +1,13 @@
+
+
 import { waitForElement, escapeRegExp } from './utils.js';
 import { loadCategories } from './dataLoader.js';
 import { getTriggerKey } from './storage.js';
 import { initializeEventHandlers } from './eventHandlers.js';
 import { initializeDropdown } from './dropdown.js';
-import { updateNavbarSelection } from './navbar.js';
+import { createNavbar, updateNavbarSelection } from './navbar.js';
+import { openModal } from './modal.js';
 import '../css/contentScript.css';
-
-function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
-
-  const navbar = document.createElement('div');
-  navbar.classList.add(
-    'relative', 'flex', 'justify-center', 'items-center', 'bg-navbar', 'text-white',
-    'rounded-2xl', 'p-1', 'overflow-hidden', 'navbar-animate', 'flex-grow'
-  );
-
-  const buttonsContainer = document.createElement('div');
-  buttonsContainer.classList.add(
-    'relative', 'flex', 'items-center', 'gap-x-4', 'no-scrollbar', 'overflow-x-hidden',
-    'buttons-container'
-  );
-  buttonsContainer.id = 'buttons-container';
-  buttonsContainer.setAttribute('tabindex', '0');
-
-  categories.forEach((category, index) => {
-    const button = document.createElement('button');
-    button.classList.add(
-      'nav-button', 'bg-hover', 'rounded-2xl', 'px-4', 'py-1', 'text-center',
-      'text-white', 'text-sm', 'font-medium', 'focus:outline-none', 'transition-colors',
-      'duration-700', 'ease-in-out', 'transform', 'button-animate', 'flex-shrink-0'
-    );
-    button.style.animationDelay = `${0.2 + index * 0.2}s`;
-    button.textContent = category.category;
-
-    if (index === selectedCategoryIndex) {
-      button.classList.remove('bg-hover');
-      button.classList.add('bg-selected-bt', 'active-button');
-    }
-
-    button.addEventListener('click', () => {
-      onSelectCategory(index);
-    });
-
-    buttonsContainer.appendChild(button);
-  });
-
-  const indicator = document.createElement('div');
-  indicator.id = 'indicator';
-  indicator.classList.add('indicator');
-
-  buttonsContainer.appendChild(indicator);
-  navbar.appendChild(buttonsContainer);
-
-  return {
-    navbar,
-    buttonsContainer,
-    indicator,
-  };
-}
 
 (async function () {
   let triggerKey = await getTriggerKey();
@@ -82,6 +33,7 @@ function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
     escapedTriggerKey,
     categories,
     updateNavbarSelection: () => updateNavbarSelection(navbarElements, state.selectedCategoryIndex),
+    updateNavbar: updateNavbar,
   };
 
   dropdownManager = initializeDropdown(inputDiv, dropdownElements, state);
@@ -91,7 +43,7 @@ function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
     state.selectedCategory = categories[state.selectedCategoryIndex];
     state.updateNavbarSelection();
     if (dropdownManager) {
-      dropdownManager.updateDropdown(state.selectedCategory, escapedTriggerKey);
+      dropdownManager.updateDropdown(state.selectedCategory, state.escapedTriggerKey);
     }
   });
 
@@ -107,7 +59,19 @@ function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
   initializeEventHandlers(inputDiv, dropdownManager, state);
 
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.type === 'USER_DATA_UPDATED') {
+    if (message.type === 'OPEN_MODAL') {
+      openModal(state);
+    } else if (message.type === 'TRIGGER_KEY_UPDATED') {
+
+      getTriggerKey().then((newTriggerKey) => {
+        if (newTriggerKey !== triggerKey) {
+          triggerKey = newTriggerKey;
+          escapedTriggerKey = escapeRegExp(triggerKey);
+          state.triggerKey = triggerKey;
+          state.escapedTriggerKey = escapedTriggerKey;
+        }
+      });
+    } else if (message.type === 'USER_DATA_UPDATED') {
       getTriggerKey().then((newTriggerKey) => {
         if (newTriggerKey !== triggerKey) {
           triggerKey = newTriggerKey;
@@ -120,84 +84,77 @@ function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
       loadCategories().then((newCategories) => {
         categories = newCategories;
         state.categories = newCategories;
-        updateNavbar(navbarElements, categories);
+        updateNavbar();
         selectedCategoryIndex = 0;
         selectedCategory = categories[selectedCategoryIndex];
         state.selectedCategoryIndex = selectedCategoryIndex;
         state.selectedCategory = selectedCategory;
         state.updateNavbarSelection();
         if (dropdownManager) {
-          dropdownManager.updateDropdown(selectedCategory.options, escapedTriggerKey);
+          dropdownManager.updateDropdown(state.selectedCategory, state.escapedTriggerKey);
         }
       });
     }
   });
-})();
 
-function updateNavbar(navbarElements, categories) {
-  const { buttonsContainer, indicator } = navbarElements;
-  buttonsContainer.innerHTML = '';
-  categories.forEach((category, index) => {
-    const button = document.createElement('button');
-    button.classList.add(
-      'nav-button', 'bg-hover', 'rounded-2xl', 'px-4', 'py-1', 'text-center',
-      'text-white', 'text-sm', 'font-medium', 'focus:outline-none', 'transition-colors',
-      'duration-700', 'ease-in-out', 'transform', 'button-animate', 'flex-shrink-0'
-    );
-    button.style.animationDelay = `${0.2 + index * 0.2}s`;
-    button.textContent = category.category;
+  function updateNavbar() {
+    const { navbar, buttonsContainer, indicator } = navbarElements;
+    buttonsContainer.innerHTML = '';
 
-    if (index === 0) {
-      button.classList.remove('bg-hover');
-      button.classList.add('bg-selected-bt', 'active-button');
-    }
+    state.categories.forEach((category, index) => {
+      const button = document.createElement('button');
+      button.classList.add(
+        'nav-button', 'bg-hover', 'rounded-2xl', 'px-4', 'py-1', 'text-center',
+        'text-white', 'text-sm', 'font-medium', 'focus:outline-none', 'transition-colors',
+        'duration-700', 'ease-in-out', 'transform', 'button-animate', 'flex-shrink-0'
+      );
+      button.style.animationDelay = `${0.2 + index * 0.2}s`;
+      button.textContent = category.category;
 
-    button.addEventListener('click', () => {
+      if (index === state.selectedCategoryIndex) {
+        button.classList.remove('bg-hover');
+        button.classList.add('bg-selected-bt', 'active-button');
+      }
 
+      button.addEventListener('click', () => {
+        state.selectedCategoryIndex = index;
+        state.selectedCategory = state.categories[state.selectedCategoryIndex];
+        state.updateNavbarSelection();
+        if (dropdownManager) {
+          dropdownManager.updateDropdown(state.selectedCategory, state.escapedTriggerKey);
+        }
+      });
+
+      buttonsContainer.appendChild(button);
     });
 
-    buttonsContainer.appendChild(button);
-  });
+    buttonsContainer.appendChild(indicator);
+  }
 
-  buttonsContainer.appendChild(indicator);
-}
+  function createDropdown(div) {
+    const dropdownContainer = document.createElement('div');
+    dropdownContainer.classList.add('dropdown-menu', 'hidden');
+    dropdownContainer.id = 'dropdown-menu';
 
-function updateIndicator(indicator, button) {
-  const left = button.offsetLeft;
-  const width = button.offsetWidth;
-  const indicatorWidth = width * 0.8;
-  const indicatorLeft = left + width * 0.1;
-  indicator.style.left = `${indicatorLeft}px`;
-  indicator.style.width = `${indicatorWidth}px`;
-}
+    const buttonsContainer = document.createElement('div');
+    buttonsContainer.classList.add('dropdown-buttons-container', 'm-1');
 
-function createDropdown(div) {
-  const dropdownContainer = document.createElement('div');
-  dropdownContainer.classList.add('dropdown-menu', 'hidden');
-  dropdownContainer.id = 'dropdown-menu';
+    const optionsContainer = document.createElement('div');
+    optionsContainer.classList.add('options-container');
 
-  const buttonsContainer = document.createElement('div');
-  buttonsContainer.classList.add('dropdown-buttons-container', 'm-1');
+    const dropdownIndicator = document.createElement('div');
+    dropdownIndicator.id = 'dropdown-indicator';
+    dropdownIndicator.classList.add('dropdown-indicator');
 
-  const optionsContainer = document.createElement('div');
-  optionsContainer.classList.add('options-container');
+    buttonsContainer.appendChild(dropdownIndicator);
+    buttonsContainer.appendChild(optionsContainer);
+    dropdownContainer.appendChild(buttonsContainer);
 
-  const dropdownIndicator = document.createElement('div');
-  dropdownIndicator.id = 'dropdown-indicator';
-  dropdownIndicator.classList.add('dropdown-indicator');
-
-  buttonsContainer.appendChild(dropdownIndicator);
-  buttonsContainer.appendChild(optionsContainer);
-  dropdownContainer.appendChild(buttonsContainer);
-
-
-  return {
-    dropdownContainer,
-    buttonsContainer,
-    optionsContainer,
-    dropdownIndicator,
-  };
-}
-
-
-const navbarElements = createNavbar
+    return {
+      dropdownContainer,
+      buttonsContainer,
+      optionsContainer,
+      dropdownIndicator,
+    };
+  }
+})();
