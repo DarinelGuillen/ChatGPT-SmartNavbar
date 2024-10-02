@@ -1,7 +1,9 @@
+
+
 import { replaceTextInDiv } from './utils.js';
 
 export function initializeDropdown(div, dropdownElements, state) {
-  const { dropdownContainer, buttonsContainer, optionsContainer, dropdownIndicator } = dropdownElements;
+  const { dropdownContainer, optionsContainer, dropdownIndicator } = dropdownElements;
 
   document.body.appendChild(dropdownContainer);
 
@@ -76,7 +78,9 @@ export function initializeDropdown(div, dropdownElements, state) {
       return;
     }
 
-    const scoredOptions = selectedCategory.options
+    const visibleOptions = selectedCategory.options.filter(opt => opt.isVisible);
+
+    const scoredOptions = visibleOptions
       .map((item) => {
         if (item && item.id) {
           const score = matchSearchText(item.id.toLowerCase(), searchText);
@@ -91,7 +95,7 @@ export function initializeDropdown(div, dropdownElements, state) {
     currentOptions = scoredOptions.slice(0, 10).map((entry) => entry.item);
 
     if (currentOptions.length > 0) {
-      currentOptions.forEach((item, index) => {
+      currentOptions.forEach((item) => {
         const button = document.createElement('button');
         button.classList.add(
           'dropdown-button', 'bg-hover', 'rounded', 'px-2', 'py-1', 'text-white',

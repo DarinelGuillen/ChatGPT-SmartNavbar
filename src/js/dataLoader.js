@@ -9,21 +9,41 @@ export async function loadCategories() {
   categories = JSON.parse(JSON.stringify(categories));
 
 
-  const visibleCategories = categories.filter(cat => cat.isVisible);
-
-
-  visibleCategories.unshift({
-    category: 'Todos',
-    options: []
+  categories.sort((a, b) => {
+    if (a.isVisible === b.isVisible) return 0;
+    return a.isVisible ? -1 : 1;
   });
 
 
-  visibleCategories[0].options = visibleCategories.slice(1).reduce((acc, cat) => {
+  categories.forEach(category => {
+    if (Array.isArray(category.options)) {
+      category.options.sort((a, b) => {
+        if (a.isVisible === b.isVisible) return 0;
+        return a.isVisible ? -1 : 1;
+      });
+    }
+  });
+
+
+  const visibleCategories = categories.filter(cat => cat.isVisible);
+
+
+  const allCategory = {
+    category: 'Todos',
+    options: []
+  };
+
+
+  allCategory.options = visibleCategories.reduce((acc, cat) => {
     if (Array.isArray(cat.options)) {
-      return acc.concat(cat.options);
+      const visibleOptions = cat.options.filter(opt => opt.isVisible);
+      return acc.concat(visibleOptions);
     }
     return acc;
   }, []);
+
+
+  visibleCategories.unshift(allCategory);
 
   return visibleCategories;
 }

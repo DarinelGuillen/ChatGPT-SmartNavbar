@@ -1,9 +1,8 @@
 
 
 export function saveCategories(categories) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     chrome.storage.local.set({ categories }, () => {
-      console.log('Categorías guardadas.');
       resolve();
     });
   });
@@ -22,6 +21,11 @@ export function getCategories() {
               cat.id = cat.id || index + 1;
               cat.isPredefined = true;
               cat.isVisible = cat.isVisible !== false;
+
+              cat.options.forEach((option) => {
+                option.isVisible = option.isVisible !== false;
+                option.isPredefined = true;
+              });
             });
             resolve(defaultCategories);
           });
@@ -31,9 +35,7 @@ export function getCategories() {
 }
 
 export function saveTriggerKey(triggerKey) {
-  chrome.storage.local.set({ triggerKey }, () => {
-    console.log('Trigger key guardada.');
-  });
+  chrome.storage.local.set({ triggerKey }, () => {});
 }
 
 export function getTriggerKey() {

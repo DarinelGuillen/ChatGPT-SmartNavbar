@@ -83,7 +83,7 @@
     flex-direction: column;
     gap: 0.3rem;
     max-height: 200px;
-    width:auto;
+    width: auto;
     overflow-y: auto;
 }
 
@@ -91,6 +91,15 @@
     width: 100%;
     text-align: left;
     border-radius: 6px;
+    padding: 0px 0px;
+    background-color: transparent;
+    color: #F0F0F0;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown-button:hover {
+    background-color: rgba(102, 153, 204, 0.2);
 }
 
 .dropdown-indicator {
@@ -102,7 +111,7 @@
     top: 0;
     height: 0%;
     border-radius: 1px;
-    z-index: 20;
+    z-index: 25;
 }
 
 @keyframes dropdownEnter {
@@ -133,51 +142,233 @@
     scrollbar-width: none;
 }
 
-/* Estilos para el modal */
+/* --- Estilos para el Modal --- */
+
 #extension-modal {
   display: none;
 }
 
-#extension-modal.hidden {
+#extension-modal.modal-hidden {
   display: none;
 }
 
-#extension-modal {
+#extension-modal.modal-show {
   display: flex;
 }
 
 /* Estilos para el fondo oscuro */
 #extension-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background-color: rgba(0, 0, 0, 0.75);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Estilos para la lista de categorías y prompts */
-.category-item {
-  border: 1px solid #ddd;
+/* Contenedor principal del modal */
+.modal-content {
+  background-color: #1f1f1f;
+  color: #F0F0F0;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  width: 80%;
+  height: 80%;
+}
+
+/* Sidebar de categorías */
+.modal-sidebar {
+  width: 250px;
+  background-color: #2c2c2c;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+/* Título de categorías */
+.modal-sidebar h2 {
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+
+/* Lista de categorías */
+.modal-category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Estilo de cada categoría */
+.modal-category-item {
+  background-color: #3a3a3a;
   border-radius: 4px;
   padding: 8px;
-  margin-bottom: 8px;
-}
-
-.prompt-item {
+  cursor: pointer;
   display: flex;
   justify-content: space-between;
-  padding: 4px 0;
+  align-items: center;
 }
 
-/* Estilos para botones */
-.btn {
+.modal-category-item:hover {
+  background-color: #505050;
+}
+
+.modal-category-item.selected {
+  background-color: #28a745;
+}
+
+/* Nombre de la categoría */
+.modal-category-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Acciones de la categoría */
+.modal-category-actions {
+  display: flex;
+  align-items: center;
+}
+
+/* Panel principal de prompts */
+.modal-main {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Título principal */
+.modal-main h1 {
+  font-size: 28px;
+  margin-bottom: 16px;
+}
+
+/* Lista de prompts */
+.modal-prompt-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Estilo de cada prompt */
+.modal-prompt-card {
+  background-color: #2c2c2c;
+  border-radius: 4px;
+  padding: 12px;
+}
+
+.modal-prompt-card .modal-prompt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-prompt-card .modal-prompt-title {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.modal-prompt-card .modal-prompt-actions {
+  display: flex;
+  align-items: center;
+}
+
+.modal-prompt-card p {
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+/* Opciones atenuadas (ocultas) */
+.opacity-50 {
+  opacity: 0.5;
+}
+
+/* Botones e íconos */
+.modal-icon-button {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+}
+
+.modal-icon-button img {
+  width: 20px;
+  height: 20px;
+}
+
+.modal-add-button {
+  display: flex;
+  align-items: center;
+  color: #2196f3;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.modal-add-button img {
+  margin-right: 8px;
+}
+
+/* Botón de cerrar modal */
+#close-modal-button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+#close-modal-button img {
+  width: 24px;
+  height: 24px;
+}
+
+/* Formularios */
+.modal-input,
+.modal-textarea {
+  width: 100%;
+  padding: 8px;
+  background-color: #3a3a3a;
+  border: 1px solid #555;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: #F0F0F0;
+}
+
+.modal-label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+
+/* Botones */
+.modal-btn {
   padding: 8px 16px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  margin-left: 8px;
+  font-size: 14px;
+  background-color: #2196f3;
+  color: #F0F0F0;
 }
 
-.btn:hover {
-  opacity: 0.9;
+.modal-btn:hover {
+  background-color: #1976d2;
 }
 
-.btn-sm {
-  padding: 4px 8px;
-  font-size: 12px;
+.modal-btn-secondary {
+  background-color: #555;
+  color: #F0F0F0;
+}
+
+.modal-btn-secondary:hover {
+  background-color: #666;
 }

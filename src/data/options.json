@@ -3,8 +3,8 @@
     "id": 1,
     "category": "TEST",
     "options": [
-      { "id": "Extension", "option": "Option 1 of dev: Help with code debugging. This is a longer description of what this prompt does. It can span multiple lines and provide more detailed information about the prompt's purpose and usage." },
-      { "id": "Explain Optimize", "option": "Option 2 of dev: Code optimization. This prompt is designed to help developers improve their code's performance. It can suggest various optimization techniques and best practices for writing efficient code." }
+      { "id": "Extension", "option": "Option 1 of dev: Help with code debugging.", "isVisible": true },
+      { "id": "Explain Optimize", "option": "Option 2 of dev: Code optimization.", "isVisible": true }
     ],
     "isVisible": false,
     "isPredefined": true
@@ -13,8 +13,8 @@
     "id": 2,
     "category": "EnhanceCodePlus",
     "options": [
-      { "id": "Add Comments", "option": "Option 1 of EnhanceCodePlus: Add comments. This prompt assists in adding meaningful comments to your code. It can help improve code readability and maintainability by suggesting appropriate comments for different parts of your codebase." },
-      { "id": "Explain TypeScript", "option": "Option 2 of EnhanceCodePlus: Convert to TypeScript. This prompt provides guidance on converting JavaScript code to TypeScript. It can explain TypeScript concepts and suggest type annotations for your code." }
+      { "id": "Add Comments", "option": "Option 1 of EnhanceCodePlus: Add comments.", "isVisible": true },
+      { "id": "Explain TypeScript", "option": "Option 2 of EnhanceCodePlus: Convert to TypeScript.", "isVisible": true }
     ],
     "isVisible": true,
     "isPredefined": true
@@ -23,8 +23,8 @@
     "id": 3,
     "category": "OPTION 3",
     "options": [
-      { "id": "Explain Code", "option": "Option 1 of OPTION 3: Code explanation" },
-      { "id": "Write Unit Tests", "option": "Option 2 of OPTION 3: Write unit tests" }
+      { "id": "Explain Code", "option": "Option 1 of OPTION 3: Code explanation", "isVisible": true },
+      { "id": "Write Unit Tests", "option": "Option 2 of OPTION 3: Write unit tests", "isVisible": true }
     ],
     "isVisible": true,
     "isPredefined": true
@@ -33,8 +33,8 @@
     "id": 4,
     "category": "Performance",
     "options": [
-      { "id": "Explain Performance", "option": "Option 1 of Performance: Performance analysis" },
-      { "id": "Profiling", "option": "Option 2 of Performance: Performance profiling" }
+      { "id": "Explain Performance", "option": "Option 1 of Performance: Performance analysis", "isVisible": true },
+      { "id": "Profiling", "option": "Option 2 of Performance: Performance profiling", "isVisible": true }
     ],
     "isVisible": true,
     "isPredefined": true
@@ -43,8 +43,8 @@
     "id": 5,
     "category": "Architecture",
     "options": [
-      { "id": "Design Patterns", "option": "Option 1 of Architecture: Design patterns" },
-      { "id": "Explain Modularization", "option": "Option 2 of Architecture: Modularization" }
+      { "id": "Design Patterns", "option": "Option 1 of Architecture: Design patterns", "isVisible": true },
+      { "id": "Explain Modularization", "option": "Option 2 of Architecture: Modularization", "isVisible": true }
     ],
     "isVisible": true,
     "isPredefined": true
@@ -53,8 +53,8 @@
     "id": 6,
     "category": "Documentation",
     "options": [
-      { "id": "API Documentation", "option": "Option 1 of Documentation: API documentation" },
-      { "id": "Explain User Guide", "option": "Option 2 of Documentation: User guide" }
+      { "id": "API Documentation", "option": "Option 1 of Documentation: API documentation", "isVisible": true },
+      { "id": "Explain User Guide", "option": "Option 2 of Documentation: User guide", "isVisible": true }
     ],
     "isVisible": true,
     "isPredefined": true
@@ -63,8 +63,8 @@
     "id": 7,
     "category": "Integration",
     "options": [
-      { "id": "Explain Third-party", "option": "Option 1 of Integration: Third-party integration" },
-      { "id": "Database Integration", "option": "Option 2 of Integration: Database integration" }
+      { "id": "Explain Third-party", "option": "Option 1 of Integration: Third-party integration", "isVisible": true },
+      { "id": "Database Integration", "option": "Option 2 of Integration: Database integration", "isVisible": true }
     ],
     "isVisible": true,
     "isPredefined": true
