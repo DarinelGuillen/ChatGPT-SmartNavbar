@@ -3,7 +3,7 @@
     "id": 1,
     "category": "TEST",
     "options": [
-      { "id": "Extension", "option": "Option 1 of dev: Help with code debugging.", "isVisible": true },
+      { "id": "Extension", "option": "Option 1 of dev: Help with code debugging. This option provides comprehensive assistance in identifying and resolving issues in your code. It covers a wide range of debugging techniques, including step-by-step execution, breakpoints, logging, and the use of debugging tools. Whether you're dealing with syntax errors, runtime exceptions, or logical flaws, this option aims to enhance your debugging skills and improve your overall coding efficiency. Additionally, it offers insights into best practices for writing clean, maintainable code, and strategies for troubleshooting complex problems. By utilizing this option, developers can gain a deeper understanding of their code's behavior, leading to faster resolution of issues and a more robust development process. This resource is invaluable for both novice and experienced programmers looking to refine their debugging techniques and elevate their coding proficiency.", "isVisible": true },
       { "id": "Explain Optimize", "option": "Option 2 of dev: Code optimization.", "isVisible": true }
     ],
     "isVisible": false,

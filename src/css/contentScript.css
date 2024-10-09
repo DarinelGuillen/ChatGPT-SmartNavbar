@@ -14,7 +14,7 @@
   display: none;
 }
 
-/* Agrega otros estilos necesarios aquí END */
+/* Estilos adicionales */
 
 .bg-CHAT { background-color: rgba(33, 33, 33, 1); }
 .bg-navbar { background-color: #333333; }
@@ -25,32 +25,32 @@
 .bg-inactive { background-color: rgba(164, 159, 157, 0.12); }
 
 .indicator {
-    transition: left 0.3s ease, width 0.3s ease, bottom 0.3s ease;
-    height: 1px;
-    background-color: #28a745;
-    position: absolute;
-    bottom: 0px;
-    left: 0;
-    width: 0%;
-    border-radius: 2px;
-    z-index: 21;
+  transition: left 0.3s ease, width 0.3s ease, bottom 0.3s ease;
+  height: 1px;
+  background-color: #28a745;
+  position: absolute;
+  bottom: 0px;
+  left: 0;
+  width: 0%;
+  border-radius: 2px;
+  z-index: 21;
 }
 
 @keyframes navbarEnter {
-    0% { opacity: 0; transform: scale(0.8); }
-    100% { opacity: 1; transform: scale(1); }
+  0% { opacity: 0; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
 @keyframes buttonEnter {
-    0% { opacity: 0; transform: translateY(20px); }
-    100% { opacity: 1; transform: translateY(0); }
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
 .navbar-animate { animation: navbarEnter 0.8s ease forwards; }
 .button-animate {
-    animation: buttonEnter 0.8s ease forwards;
-    opacity: 0;
-    transform: translateY(20px);
+  animation: buttonEnter 0.8s ease forwards;
+  opacity: 0;
+  transform: translateY(20px);
 }
 
 .active-button { transform: scale(1.05); }
@@ -59,93 +59,118 @@
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 .buttons-container {
-    position: relative;
-    display: flex;
-    gap: 0.2rem;
-    overflow-x: auto;
-    scroll-behavior: smooth;
+  position: relative;
+  display: flex;
+  gap: 0.2rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
 }
 
 .dropdown-menu {
-    position: fixed;
-    background-color: #333333;
-    border-radius: 6px;
-    padding: 0;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 20;
-    min-width: 150px;
-    width: auto;
+  position: fixed;
+  background-color: #333333;
+  border-radius: 6px;
+  padding: 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 20;
+  min-width: 150px;
+  width: auto;
 }
 
 .dropdown-buttons-container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    max-height: 200px;
-    width: auto;
-    overflow-y: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  max-height: 200px;
+  width: auto;
+  overflow-y: auto;
 }
 
 .dropdown-button {
-    width: 100%;
-    text-align: left;
-    border-radius: 6px;
-    padding: 0px 0px;
-    background-color: transparent;
-    color: #F0F0F0;
-    border: none;
-    cursor: pointer;
+  width: 100%;
+  text-align: left;
+  border-radius: 6px;
+  padding: 0px 0px;
+  background-color: transparent;
+  color: #F0F0F0;
+  border: none;
+  cursor: pointer;
 }
 
 .dropdown-button:hover {
-    background-color: rgba(102, 153, 204, 0.2);
+  background-color: rgba(102, 153, 204, 0.2);
 }
 
 .dropdown-indicator {
-    transition: top 0.3s ease, height 0.3s ease;
-    width: 1px;
-    background-color: #ffeb3b;
-    position: absolute;
-    left: 0.1rem;
-    top: 0;
-    height: 0%;
-    border-radius: 1px;
-    z-index: 25;
+  transition: top 0.3s ease, height 0.3s ease;
+  width: 1px;
+  background-color: #ffeb3b;
+  position: absolute;
+  left: 0.1rem;
+  top: 0;
+  height: 0%;
+  border-radius: 1px;
+  z-index: 25;
 }
 
 @keyframes dropdownEnter {
-    0% { opacity: 0; transform: scaleY(0.8); }
-    100% { opacity: 1; transform: scaleY(1); }
+  0% { opacity: 0; transform: scaleY(0.8); }
+  100% { opacity: 1; transform: scaleY(1); }
 }
 
 @keyframes dropdownButtonEnter {
-    0% { opacity: 0; transform: translateX(-20px); }
-    100% { opacity: 1; transform: translateX(0); }
+  0% { opacity: 0; transform: translateX(-20px); }
+  100% { opacity: 1; transform: translateX(0); }
 }
 
 .dropdown-menu-show { animation: dropdownEnter 0.5s ease forwards; }
 .dropdown-button-animate {
-    animation: dropdownButtonEnter 0.5s ease forwards;
-    opacity: 0;
-    transform: translateX(-20px);
+  animation: dropdownButtonEnter 0.5s ease forwards;
+  opacity: 0;
+  transform: translateX(-20px);
 }
 
 .active-dropdown-button { background-color: rgba(255, 235, 59, 0.3); }
 
 .dropdown-buttons-container::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 .dropdown-buttons-container {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* --- Estilos para el Modal --- */
-
 #extension-modal {
-  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none; /* Oculto por defecto */
+  background-color: rgba(0, 0, 0, 0.75);
+  z-index: 9999;
+  align-items: flex-start; /* Alinear contenido al inicio verticalmente */
+  justify-content: center; /* Centrar horizontalmente */
+  padding-top: 20px; /* Espaciado desde la parte superior */
+  box-sizing: border-box; /* Incluir padding en el tamaño total */
+}
+
+.modal-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none; /* Oculto por defecto */
+  background-color: rgba(0, 0, 0, 0.75);
+  z-index: 9999;
+  align-items: flex-start; /* Alinear contenido al inicio verticalmente */
+  justify-content: center; /* Centrar horizontalmente */
+  padding-top: 20px; /* Espaciado desde la parte superior */
+  box-sizing: border-box; /* Incluir padding en el tamaño total */
 }
 
 #extension-modal.modal-hidden {
@@ -156,19 +181,6 @@
   display: flex;
 }
 
-/* Estilos para el fondo oscuro */
-#extension-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.75);
-  z-index: 9999;
-  align-items: center;
-  justify-content: center;
-}
-
 /* Contenedor principal del modal */
 .modal-content {
   background-color: #1f1f1f;
@@ -177,7 +189,8 @@
   overflow: hidden;
   display: flex;
   width: 80%;
-  height: 80%;
+  height: auto; /* Ajustar según el contenido */
+  max-height: 90%; /* Limitar altura */
 }
 
 /* Sidebar de categorías */
@@ -232,6 +245,23 @@
 .modal-category-actions {
   display: flex;
   align-items: center;
+  gap: 8px;
+}
+
+.modal-category-actions .modal-icon-button {
+  width: 20px;
+  height: 20px;
+}
+
+.modal-category-actions .modal-icon-button img {
+  width: 100%;
+  height: 100%;
+}
+
+/* Reducir tamaño de íconos si hay más de cuatro */
+.modal-category-actions.more-icons .modal-icon-button {
+  width: 18px;
+  height: 18px;
 }
 
 /* Panel principal de prompts */
@@ -276,6 +306,17 @@
 .modal-prompt-card .modal-prompt-actions {
   display: flex;
   align-items: center;
+  gap: 8px;
+}
+
+.modal-prompt-card .modal-icon-button {
+  width: 20px;
+  height: 20px;
+}
+
+.modal-prompt-card .modal-icon-button img {
+  width: 100%;
+  height: 100%;
 }
 
 .modal-prompt-card p {
@@ -297,8 +338,8 @@
 }
 
 .modal-icon-button img {
-  width: 20px;
-  height: 20px;
+  width: 100%;
+  height: 100%;
 }
 
 .modal-add-button {
@@ -371,4 +412,85 @@
 
 .modal-btn-secondary:hover {
   background-color: #666;
+}
+
+/* Estilos para el tooltip de vista previa */
+.prompt-preview-tooltip {
+  position: absolute;
+  background-color: #333333;
+  color: #F0F0F0;
+  padding: 8px;
+  border-radius: 4px;
+  max-width: 300px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  pointer-events: none;
+  font-size: 14px;
+}
+
+.prompt-preview-tooltip.visible {
+  opacity: 1;
+}
+
+/* Estilos para el ícono de información */
+.info-icon {
+  width: 16px;
+  height: 16px;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+/* Ajustes para el botón del prompt si es necesario */
+.dropdown-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Estilos para el área de texto expandido */
+.expanded-input {
+  min-height: 150px; /* Ajusta este valor según tus necesidades */
+  max-height: 300px; /* Altura máxima si lo deseas */
+  overflow-y: auto;
+  transition: min-height 0.3s ease-in-out;
+}
+
+/* Estilos para el contenedor del título y búsqueda */
+.title-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.title-container h1 {
+  margin: 0;
+}
+
+/* Estilos para el contenedor de búsqueda */
+.search-container {
+  display: flex;
+  align-items: center;
+}
+
+/* Estilos para el campo de búsqueda */
+.category-search {
+  padding: 8px 12px;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background-color: #1f1f1f;
+  color: #e0e0e0;
+  width: 250px;
+}
+
+.category-search::placeholder {
+  color: #777;
+}
+
+.category-search:focus {
+  border-color: #28a745;
+  outline: none;
 }

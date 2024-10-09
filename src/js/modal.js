@@ -14,7 +14,7 @@ export function openModal(state) {
   // Crear el modal
   modal = document.createElement('div');
   modal.id = 'extension-modal';
-  modal.classList.add('modal-show');
+  modal.classList.add('modal-hidden'); // Comienza oculto
 
   // Contenedor del contenido del modal
   const modalContent = document.createElement('div');
@@ -57,11 +57,23 @@ export function openModal(state) {
   `;
   mainPanel.appendChild(closeButton);
 
+  // Crear contenedor para el título y el campo de búsqueda
+  const titleContainer = document.createElement('div');
+  titleContainer.classList.add('title-container');
+
   // Título principal
   const mainTitle = document.createElement('h1');
   mainTitle.id = 'main-title';
   mainTitle.textContent = 'Selecciona una Categoría';
-  mainPanel.appendChild(mainTitle);
+  titleContainer.appendChild(mainTitle);
+
+  // Contenedor del campo de búsqueda (vacío por defecto)
+  const searchContainer = document.createElement('div');
+  searchContainer.classList.add('search-container');
+  titleContainer.appendChild(searchContainer);
+
+  // Añadir el contenedor del título al panel principal
+  mainPanel.appendChild(titleContainer);
 
   // Lista de prompts
   const promptList = document.createElement('div');
@@ -83,7 +95,13 @@ export function openModal(state) {
   modalContent.appendChild(sidebar);
   modalContent.appendChild(mainPanel);
   modal.appendChild(modalContent);
+
+  // Agregar el modal al body
   document.body.appendChild(modal);
+
+  // Mostrar el modal
+  modal.classList.remove('modal-hidden');
+  modal.classList.add('modal-show');
 
   // Inicializar la funcionalidad del modal
   initializeModalFunctionality({
@@ -93,6 +111,7 @@ export function openModal(state) {
     addCategoryBtn,
     addPromptBtn,
     closeButton,
+    searchContainer,
     state,
   });
 }
@@ -105,14 +124,36 @@ function initializeModalFunctionality(elements) {
     addCategoryBtn,
     addPromptBtn,
     closeButton,
+    searchContainer,
     state,
   } = elements;
 
   let categories = [];
   let selectedCategory = null;
+  let debounceTimer;
 
   getCategories().then((loadedCategories) => {
     categories = loadedCategories;
+
+    // Crear la categoría "Todos" que contiene todos los prompts
+    const allOptions = [];
+    categories.forEach(cat => {
+      if (Array.isArray(cat.options)) {
+        allOptions.push(...cat.options);
+      }
+    });
+
+    const todosCategory = {
+      id: 'all',
+      category: 'Todos',
+      options: allOptions,
+      isVisible: true,
+      isPredefined: true
+    };
+
+    // Insertar la categoría "Todos" al inicio de la lista
+    categories.unshift(todosCategory);
+
     renderCategories();
     renderPrompts();
   });
@@ -128,16 +169,28 @@ function initializeModalFunctionality(elements) {
     categories.forEach(category => {
       const categoryItem = document.createElement('div');
       categoryItem.className = `modal-category-item ${selectedCategory && selectedCategory.id === category.id ? 'selected' : ''}`;
+
+      // Contar cuántos íconos se mostrarán
+      let iconCount = 1; // Siempre se muestra el ícono de visibilidad
+      if (category.id !== 'all') {
+        iconCount += 3; // Editar, Duplicar, Borrar
+      }
+
+      const actionsClass = iconCount >= 4 ? 'modal-category-actions more-icons' : 'modal-category-actions';
+
       categoryItem.innerHTML = `
         <div class="modal-category-name">${category.category}</div>
-        <div class="modal-category-actions">
+        <div class="${actionsClass}">
           <button class="modal-icon-button toggle-visibility-btn" data-id="${category.id}">
             <img src="${chrome.runtime.getURL(category.isVisible ? 'icons/eye.svg' : 'icons/eye-off.svg')}" />
           </button>
-          <button class="modal-icon-button edit-category-btn" data-id="${category.id}">
-            <img src="${chrome.runtime.getURL('icons/edit-3.svg')}" />
-          </button>
-          ${!category.isPredefined ? `
+          ${category.id !== 'all' ? `
+            <button class="modal-icon-button edit-category-btn" data-id="${category.id}">
+              <img src="${chrome.runtime.getURL('icons/edit-3.svg')}" />
+            </button>
+            <button class="modal-icon-button duplicate-category-btn" data-id="${category.id}">
+              <img src="${chrome.runtime.getURL('icons/copy.svg')}" />
+            </button>
             <button class="modal-icon-button delete-category-btn" data-id="${category.id}">
               <img src="${chrome.runtime.getURL('icons/trash.svg')}" />
             </button>
@@ -146,11 +199,18 @@ function initializeModalFunctionality(elements) {
       `;
 
       categoryItem.addEventListener('click', (e) => {
-        if (!(e.target.closest('.toggle-visibility-btn') || e.target.closest('.edit-category-btn') || e.target.closest('.delete-category-btn'))) {
-          selectedCategory = category;
-          renderPrompts();
-          renderCategories();
+        // Evitar que se active si se hizo clic en las acciones
+        if (
+          e.target.closest('.toggle-visibility-btn') ||
+          e.target.closest('.edit-category-btn') ||
+          e.target.closest('.duplicate-category-btn') ||
+          e.target.closest('.delete-category-btn')
+        ) {
+          return;
         }
+        selectedCategory = category;
+        renderPrompts();
+        renderCategories();
       });
       categoryList.appendChild(categoryItem);
     });
@@ -158,19 +218,59 @@ function initializeModalFunctionality(elements) {
 
   function renderPrompts() {
     promptList.innerHTML = '';
+
     if (selectedCategory) {
       mainTitle.textContent = `Prompts para ${selectedCategory.category}`;
 
-      // Ordenar opciones según isVisible
-      selectedCategory.options.sort((a, b) => {
+      if (selectedCategory.id === 'all') {
+        if (!searchContainer.querySelector('.category-search')) {
+          // Crear el campo de búsqueda
+          const searchInput = document.createElement('input');
+          searchInput.type = 'text';
+          searchInput.placeholder = 'Buscar prompts...';
+          searchInput.classList.add('category-search');
+
+          // Añadir evento para filtrar los prompts con debouncing
+          searchInput.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+              filterPrompts(searchInput.value.trim().toLowerCase());
+            }, 300);
+          });
+
+          // Añadir el campo de búsqueda al contenedor
+          searchContainer.appendChild(searchInput);
+        }
+      } else {
+        // Limpiar el contenedor de búsqueda si no es 'all'
+        searchContainer.innerHTML = '';
+      }
+
+      let promptsToDisplay = selectedCategory.options;
+
+      if (selectedCategory.id === 'all') {
+        const searchInput = searchContainer.querySelector('.category-search');
+        if (searchInput && searchInput.value.trim() !== '') {
+          const searchText = searchInput.value.trim().toLowerCase();
+          promptsToDisplay = promptsToDisplay.filter(prompt => {
+            return prompt.id.toLowerCase().includes(searchText) || prompt.option.toLowerCase().includes(searchText);
+          });
+        }
+      }
+
+      promptsToDisplay.sort((a, b) => {
         if (a.isVisible === b.isVisible) return 0;
         return a.isVisible ? -1 : 1;
       });
 
-      if (selectedCategory.options.length > 0) {
-        selectedCategory.options.forEach(prompt => {
+      if (promptsToDisplay.length > 0) {
+        promptsToDisplay.forEach(prompt => {
           const promptCard = document.createElement('div');
           promptCard.className = `modal-prompt-card ${prompt.isVisible ? '' : 'opacity-50'}`;
+
+          const canEditPrompt = !prompt.isPredefined;
+          const showDuplicatePrompt = selectedCategory.id !== 'all' && canEditPrompt;
+
           promptCard.innerHTML = `
             <div class="modal-prompt-header">
               <div class="modal-prompt-title">${prompt.id}</div>
@@ -182,9 +282,77 @@ function initializeModalFunctionality(elements) {
                   <button class="modal-icon-button edit-prompt-btn" data-id="${prompt.id}">
                     <img src="${chrome.runtime.getURL('icons/edit-3.svg')}" />
                   </button>
+                  <button class="modal-icon-button duplicate-prompt-btn" data-id="${prompt.id}">
+                    <img src="${chrome.runtime.getURL('icons/copy.svg')}" />
+                  </button>
                   <button class="modal-icon-button delete-prompt-btn" data-id="${prompt.id}">
                     <img src="${chrome.runtime.getURL('icons/trash.svg')}" />
                   </button>
+                ` : `
+                  <button class="modal-icon-button edit-prompt-btn" data-id="${prompt.id}">
+                    <img src="${chrome.runtime.getURL('icons/edit-3.svg')}" />
+                  </button>
+                `}
+                <button class="modal-icon-button duplicate-prompt-btn" data-id="${prompt.id}">
+                  <img src="${chrome.runtime.getURL('icons/copy.svg')}" />
+                </button>
+              </div>
+            </div>
+            <p>${prompt.option}</p>
+          `;
+          promptList.appendChild(promptCard);
+        });
+      } else {
+        promptList.innerHTML = '<p>No se encontraron prompts.</p>';
+      }
+    } else {
+      mainTitle.textContent = 'Selecciona una Categoría';
+      searchContainer.innerHTML = '';
+      promptList.innerHTML = '';
+    }
+  }
+
+  function filterPrompts(searchText) {
+    const allCategory = categories.find(cat => cat.id === 'all');
+    if (allCategory) {
+      let promptsToDisplay = allCategory.options.filter(prompt => {
+        return prompt.id.toLowerCase().includes(searchText) || prompt.option.toLowerCase().includes(searchText);
+      });
+
+      promptsToDisplay.sort((a, b) => {
+        if (a.isVisible === b.isVisible) return 0;
+        return a.isVisible ? -1 : 1;
+      });
+
+      promptList.innerHTML = '';
+
+      if (promptsToDisplay.length > 0) {
+        promptsToDisplay.forEach(prompt => {
+          const promptCard = document.createElement('div');
+          promptCard.className = `modal-prompt-card ${prompt.isVisible ? '' : 'opacity-50'}`;
+
+          const canEditPrompt = !prompt.isPredefined;
+          const showDuplicatePrompt = selectedCategory.id !== 'all' && canEditPrompt;
+
+          promptCard.innerHTML = `
+            <div class="modal-prompt-header">
+              <div class="modal-prompt-title">${prompt.id}</div>
+              <div class="modal-prompt-actions">
+                <button class="modal-icon-button toggle-prompt-visibility-btn" data-id="${prompt.id}">
+                  <img src="${chrome.runtime.getURL(prompt.isVisible ? 'icons/eye.svg' : 'icons/eye-off.svg')}" />
+                </button>
+                ${canEditPrompt ? `
+                  <button class="modal-icon-button edit-prompt-btn" data-id="${prompt.id}">
+                    <img src="${chrome.runtime.getURL('icons/edit-3.svg')}" />
+                  </button>
+                  <button class="modal-icon-button delete-prompt-btn" data-id="${prompt.id}">
+                    <img src="${chrome.runtime.getURL('icons/trash.svg')}" />
+                  </button>
+                  ${showDuplicatePrompt ? `
+                    <button class="modal-icon-button duplicate-prompt-btn" data-id="${prompt.id}">
+                      <img src="${chrome.runtime.getURL('icons/copy.svg')}" />
+                    </button>
+                  ` : ''}
                 ` : ''}
               </div>
             </div>
@@ -193,10 +361,8 @@ function initializeModalFunctionality(elements) {
           promptList.appendChild(promptCard);
         });
       } else {
-        promptList.innerHTML = '<p>No hay prompts en esta categoría.</p>';
+        promptList.innerHTML = '<p>No se encontraron prompts.</p>';
       }
-    } else {
-      mainTitle.textContent = 'Selecciona una Categoría';
     }
   }
 
@@ -205,10 +371,10 @@ function initializeModalFunctionality(elements) {
   });
 
   addPromptBtn.addEventListener('click', () => {
-    if (selectedCategory) {
+    if (selectedCategory && selectedCategory.id !== 'all') {
       openPromptDialog();
     } else {
-      alert('Por favor, selecciona una categoría primero.');
+      alert('Por favor, selecciona una categoría válida para añadir un prompt.');
     }
   });
 
@@ -222,17 +388,26 @@ function initializeModalFunctionality(elements) {
 
   document.addEventListener('click', (e) => {
     if (e.target.closest('.toggle-visibility-btn')) {
-      const id = parseInt(e.target.closest('.toggle-visibility-btn').dataset.id);
-      toggleCategoryVisibility(id);
+      const id = e.target.closest('.toggle-visibility-btn').dataset.id;
+      if (selectedCategory && selectedCategory.id === 'all') {
+        toggleCategoryVisibility(id);
+      } else {
+        togglePromptVisibility(id);
+      }
     }
 
     if (e.target.closest('.edit-category-btn')) {
-      const id = parseInt(e.target.closest('.edit-category-btn').dataset.id);
+      const id = e.target.closest('.edit-category-btn').dataset.id;
       editCategory(id);
     }
 
+    if (e.target.closest('.duplicate-category-btn')) {
+      const id = e.target.closest('.duplicate-category-btn').dataset.id;
+      duplicateCategory(id);
+    }
+
     if (e.target.closest('.delete-category-btn')) {
-      const id = parseInt(e.target.closest('.delete-category-btn').dataset.id);
+      const id = e.target.closest('.delete-category-btn').dataset.id;
       confirmDeleteCategory(id);
     }
 
@@ -246,6 +421,11 @@ function initializeModalFunctionality(elements) {
       deletePrompt(id);
     }
 
+    if (e.target.closest('.duplicate-prompt-btn')) {
+      const id = e.target.closest('.duplicate-prompt-btn').dataset.id;
+      duplicatePrompt(id);
+    }
+
     if (e.target.closest('.toggle-prompt-visibility-btn')) {
       const id = e.target.closest('.toggle-prompt-visibility-btn').dataset.id;
       togglePromptVisibility(id);
@@ -254,23 +434,27 @@ function initializeModalFunctionality(elements) {
 
   function toggleCategoryVisibility(id) {
     const category = categories.find(cat => cat.id === id);
-    category.isVisible = !category.isVisible;
-    saveCategories(categories).then(() => {
-      renderCategories();
-      if (selectedCategory && selectedCategory.id === id) {
-        renderPrompts();
-      }
-      notifyContentScript();
-    });
+    if (category) {
+      category.isVisible = !category.isVisible;
+      saveCategories(categories).then(() => {
+        renderCategories();
+        if (selectedCategory && selectedCategory.id === id) {
+          renderPrompts();
+        }
+        notifyContentScript();
+      });
+    }
   }
 
   function togglePromptVisibility(promptId) {
     const prompt = selectedCategory.options.find(p => p.id === promptId);
-    prompt.isVisible = !prompt.isVisible;
-    saveCategories(categories).then(() => {
-      renderPrompts();
-      notifyContentScript();
-    });
+    if (prompt) {
+      prompt.isVisible = !prompt.isVisible;
+      saveCategories(categories).then(() => {
+        renderPrompts();
+        notifyContentScript();
+      });
+    }
   }
 
   function editCategory(id) {
@@ -280,16 +464,18 @@ function initializeModalFunctionality(elements) {
 
   function confirmDeleteCategory(id) {
     const category = categories.find(cat => cat.id === id);
-    if (confirm('¿Estás seguro de que deseas eliminar esta categoría y todos los prompts asociados?')) {
-      categories = categories.filter(cat => cat.id !== id);
-      if (selectedCategory && selectedCategory.id === id) {
-        selectedCategory = null;
-        renderPrompts();
+    if (category) {
+      if (confirm('¿Estás seguro de que deseas eliminar esta categoría y todos los prompts asociados?')) {
+        categories = categories.filter(cat => cat.id !== id);
+        if (selectedCategory && selectedCategory.id === id) {
+          selectedCategory = null;
+          renderPrompts();
+        }
+        saveCategories(categories).then(() => {
+          renderCategories();
+          notifyContentScript();
+        });
       }
-      saveCategories(categories).then(() => {
-        renderCategories();
-        notifyContentScript();
-      });
     }
   }
 
@@ -301,6 +487,41 @@ function initializeModalFunctionality(elements) {
   function deletePrompt(promptId) {
     if (confirm('¿Estás seguro de que deseas eliminar este prompt?')) {
       selectedCategory.options = selectedCategory.options.filter(p => p.id !== promptId);
+      saveCategories(categories).then(() => {
+        renderPrompts();
+        notifyContentScript();
+      });
+    }
+  }
+
+  function duplicateCategory(id) {
+    const category = categories.find(cat => cat.id === id);
+    if (category) {
+      const newCategory = JSON.parse(JSON.stringify(category));
+      newCategory.id = Date.now().toString();
+      newCategory.category = `${category.category} - Copia`;
+      newCategory.isPredefined = false; // Asegurar que la nueva categoría no es predefinida
+      newCategory.options = category.options.map(prompt => {
+        const newPrompt = { ...prompt };
+        newPrompt.id = `${prompt.id} - Copia`;
+        newPrompt.isPredefined = false; // Asegurar que el nuevo prompt no es predefinido
+        return newPrompt;
+      });
+      categories.push(newCategory);
+      saveCategories(categories).then(() => {
+        renderCategories();
+        notifyContentScript();
+      });
+    }
+  }
+
+  function duplicatePrompt(promptId) {
+    const prompt = selectedCategory.options.find(p => p.id === promptId);
+    if (prompt) {
+      const newPrompt = { ...prompt };
+      newPrompt.id = `${prompt.id} - Copia`;
+      newPrompt.isPredefined = false; // Asegurar que el nuevo prompt no es predefinido
+      selectedCategory.options.push(newPrompt);
       saveCategories(categories).then(() => {
         renderPrompts();
         notifyContentScript();
@@ -335,7 +556,7 @@ function initializeModalFunctionality(elements) {
           category.category = name;
         } else {
           const newCategory = {
-            id: Date.now(),
+            id: Date.now().toString(),
             category: name,
             options: [],
             isVisible: true,

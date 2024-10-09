@@ -1,6 +1,4 @@
-
-
-import { replaceTextInDiv } from './utils.js';
+import { replaceTextInDiv, showPromptPreview, hidePromptPreview } from './utils.js';
 
 export function initializeDropdown(div, dropdownElements, state) {
   const { dropdownContainer, optionsContainer, dropdownIndicator } = dropdownElements;
@@ -103,6 +101,23 @@ export function initializeDropdown(div, dropdownElements, state) {
           'ease-in-out', 'transform', 'dropdown-button-animate'
         );
         button.textContent = item.id;
+        button.style.position = 'relative'; // Ensure button has relative positioning
+
+        const infoIcon = document.createElement('img');
+        infoIcon.src = chrome.runtime.getURL('icons/alert-circle.svg');
+        infoIcon.classList.add('info-icon');
+
+        // Add events to show and hide the preview
+        infoIcon.addEventListener('mouseenter', () => {
+          showPromptPreview(item.option, infoIcon);
+        });
+
+        infoIcon.addEventListener('mouseleave', () => {
+          hidePromptPreview();
+        });
+
+        // Append the icon to the button
+        button.appendChild(infoIcon);
 
         button.addEventListener('click', () => {
           replaceTextInDiv(div, item.option, state.triggerKey);

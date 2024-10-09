@@ -24,6 +24,22 @@ import '../css/contentScript.css';
   const inputDiv = await waitForElement('#prompt-textarea');
   const dropdownElements = createDropdown(inputDiv);
 
+  function adjustInputSize() {
+    if (inputDiv.innerText.trim().length > 0) {
+      inputDiv.classList.add('expanded-input');
+    } else {
+      inputDiv.classList.remove('expanded-input');
+    }
+  }
+
+  // Call the function on startup
+  adjustInputSize();
+
+  // Add listener to detect changes
+  inputDiv.addEventListener('input', () => {
+    adjustInputSize();
+  });
+
   const state = {
     selectedCategoryIndex,
     selectedCategory,
