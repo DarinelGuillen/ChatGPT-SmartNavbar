@@ -164,14 +164,19 @@
   left: 0;
   width: 100%;
   height: 100%;
-  display: none; /* Oculto por defecto */
-  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  background-color: rgba(255, 255, 255, 0.15); /* Fondo translúcido */
+  backdrop-filter: blur(10px); /* Desenfoque para efecto cristal */
   z-index: 9999;
-  align-items: flex-start; /* Alinear contenido al inicio verticalmente */
-  justify-content: center; /* Centrar horizontalmente */
-  padding-top: 20px; /* Espaciado desde la parte superior */
-  box-sizing: border-box; /* Incluir padding en el tamaño total */
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 20px;
+  box-sizing: border-box;
+  border-radius: 10px; /* Bordes redondeados para mejor efecto visual */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para darle profundidad */
 }
+
+
 
 #extension-modal.modal-hidden {
   display: none;
