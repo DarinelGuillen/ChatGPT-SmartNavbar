@@ -1,5 +1,9 @@
 /* Dropdown Styles */
 
+
+#target-div {
+  white-space: pre-wrap;
+}
 .dropdown-menu {
   position: fixed;
   background-color: #333333;

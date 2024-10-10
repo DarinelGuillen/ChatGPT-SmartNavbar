@@ -40,7 +40,18 @@ export function replaceTextInDiv(el, option, triggerKey) {
     const before = text.substring(0, match.index);
     const after = text.substring(match.index + match[0].length);
 
-    el.innerHTML = before + option.replace(/\n/g, '<br>') + '<br>' + after;
+    // Escapa caracteres especiales de HTML
+    const escapedOption = option
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+
+    // Reemplaza \n por <br> y \t por espacios no separables (&nbsp;)
+    const formattedOption = escapedOption
+      .replace(/\n/g, '<br>')
+      .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
+
+    el.innerHTML = before + formattedOption + '<br>' + after;
 
     el.focus();
     const newRange = document.createRange();

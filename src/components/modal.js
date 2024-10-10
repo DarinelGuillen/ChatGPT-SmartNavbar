@@ -577,7 +577,6 @@ function initializeModalFunctionality(elements) {
       dialog.remove();
     });
   }
-
   function openPromptDialog(prompt = null) {
     const dialog = document.createElement('div');
     dialog.classList.add('modal-dialog');
@@ -587,7 +586,7 @@ function initializeModalFunctionality(elements) {
         <label class="modal-label">ID del Prompt</label>
         <input type="text" id="prompt-id-input" class="modal-input" value="${prompt ? prompt.id : ''}" />
         <label class="modal-label">Contenido del Prompt</label>
-        <textarea id="prompt-option-input" class="modal-textarea" rows="5">${prompt ? prompt.option : ''}</textarea>
+        <textarea id="prompt-option-input" class="modal-textarea" rows="10" placeholder="Escribe tu prompt aquí. Usa Shift + Enter para saltos de línea y Tab para tabulaciones.">${prompt ? prompt.option : ''}</textarea>
         <div class="modal-dialog-actions">
           <button id="cancel-prompt-btn" class="modal-btn modal-btn-secondary">Cancelar</button>
           <button id="save-prompt-btn" class="modal-btn">${prompt ? 'Guardar Cambios' : 'Guardar Prompt'}</button>
@@ -601,6 +600,7 @@ function initializeModalFunctionality(elements) {
     const savePromptBtn = dialog.querySelector('#save-prompt-btn');
     const cancelPromptBtn = dialog.querySelector('#cancel-prompt-btn');
 
+    // Guardar Prompt
     savePromptBtn.addEventListener('click', () => {
       const id = promptIdInput.value.trim();
       const option = promptOptionInput.value.trim();
@@ -617,11 +617,42 @@ function initializeModalFunctionality(elements) {
           dialog.remove();
           notifyContentScript();
         });
+      } else {
+        alert('Por favor, completa todos los campos.');
       }
     });
 
+    // Cancelar Prompt
     cancelPromptBtn.addEventListener('click', () => {
       dialog.remove();
+    });
+
+    // Manejar la tecla Tab para insertar tabulaciones
+    promptOptionInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const start = promptOptionInput.selectionStart;
+        const end = promptOptionInput.selectionEnd;
+
+        // Insertar tabulación
+        promptOptionInput.value = promptOptionInput.value.substring(0, start) + '\t' + promptOptionInput.value.substring(end);
+
+        // Mover el cursor después de la tabulación
+        promptOptionInput.selectionStart = promptOptionInput.selectionEnd = start + 1;
+      }
+
+      // Opcional: Manejar Shift + Enter para saltos de línea
+      if (e.key === 'Enter' && e.shiftKey) {
+        e.preventDefault();
+        const start = promptOptionInput.selectionStart;
+        const end = promptOptionInput.selectionEnd;
+
+        // Insertar salto de línea
+        promptOptionInput.value = promptOptionInput.value.substring(0, start) + '\n' + promptOptionInput.value.substring(end);
+
+        // Mover el cursor después del salto de línea
+        promptOptionInput.selectionStart = promptOptionInput.selectionEnd = start + 1;
+      }
     });
   }
 
