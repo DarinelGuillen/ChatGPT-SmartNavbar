@@ -1,0 +1,9 @@
+/* Input Styles */
+
+/* Expanded Input Area */
+.expanded-input {
+  min-height: 150px; /* Adjust as needed */
+  max-height: 300px;
+  overflow-y: auto;
+  transition: min-height 0.3s ease-in-out;
+}

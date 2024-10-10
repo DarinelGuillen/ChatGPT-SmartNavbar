@@ -1,6 +1,6 @@
-/* popup.css */
+/* Popup Styles */
 
-/* Estilos para campos de entrada */
+/* Input Fields */
 .input-field {
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -8,7 +8,7 @@
   font-size: 14px;
 }
 
-/* Estilos para botones */
+/* Buttons */
 .btn {
   padding: 8px 16px;
   border: none;
@@ -20,14 +20,12 @@
   opacity: 0.9;
 }
 
-/* Puedes agregar estilos específicos para tamaños */
 .btn-sm {
   padding: 4px 8px;
   font-size: 12px;
 }
 
-
-/* Estilos para la lista de categorías y prompts */
+/* Category and Prompt Items */
 .category-item {
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -41,13 +39,11 @@
   padding: 4px 0;
 }
 
-/* Estilos para el modal */
+/* Modal (if used in popup) */
 #modal {
-  display: none; /* Oculto por defecto */
+  display: none; /* Hidden by default */
 }
 
 #modal.show {
   display: flex;
 }
-
-

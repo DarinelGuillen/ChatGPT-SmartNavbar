@@ -1,6 +1,5 @@
 import { replaceTextInDiv, showPromptPreview, hidePromptPreview } from '../utils/utils.js';
 
-
 export function initializeDropdown(div, dropdownElements, state) {
   const { dropdownContainer, optionsContainer, dropdownIndicator } = dropdownElements;
 
@@ -105,7 +104,7 @@ export function initializeDropdown(div, dropdownElements, state) {
         button.style.position = 'relative'; // Ensure button has relative positioning
 
         const infoIcon = document.createElement('img');
-        infoIcon.src = chrome.runtime.getURL('icons/alert-circle.svg');
+        infoIcon.src = chrome.runtime.getURL('assets/icons/alert-circle.svg');
         infoIcon.classList.add('info-icon');
 
         // Add events to show and hide the preview

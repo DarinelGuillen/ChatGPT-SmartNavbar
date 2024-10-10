@@ -1,6 +1,6 @@
-// src/js/modal.js
 
- 
+
+
 import { getCategories, saveCategories } from '../data/storage.js';
 import { loadCategories } from '../data/dataLoader.js';
 
@@ -12,99 +12,99 @@ export function openModal(state) {
     return;
   }
 
-  // Crear el modal
+
   modal = document.createElement('div');
   modal.id = 'extension-modal';
-  modal.classList.add('modal-hidden'); // Comienza oculto
+  modal.classList.add('modal-hidden');
 
-  // Contenedor del contenido del modal
+
   const modalContent = document.createElement('div');
   modalContent.classList.add('modal-content');
 
-  // Sidebar de categorías
+
   const sidebar = document.createElement('div');
   sidebar.classList.add('modal-sidebar');
 
-  // Título de categorías
+
   const categoriesTitle = document.createElement('h2');
   categoriesTitle.textContent = 'Categorías';
   sidebar.appendChild(categoriesTitle);
 
-  // Lista de categorías
+
   const categoryList = document.createElement('div');
   categoryList.id = 'category-list';
   categoryList.classList.add('modal-category-list');
   sidebar.appendChild(categoryList);
 
-  // Botón para añadir categoría
+
   const addCategoryBtn = document.createElement('div');
   addCategoryBtn.id = 'add-category-btn';
   addCategoryBtn.classList.add('modal-add-button');
   addCategoryBtn.innerHTML = `
-    <img src="${chrome.runtime.getURL('icons/plus-circle.svg')}" />
+    <img src="${chrome.runtime.getURL('assets/icons/plus-circle.svg')}" />
     Añadir Categoría
   `;
   sidebar.appendChild(addCategoryBtn);
 
-  // Panel principal de prompts
+
   const mainPanel = document.createElement('div');
   mainPanel.classList.add('modal-main');
 
-  // Botón de cerrar modal
+
   const closeButton = document.createElement('button');
   closeButton.id = 'close-modal-button';
   closeButton.innerHTML = `
-    <img src="${chrome.runtime.getURL('icons/x.svg')}" />
+    <img src="${chrome.runtime.getURL('assets/icons/x.svg')}" />
   `;
   mainPanel.appendChild(closeButton);
 
-  // Crear contenedor para el título y el campo de búsqueda
+
   const titleContainer = document.createElement('div');
   titleContainer.classList.add('title-container');
 
-  // Título principal
+
   const mainTitle = document.createElement('h1');
   mainTitle.id = 'main-title';
   mainTitle.textContent = 'Selecciona una Categoría';
   titleContainer.appendChild(mainTitle);
 
-  // Contenedor del campo de búsqueda (vacío por defecto)
+
   const searchContainer = document.createElement('div');
   searchContainer.classList.add('search-container');
   titleContainer.appendChild(searchContainer);
 
-  // Añadir el contenedor del título al panel principal
+
   mainPanel.appendChild(titleContainer);
 
-  // Lista de prompts
+
   const promptList = document.createElement('div');
   promptList.id = 'prompt-list';
   promptList.classList.add('modal-prompt-list');
   mainPanel.appendChild(promptList);
 
-  // Botón para añadir prompt
+
   const addPromptBtn = document.createElement('div');
   addPromptBtn.id = 'add-prompt-btn';
   addPromptBtn.classList.add('modal-add-button');
   addPromptBtn.innerHTML = `
-    <img src="${chrome.runtime.getURL('icons/plus-circle.svg')}" />
+    <img src="${chrome.runtime.getURL('assets/icons/plus-circle.svg')}" />
     Añadir Prompt
   `;
   mainPanel.appendChild(addPromptBtn);
 
-  // Ensamblar el contenido del modal
+
   modalContent.appendChild(sidebar);
   modalContent.appendChild(mainPanel);
   modal.appendChild(modalContent);
 
-  // Agregar el modal al body
+
   document.body.appendChild(modal);
 
-  // Mostrar el modal
+
   modal.classList.remove('modal-hidden');
   modal.classList.add('modal-show');
 
-  // Inicializar la funcionalidad del modal
+
   initializeModalFunctionality({
     categoryList,
     promptList,
@@ -136,7 +136,7 @@ function initializeModalFunctionality(elements) {
   getCategories().then((loadedCategories) => {
     categories = loadedCategories;
 
-    // Crear la categoría "Todos" que contiene todos los prompts
+
     const allOptions = [];
     categories.forEach(cat => {
       if (Array.isArray(cat.options)) {
@@ -152,7 +152,7 @@ function initializeModalFunctionality(elements) {
       isPredefined: true
     };
 
-    // Insertar la categoría "Todos" al inicio de la lista
+
     categories.unshift(todosCategory);
 
     renderCategories();
@@ -160,7 +160,7 @@ function initializeModalFunctionality(elements) {
   });
 
   function renderCategories() {
-    // Ordenar categorías según isVisible
+
     categories.sort((a, b) => {
       if (a.isVisible === b.isVisible) return 0;
       return a.isVisible ? -1 : 1;
@@ -171,10 +171,10 @@ function initializeModalFunctionality(elements) {
       const categoryItem = document.createElement('div');
       categoryItem.className = `modal-category-item ${selectedCategory && selectedCategory.id === category.id ? 'selected' : ''}`;
 
-      // Contar cuántos íconos se mostrarán
-      let iconCount = 1; // Siempre se muestra el ícono de visibilidad
+
+      let iconCount = 1;
       if (category.id !== 'all') {
-        iconCount += 3; // Editar, Duplicar, Borrar
+        iconCount += 3;
       }
 
       const actionsClass = iconCount >= 4 ? 'modal-category-actions more-icons' : 'modal-category-actions';
@@ -183,24 +183,24 @@ function initializeModalFunctionality(elements) {
         <div class="modal-category-name">${category.category}</div>
         <div class="${actionsClass}">
           <button class="modal-icon-button toggle-visibility-btn" data-id="${category.id}">
-            <img src="${chrome.runtime.getURL(category.isVisible ? 'icons/eye.svg' : 'icons/eye-off.svg')}" />
+            <img src="${chrome.runtime.getURL(category.isVisible ? 'assets/icons/eye.svg' : 'assets/icons/eye-off.svg')}" />
           </button>
           ${category.id !== 'all' ? `
             <button class="modal-icon-button edit-category-btn" data-id="${category.id}">
-              <img src="${chrome.runtime.getURL('icons/edit-3.svg')}" />
+              <img src="${chrome.runtime.getURL('assets/icons/edit-3.svg')}" />
             </button>
             <button class="modal-icon-button duplicate-category-btn" data-id="${category.id}">
-              <img src="${chrome.runtime.getURL('icons/copy.svg')}" />
+              <img src="${chrome.runtime.getURL('assets/icons/copy.svg')}" />
             </button>
             <button class="modal-icon-button delete-category-btn" data-id="${category.id}">
-              <img src="${chrome.runtime.getURL('icons/trash.svg')}" />
+              <img src="${chrome.runtime.getURL('assets/icons/trash.svg')}" />
             </button>
           ` : ''}
         </div>
       `;
 
       categoryItem.addEventListener('click', (e) => {
-        // Evitar que se active si se hizo clic en las acciones
+
         if (
           e.target.closest('.toggle-visibility-btn') ||
           e.target.closest('.edit-category-btn') ||
@@ -225,13 +225,13 @@ function initializeModalFunctionality(elements) {
 
       if (selectedCategory.id === 'all') {
         if (!searchContainer.querySelector('.category-search')) {
-          // Crear el campo de búsqueda
+
           const searchInput = document.createElement('input');
           searchInput.type = 'text';
           searchInput.placeholder = 'Buscar prompts...';
           searchInput.classList.add('category-search');
 
-          // Añadir evento para filtrar los prompts con debouncing
+
           searchInput.addEventListener('input', () => {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
@@ -239,11 +239,11 @@ function initializeModalFunctionality(elements) {
             }, 300);
           });
 
-          // Añadir el campo de búsqueda al contenedor
+
           searchContainer.appendChild(searchInput);
         }
       } else {
-        // Limpiar el contenedor de búsqueda si no es 'all'
+
         searchContainer.innerHTML = '';
       }
 
@@ -277,25 +277,25 @@ function initializeModalFunctionality(elements) {
               <div class="modal-prompt-title">${prompt.id}</div>
               <div class="modal-prompt-actions">
                 <button class="modal-icon-button toggle-prompt-visibility-btn" data-id="${prompt.id}">
-                  <img src="${chrome.runtime.getURL(prompt.isVisible ? 'icons/eye.svg' : 'icons/eye-off.svg')}" />
+                  <img src="${chrome.runtime.getURL(prompt.isVisible ? 'assets/icons/eye.svg' : 'assets/icons/eye-off.svg')}" />
                 </button>
                 ${!prompt.isPredefined ? `
                   <button class="modal-icon-button edit-prompt-btn" data-id="${prompt.id}">
-                    <img src="${chrome.runtime.getURL('icons/edit-3.svg')}" />
+                    <img src="${chrome.runtime.getURL('assets/icons/edit-3.svg')}" />
                   </button>
                   <button class="modal-icon-button duplicate-prompt-btn" data-id="${prompt.id}">
-                    <img src="${chrome.runtime.getURL('icons/copy.svg')}" />
+                    <img src="${chrome.runtime.getURL('assets/icons/copy.svg')}" />
                   </button>
                   <button class="modal-icon-button delete-prompt-btn" data-id="${prompt.id}">
-                    <img src="${chrome.runtime.getURL('icons/trash.svg')}" />
+                    <img src="${chrome.runtime.getURL('assets/icons/trash.svg')}" />
                   </button>
                 ` : `
                   <button class="modal-icon-button edit-prompt-btn" data-id="${prompt.id}">
-                    <img src="${chrome.runtime.getURL('icons/edit-3.svg')}" />
+                    <img src="${chrome.runtime.getURL('assets/icons/edit-3.svg')}" />
                   </button>
                 `}
                 <button class="modal-icon-button duplicate-prompt-btn" data-id="${prompt.id}">
-                  <img src="${chrome.runtime.getURL('icons/copy.svg')}" />
+                  <img src="${chrome.runtime.getURL('assets/icons/copy.svg')}" />
                 </button>
               </div>
             </div>
@@ -340,18 +340,18 @@ function initializeModalFunctionality(elements) {
               <div class="modal-prompt-title">${prompt.id}</div>
               <div class="modal-prompt-actions">
                 <button class="modal-icon-button toggle-prompt-visibility-btn" data-id="${prompt.id}">
-                  <img src="${chrome.runtime.getURL(prompt.isVisible ? 'icons/eye.svg' : 'icons/eye-off.svg')}" />
+                  <img src="${chrome.runtime.getURL(prompt.isVisible ? 'assets/icons/eye.svg' : 'assets/icons/eye-off.svg')}" />
                 </button>
                 ${canEditPrompt ? `
                   <button class="modal-icon-button edit-prompt-btn" data-id="${prompt.id}">
-                    <img src="${chrome.runtime.getURL('icons/edit-3.svg')}" />
+                    <img src="${chrome.runtime.getURL('assets/icons/edit-3.svg')}" />
                   </button>
                   <button class="modal-icon-button delete-prompt-btn" data-id="${prompt.id}">
-                    <img src="${chrome.runtime.getURL('icons/trash.svg')}" />
+                    <img src="${chrome.runtime.getURL('assets/icons/trash.svg')}" />
                   </button>
                   ${showDuplicatePrompt ? `
                     <button class="modal-icon-button duplicate-prompt-btn" data-id="${prompt.id}">
-                      <img src="${chrome.runtime.getURL('icons/copy.svg')}" />
+                      <img src="${chrome.runtime.getURL('assets/icons/copy.svg')}" />
                     </button>
                   ` : ''}
                 ` : ''}
@@ -501,11 +501,11 @@ function initializeModalFunctionality(elements) {
       const newCategory = JSON.parse(JSON.stringify(category));
       newCategory.id = Date.now().toString();
       newCategory.category = `${category.category} - Copia`;
-      newCategory.isPredefined = false; // Asegurar que la nueva categoría no es predefinida
+      newCategory.isPredefined = false;
       newCategory.options = category.options.map(prompt => {
         const newPrompt = { ...prompt };
         newPrompt.id = `${prompt.id} - Copia`;
-        newPrompt.isPredefined = false; // Asegurar que el nuevo prompt no es predefinido
+        newPrompt.isPredefined = false;
         return newPrompt;
       });
       categories.push(newCategory);
@@ -521,7 +521,7 @@ function initializeModalFunctionality(elements) {
     if (prompt) {
       const newPrompt = { ...prompt };
       newPrompt.id = `${prompt.id} - Copia`;
-      newPrompt.isPredefined = false; // Asegurar que el nuevo prompt no es predefinido
+      newPrompt.isPredefined = false;
       selectedCategory.options.push(newPrompt);
       saveCategories(categories).then(() => {
         renderPrompts();

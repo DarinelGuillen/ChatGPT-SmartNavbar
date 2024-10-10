@@ -5,7 +5,19 @@ import { initializeEventHandlers } from '../eventHandlers/eventHandlers.js';
 import { initializeDropdown } from '../components/Dropdown.js';
 import { createNavbar, updateNavbarSelection } from '../components/Navbar.js';
 import { openModal } from '../components/Modal.js';
-import '../css/contentScript.css';
+
+
+// Import CSS files
+// Importar CSS
+import '../assets/global.css';
+import '../assets/components/navbar.css';
+import '../assets/components/dropdown.css';
+import '../assets/components/tooltip.css';
+import '../assets/components/modal.css';
+import '../assets/components/input.css';
+import '../assets/components/search.css';
+
+
 
 (async function () {
   let triggerKey = await getTriggerKey();

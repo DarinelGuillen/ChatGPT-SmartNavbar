@@ -1,0 +1,20 @@
+@import './tailwind.css';
+
+/* Global utility classes and styles */
+
+.fixed {
+  position: fixed;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Color classes */
+.bg-CHAT { background-color: rgba(33, 33, 33, 1); }
+.bg-navbar { background-color: #333333; }
+.bg-selected { background-color: rgba(40, 167, 69, 1); }
+.bg-selected-bt { background-color: rgba(17, 65, 226, 0.43); }
+.bg-hover { background-color: rgba(102, 153, 204, 0.13); }
+.bg-letra { color: #F0F0F0; }
+.bg-inactive { background-color: rgba(164, 159, 157, 0.12); }
