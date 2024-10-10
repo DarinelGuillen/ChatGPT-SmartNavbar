@@ -1,7 +1,7 @@
 import '../css/popup.css';
 import '../css/tailwind.css';
 
-import { getTriggerKey, saveTriggerKey } from './storage.js';
+import { getTriggerKey, saveTriggerKey } from '../data/storage.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const openModalButton = document.getElementById('open-modal-button');

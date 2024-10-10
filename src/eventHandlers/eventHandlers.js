@@ -1,6 +1,6 @@
 // eventHandlers.js
 
-import { replaceTextInDiv } from './utils.js';
+import { replaceTextInDiv } from '../utils/utils.js';
 
 export function initializeEventHandlers(div, dropdownManager, state) {
   div.addEventListener('input', () => {

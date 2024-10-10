@@ -1,7 +1,8 @@
 // src/js/modal.js
 
-import { getCategories, saveCategories } from './storage.js';
-import { loadCategories } from './dataLoader.js';
+ 
+import { getCategories, saveCategories } from '../data/storage.js';
+import { loadCategories } from '../data/dataLoader.js';
 
 export function openModal(state) {
   let modal = document.getElementById('extension-modal');

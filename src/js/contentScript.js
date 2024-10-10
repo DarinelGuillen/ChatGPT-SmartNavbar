@@ -1,10 +1,10 @@
-import { waitForElement, escapeRegExp } from './utils.js';
-import { loadCategories } from './dataLoader.js';
-import { getTriggerKey } from './storage.js';
-import { initializeEventHandlers } from './eventHandlers.js';
-import { initializeDropdown } from './dropdown.js';
-import { createNavbar, updateNavbarSelection } from './navbar.js';
-import { openModal } from './modal.js';
+import { waitForElement, escapeRegExp } from '../utils/utils.js';
+import { loadCategories } from '../data/dataLoader.js';
+import { getTriggerKey } from '../data/storage.js';
+import { initializeEventHandlers } from '../eventHandlers/eventHandlers.js';
+import { initializeDropdown } from '../components/Dropdown.js';
+import { createNavbar, updateNavbarSelection } from '../components/Navbar.js';
+import { openModal } from '../components/Modal.js';
 import '../css/contentScript.css';
 
 (async function () {

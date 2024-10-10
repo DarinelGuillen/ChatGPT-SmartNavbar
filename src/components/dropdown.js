@@ -1,4 +1,5 @@
-import { replaceTextInDiv, showPromptPreview, hidePromptPreview } from './utils.js';
+import { replaceTextInDiv, showPromptPreview, hidePromptPreview } from '../utils/utils.js';
+
 
 export function initializeDropdown(div, dropdownElements, state) {
   const { dropdownContainer, optionsContainer, dropdownIndicator } = dropdownElements;
