@@ -1,0 +1,20 @@
+/* Tooltip Styles */
+
+.prompt-preview-tooltip {
+  position: absolute;
+  background-color: #333333;
+  color: #F0F0F0;
+  padding: 8px;
+  border-radius: 4px;
+  max-width: 300px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  pointer-events: none;
+  font-size: 14px;
+}
+
+.prompt-preview-tooltip.visible {
+  opacity: 1;
+}

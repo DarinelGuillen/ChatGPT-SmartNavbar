@@ -1,5 +1,3 @@
-// navbar.js
-
 export function createNavbar(categories, selectedCategoryIndex, onSelectCategory) {
   const navbar = document.createElement('div');
   navbar.classList.add(

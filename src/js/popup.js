@@ -1,7 +1,8 @@
-import '../css/popup.css';
-import '../css/tailwind.css';
+import '../assets/popup.css';
+import '../assets/tailwind.css';
 
-import { getTriggerKey, saveTriggerKey } from './storage.js';
+
+import { getTriggerKey, saveTriggerKey } from '../data/storage.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const openModalButton = document.getElementById('open-modal-button');
@@ -12,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   triggerKeyInput.value = triggerKey;
 
   openModalButton.addEventListener('click', () => {
-    // Enviar mensaje al content script para abrir el modal
+
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs[0]?.id) {
         chrome.tabs.sendMessage(tabs[0].id, { type: 'OPEN_MODAL' });
@@ -26,7 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const newTriggerKey = triggerKeyInput.value.trim();
     if (newTriggerKey) {
       saveTriggerKey(newTriggerKey);
-      // Notificar al content script que la tecla de activación ha cambiado
+
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         if (tabs[0]?.id) {
           chrome.tabs.sendMessage(tabs[0].id, { type: 'TRIGGER_KEY_UPDATED' });

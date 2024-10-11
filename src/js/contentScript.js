@@ -1,11 +1,23 @@
-import { waitForElement, escapeRegExp } from './utils.js';
-import { loadCategories } from './dataLoader.js';
-import { getTriggerKey } from './storage.js';
-import { initializeEventHandlers } from './eventHandlers.js';
-import { initializeDropdown } from './dropdown.js';
-import { createNavbar, updateNavbarSelection } from './navbar.js';
-import { openModal } from './modal.js';
-import '../css/contentScript.css';
+import { waitForElement, escapeRegExp } from '../utils/utils.js';
+import { loadCategories } from '../data/dataLoader.js';
+import { getTriggerKey } from '../data/storage.js';
+import { initializeEventHandlers } from '../eventHandlers/eventHandlers.js';
+import { initializeDropdown } from '../components/Dropdown.js';
+import { createNavbar, updateNavbarSelection } from '../components/Navbar.js';
+import { openModal } from '../components/Modal.js';
+
+
+// Import CSS files
+// Importar CSS
+import '../assets/global.css';
+import '../assets/components/navbar.css';
+import '../assets/components/dropdown.css';
+import '../assets/components/tooltip.css';
+import '../assets/components/modal.css';
+import '../assets/components/input.css';
+import '../assets/components/search.css';
+
+
 
 (async function () {
   let triggerKey = await getTriggerKey();
@@ -23,6 +35,22 @@ import '../css/contentScript.css';
 
   const inputDiv = await waitForElement('#prompt-textarea');
   const dropdownElements = createDropdown(inputDiv);
+
+  function adjustInputSize() {
+    if (inputDiv.innerText.trim().length > 0) {
+      inputDiv.classList.add('expanded-input');
+    } else {
+      inputDiv.classList.remove('expanded-input');
+    }
+  }
+
+  // Call the function on startup
+  adjustInputSize();
+
+  // Add listener to detect changes
+  inputDiv.addEventListener('input', () => {
+    adjustInputSize();
+  });
 
   const state = {
     selectedCategoryIndex,

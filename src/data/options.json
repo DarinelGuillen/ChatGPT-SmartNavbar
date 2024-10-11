@@ -1,70 +1,36 @@
 [
   {
     "id": 1,
-    "category": "TEST",
+    "category": "Desarrollo",
     "options": [
-      { "id": "Extension", "option": "Option 1 of dev: Help with code debugging.", "isVisible": true },
-      { "id": "Explain Optimize", "option": "Option 2 of dev: Code optimization.", "isVisible": true }
+      {
+        "id": "Depuración Avanzada",
+        "option": "Opción 1: Depuración Avanzada.\n\tDescripción:\n\t\tEsta opción ofrece técnicas avanzadas para la depuración del código.\n\t\tIncluye:\n\t\t\t- Depuración paso a paso.\n\t\t\t- Uso de breakpoints condicionales.\n\t\t\t- Análisis de rendimiento.\n\tBeneficios:\n\t\t- Identificación rápida de errores.\n\t\t- Optimización del rendimiento del código.",
+        "isVisible": true
+      },
+      {
+        "id": "Optimización de Código",
+        "option": "Opción 2: Optimización de Código.\n\tDescripción:\n\t\tMejora la eficiencia y rendimiento de tu aplicación.\n\t\tIncluye:\n\t\t\t- Refactorización de código.\n\t\t\t- Reducción de la complejidad algorítmica.\n\t\t\t- Minimización de recursos utilizados.\n\tBeneficios:\n\t\t- Aplicaciones más rápidas.\n\t\t- Mejor experiencia de usuario.",
+        "isVisible": true
+      }
     ],
-    "isVisible": false,
+    "isVisible": true,
     "isPredefined": true
   },
   {
     "id": 2,
-    "category": "EnhanceCodePlus",
+    "category": "Mejora de Código",
     "options": [
-      { "id": "Add Comments", "option": "Option 1 of EnhanceCodePlus: Add comments.", "isVisible": true },
-      { "id": "Explain TypeScript", "option": "Option 2 of EnhanceCodePlus: Convert to TypeScript.", "isVisible": true }
-    ],
-    "isVisible": true,
-    "isPredefined": true
-  },
-  {
-    "id": 3,
-    "category": "OPTION 3",
-    "options": [
-      { "id": "Explain Code", "option": "Option 1 of OPTION 3: Code explanation", "isVisible": true },
-      { "id": "Write Unit Tests", "option": "Option 2 of OPTION 3: Write unit tests", "isVisible": true }
-    ],
-    "isVisible": true,
-    "isPredefined": true
-  },
-  {
-    "id": 4,
-    "category": "Performance",
-    "options": [
-      { "id": "Explain Performance", "option": "Option 1 of Performance: Performance analysis", "isVisible": true },
-      { "id": "Profiling", "option": "Option 2 of Performance: Performance profiling", "isVisible": true }
-    ],
-    "isVisible": true,
-    "isPredefined": true
-  },
-  {
-    "id": 5,
-    "category": "Architecture",
-    "options": [
-      { "id": "Design Patterns", "option": "Option 1 of Architecture: Design patterns", "isVisible": true },
-      { "id": "Explain Modularization", "option": "Option 2 of Architecture: Modularization", "isVisible": true }
-    ],
-    "isVisible": true,
-    "isPredefined": true
-  },
-  {
-    "id": 6,
-    "category": "Documentation",
-    "options": [
-      { "id": "API Documentation", "option": "Option 1 of Documentation: API documentation", "isVisible": true },
-      { "id": "Explain User Guide", "option": "Option 2 of Documentation: User guide", "isVisible": true }
-    ],
-    "isVisible": true,
-    "isPredefined": true
-  },
-  {
-    "id": 7,
-    "category": "Integration",
-    "options": [
-      { "id": "Explain Third-party", "option": "Option 1 of Integration: Third-party integration", "isVisible": true },
-      { "id": "Database Integration", "option": "Option 2 of Integration: Database integration", "isVisible": true }
+      {
+        "id": "Añadir Comentarios Detallados",
+        "option": "Opción 1: Añadir Comentarios Detallados.\n\tDescripción:\n\t\tFacilita la comprensión del código para futuros desarrolladores.\n\t\tIncluye:\n\t\t\t- Comentarios de función.\n\t\t\t- Explicaciones de lógica compleja.\n\tBeneficios:\n\t\t- Mantenimiento más sencillo.\n\t\t- Facilita la colaboración en equipo.",
+        "isVisible": true
+      },
+      {
+        "id": "Convertir a TypeScript",
+        "option": "Usuario escribiendo\n\tSalto de línea                  - Muchos espacios\n\t\t- Opción\nOtro salto, ejemplo...",
+        "isVisible": true
+      }
     ],
     "isVisible": true,
     "isPredefined": true

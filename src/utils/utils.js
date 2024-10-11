@@ -1,4 +1,30 @@
+let previewTooltip;
 
+export function showPromptPreview(content, anchorElement) {
+
+  if (!previewTooltip) {
+    previewTooltip = document.createElement('div');
+    previewTooltip.classList.add('prompt-preview-tooltip');
+    document.body.appendChild(previewTooltip);
+  }
+
+
+  previewTooltip.textContent = content.substring(0, 100) + (content.length > 100 ? '...' : '');
+
+
+  const rect = anchorElement.getBoundingClientRect();
+  previewTooltip.style.top = `${rect.bottom + window.scrollY + 5}px`;
+  previewTooltip.style.left = `${rect.left + window.scrollX}px`;
+
+
+  previewTooltip.classList.add('visible');
+}
+
+export function hidePromptPreview() {
+  if (previewTooltip) {
+    previewTooltip.classList.remove('visible');
+  }
+}
 
 export function replaceTextInDiv(el, option, triggerKey) {
   const escapedTriggerKey = escapeRegExp(triggerKey);
@@ -14,13 +40,21 @@ export function replaceTextInDiv(el, option, triggerKey) {
     const before = text.substring(0, match.index);
     const after = text.substring(match.index + match[0].length);
 
+    // Escapa caracteres especiales de HTML
+    const escapedOption = option
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
 
-    el.innerHTML = before + option.replace(/\n/g, '<br>') + '<br>' + after;
+    // Reemplaza \n por <br> y \t por espacios no separables (&nbsp;)
+    const formattedOption = escapedOption
+      .replace(/\n/g, '<br>')
+      .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
 
+    el.innerHTML = before + formattedOption + '<br>' + after;
 
     el.focus();
     const newRange = document.createRange();
-
 
     const lastNode = el.lastChild;
     if (lastNode) {
@@ -28,7 +62,6 @@ export function replaceTextInDiv(el, option, triggerKey) {
         const offset = lastNode.length;
         newRange.setStart(lastNode, offset);
       } else {
-
         newRange.setStartAfter(lastNode);
       }
       newRange.collapse(true);

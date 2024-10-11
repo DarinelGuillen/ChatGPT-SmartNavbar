@@ -1,0 +1,288 @@
+/* Modal Styles */
+
+/* Modal Container */
+#extension-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none; /* Hidden by default */
+  background-color: rgba(0, 0, 0, 0.75);
+  z-index: 9997;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#extension-modal.modal-hidden {
+  display: none;
+}
+
+#extension-modal.modal-show {
+  display: flex;
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #1f1f1f;
+  color: #F0F0F0;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  width: 90%; /* Increased width */
+  height: 90%; /* Increased height */
+  max-height: 95%;
+  position: relative;
+}
+
+/* Sidebar */
+.modal-sidebar {
+  width: 300px; /* Increased sidebar width */
+  background-color: #2c2c2c;
+  padding: 24px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.modal-sidebar h2 {
+  font-size: 28px; /* Increased font size */
+  margin-bottom: 20px;
+}
+
+/* Category List */
+.modal-category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modal-category-item {
+  background-color: #3a3a3a;
+  border-radius: 4px;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-category-item:hover {
+  background-color: #505050;
+}
+
+.modal-category-item.selected {
+  background-color: #28a745;
+}
+
+.modal-category-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Category Actions */
+.modal-category-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-category-actions .modal-icon-button {
+  width: 20px;
+  height: 20px;
+}
+
+.modal-category-actions.more-icons .modal-icon-button {
+  width: 18px;
+  height: 18px;
+}
+
+.modal-category-actions .modal-icon-button img {
+  width: 100%;
+  height: 100%;
+}
+
+/* Main Panel */
+.modal-main {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Prompt List */
+.modal-prompt-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Prompt Card */
+.modal-prompt-card {
+  background-color: #2c2c2c;
+  border-radius: 4px;
+  padding: 12px;
+}
+
+.modal-prompt-card .modal-prompt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-prompt-card .modal-prompt-title {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.modal-prompt-card .modal-prompt-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-prompt-card .modal-icon-button {
+  width: 20px;
+  height: 20px;
+}
+
+.modal-prompt-card .modal-icon-button img {
+  width: 100%;
+  height: 100%;
+}
+
+.modal-prompt-card p {
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+/* Opacity for Hidden Items */
+.opacity-50 {
+  opacity: 0.5;
+}
+
+/* Close Button */
+#close-modal-button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+#close-modal-button img {
+  width: 24px;
+  height: 24px;
+}
+
+/* Add Button */
+.modal-add-button {
+  display: flex;
+  align-items: center;
+  color: #2196f3;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.modal-add-button img {
+  margin-right: 8px;
+}
+
+/* Form Inputs */
+.modal-input,
+.modal-textarea {
+  width: 100%;
+  padding: 10px; /* Increased padding */
+  background-color: #3a3a3a;
+  border: 1px solid #555;
+  border-radius: 4px;
+  margin-bottom: 16px; /* Increased bottom margin */
+  font-size: 16px; /* Increased font size */
+  color: #524f54;
+}
+
+.modal-label {
+  display: block;
+  margin-bottom: 6px; /* Increased bottom margin */
+  font-size: 16px; /* Increased font size */
+  font-weight: bold;
+}
+
+/* Buttons */
+.modal-btn {
+  padding: 10px 20px; /* Increased padding */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 8px;
+  font-size: 16px; /* Increased font size */
+  background-color: #2196f3;
+  color: #F0F0F0;
+}
+
+.modal-btn:hover {
+  background-color: #1976d2;
+}
+
+.modal-btn-secondary {
+  background-color: #555;
+  color: #F0F0F0;
+}
+
+.modal-btn-secondary:hover {
+  background-color: #666;
+}
+
+/* Modal Dialog Styles */
+
+/* Overlay for Dialogs */
+.modal-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: none; /* Hidden by default */
+  align-items: center;
+  justify-content: center;
+  z-index: 9998; /* Superior al modal principal */
+}
+
+/* Show Dialog Overlay */
+.modal-dialog-overlay.show {
+  display: flex;
+}
+
+/* Dialog Content */
+.modal-dialog-content {
+  background-color: #1f1f1f;
+  color: #F0F0F0;
+  border-radius: 8px;
+  width: 80%;
+  height: 80%;
+  padding: 24px;
+  box-sizing: border-box;
+  overflow: auto;
+  position: relative;
+}
+
+/* Close Button for Dialog */
+.modal-dialog-close-button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.modal-dialog-close-button img {
+  width: 24px;
+  height: 24px;
+}

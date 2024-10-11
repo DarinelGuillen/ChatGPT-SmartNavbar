@@ -1,0 +1,62 @@
+/* Navbar Styles */
+
+.navbar {
+  /* Navbar container styles */
+}
+
+.buttons-container {
+  position: relative;
+  display: flex;
+  gap: 0.2rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.indicator {
+  transition: left 0.3s ease, width 0.3s ease, bottom 0.3s ease;
+  height: 1px;
+  background-color: #28a745;
+  position: absolute;
+  bottom: 0px;
+  left: 0;
+  width: 0%;
+  border-radius: 2px;
+  z-index: 21;
+}
+
+.navbar-animate {
+  animation: navbarEnter 0.8s ease forwards;
+}
+
+@keyframes navbarEnter {
+  0% { opacity: 0; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.button-animate {
+  animation: buttonEnter 0.8s ease forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+@keyframes buttonEnter {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.nav-button {
+  /* Styles for nav buttons */
+}
+
+.nav-button.active-button {
+  transform: scale(1.05);
+}
