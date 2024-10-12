@@ -1,0 +1,148 @@
+/* canvasEditor.css */
+
+/* Fondo semi-transparente detrás del editor */
+.canvas-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+}
+
+/* Contenedor principal del editor */
+.canvas-editor {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Centrar el componente */
+  width: 90%;
+  height: 85%;
+  background-color: #1f2937; /* Fondo gris oscuro */
+  border-radius: 0.5rem; /* Bordes redondeados */
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5); /* Sombra */
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Para evitar desbordamientos */
+}
+
+/* Patrón de cuadrícula y animación de fondo */
+.canvas-editor::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 50px 50px;
+  opacity: 0.1;
+  animation: gridMove 10s linear infinite;
+  z-index: 1;
+}
+
+@keyframes gridMove {
+  0% { background-position: 0 0; }
+  100% { background-position: 50px 50px; }
+}
+
+/* Estilos del encabezado */
+.canvas-header {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background-color: #111827; /* Fondo más oscuro */
+  border-bottom: 1px solid #374151; /* Línea inferior */
+  z-index: 2; /* Por encima del patrón de cuadrícula */
+}
+
+.canvas-header-icon {
+  width: 2rem;
+  height: 2rem;
+  margin-right: 1rem;
+  transition: transform 0.3s;
+}
+
+.canvas-header-icon:hover {
+  transform: rotate(45deg) scale(1.1);
+}
+
+.canvas-title {
+  font-weight: 300;
+  font-size: 1.5rem;
+  color: #ffffff;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.canvas-close-icon {
+  cursor: pointer;
+  width: 2rem;
+  height: 2rem;
+  transition: transform 0.3s;
+}
+
+.canvas-close-icon:hover {
+  transform: rotate(45deg) scale(1.1);
+}
+
+/* Área principal de contenido */
+.canvas-main-content {
+  flex: 1;
+  position: relative;
+  padding: 1rem;
+  overflow: hidden;
+  z-index: 2; /* Por encima del patrón de cuadrícula */
+}
+
+/* Estilos del textarea */
+.canvas-textarea {
+  width: 100%;
+  height: 100%;
+  padding: 1.5rem;
+  font-family: monospace;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #ffffff;
+  background-color: transparent; /* Fondo transparente para mostrar el patrón */
+  border: none;
+  outline: none;
+  resize: none;
+  overflow-y: auto;
+  z-index: 2;
+  position: relative;
+}
+
+/* Estilos del pie de página */
+.canvas-footer {
+  padding: 1rem;
+  display: flex;
+  justify-content: center; /* Centrar el botón */
+  z-index: 2;
+}
+
+/* Botón 'Insert Text' */
+.insert-text-button {
+  display: flex;
+  align-items: center;
+  background-color: #2563eb; /* Color azul */
+  color: #ffffff;
+  padding: 0.5rem 1.5rem;
+  border-radius: 9999px; /* Bordes totalmente redondeados */
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+}
+
+.insert-text-button:hover {
+  background-color: #1d4ed8; /* Color azul más oscuro al pasar el ratón */
+}
+
+.insert-text-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: 0.5rem;
+}

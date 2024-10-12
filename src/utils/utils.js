@@ -79,7 +79,7 @@ export function waitForElement(selector) {
       return resolve(element);
     }
 
-    const observer = new MutationObserver(mutations => {
+    const observer = new MutationObserver(() => {
       const el = document.querySelector(selector);
       if (el) {
         resolve(el);
@@ -89,11 +89,24 @@ export function waitForElement(selector) {
 
     observer.observe(document.body, {
       childList: true,
-      subtree: true
+      subtree: true,
     });
   });
 }
 
 export function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+export function getTextFromPromptTextarea() {
+  const promptTextarea = document.querySelector('#prompt-textarea');
+  return promptTextarea ? promptTextarea.value || promptTextarea.innerText : '';
+}
+
+export function setTextToPromptTextarea(text) {
+  const promptTextarea = document.querySelector('#prompt-textarea');
+  if (promptTextarea) {
+    promptTextarea.value = text;
+    promptTextarea.innerText = text;
+  }
 }

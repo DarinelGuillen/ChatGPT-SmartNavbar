@@ -5,10 +5,10 @@ import { initializeEventHandlers } from '../eventHandlers/eventHandlers.js';
 import { initializeDropdown } from '../components/Dropdown.js';
 import { createNavbar, updateNavbarSelection } from '../components/Navbar.js';
 import { openModal } from '../components/Modal.js';
+import { openCanvasEditor } from '../components/canvasEditor.js';
 
 
-// Import CSS files
-// Importar CSS
+
 import '../assets/global.css';
 import '../assets/components/navbar.css';
 import '../assets/components/dropdown.css';
@@ -16,8 +16,7 @@ import '../assets/components/tooltip.css';
 import '../assets/components/modal.css';
 import '../assets/components/input.css';
 import '../assets/components/search.css';
-
-
+import '../assets/components/canvasEditor.css';
 
 (async function () {
   let triggerKey = await getTriggerKey();
@@ -36,6 +35,31 @@ import '../assets/components/search.css';
   const inputDiv = await waitForElement('#prompt-textarea');
   const dropdownElements = createDropdown(inputDiv);
 
+
+  const sendButton = await waitForElement('button[data-testid="send-button"]');
+
+  console.log('Send button:', sendButton);
+
+
+
+  const maximizeButton = document.createElement('button');
+  maximizeButton.classList.add('p-1', 'rounded-md', 'hover:bg-gray-100', 'maximize-button');
+  maximizeButton.style.marginRight = '8px';
+
+  const maximizeIcon = document.createElement('img');
+  maximizeIcon.src = chrome.runtime.getURL('assets/icons/maximize.svg');
+  maximizeIcon.classList.add('w-5', 'h-5');
+
+  maximizeButton.appendChild(maximizeIcon);
+
+
+  sendButton.parentElement.insertBefore(maximizeButton, sendButton);
+
+
+  maximizeButton.addEventListener('click', () => {
+    openCanvasEditor();
+  });
+
   function adjustInputSize() {
     if (inputDiv.innerText.trim().length > 0) {
       inputDiv.classList.add('expanded-input');
@@ -44,10 +68,10 @@ import '../assets/components/search.css';
     }
   }
 
-  // Call the function on startup
+
   adjustInputSize();
 
-  // Add listener to detect changes
+
   inputDiv.addEventListener('input', () => {
     adjustInputSize();
   });
