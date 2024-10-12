@@ -7,8 +7,6 @@ import { createNavbar, updateNavbarSelection } from '../components/Navbar.js';
 import { openModal } from '../components/Modal.js';
 import { openCanvasEditor } from '../components/canvasEditor.js';
 
-
-
 import '../assets/global.css';
 import '../assets/components/navbar.css';
 import '../assets/components/dropdown.css';
@@ -35,30 +33,39 @@ import '../assets/components/canvasEditor.css';
   const inputDiv = await waitForElement('#prompt-textarea');
   const dropdownElements = createDropdown(inputDiv);
 
+  // Seleccionar el contenedor del botón de enviar
+  const targetButtonContainer = await waitForElement('.flex.items-end.gap-1\\.5.pl-4.md\\:gap-2');
+
+  if (targetButtonContainer) {
+    // Crear el contenedor para el botón de maximizar
+    const maximizeButtonContainer = document.createElement('div');
+    maximizeButtonContainer.classList.add('flex', 'items-center');
+
+    // Crear el botón de maximizar
+    const maximizeButton = document.createElement('button');
+    maximizeButton.classList.add('flex', 'items-center', 'justify-center', 'h-8', 'w-8', 'rounded-full', 'text-token-text-primary', 'dark:text-white', 'focus-visible:outline-black', 'dark:focus-visible:outline-white', 'mb-1');
+    maximizeButton.setAttribute('aria-label', 'Abrir editor');
+
+    const maximizeIcon = document.createElement('img');
+    maximizeIcon.src = chrome.runtime.getURL('assets/icons/maximize.svg');
+    maximizeIcon.classList.add('w-5', 'h-5');
+
+    maximizeButton.appendChild(maximizeIcon);
+    maximizeButtonContainer.appendChild(maximizeButton);
+
+    // Insertar el contenedor del botón de maximizar antes del contenedor del botón de enviar
+    targetButtonContainer.insertBefore(maximizeButtonContainer, targetButtonContainer.firstChild);
+
+    // Agregar evento de clic para abrir el editor
+    maximizeButton.addEventListener('click', () => {
+      openCanvasEditor();
+    });
+  } else {
+    console.error('Contenedor del botón de enviar no encontrado. No se puede insertar el botón de maximizar.');
+  }
 
   const sendButton = await waitForElement('button[data-testid="send-button"]');
-
   console.log('Send button:', sendButton);
-
-
-
-  const maximizeButton = document.createElement('button');
-  maximizeButton.classList.add('p-1', 'rounded-md', 'hover:bg-gray-100', 'maximize-button');
-  maximizeButton.style.marginRight = '8px';
-
-  const maximizeIcon = document.createElement('img');
-  maximizeIcon.src = chrome.runtime.getURL('assets/icons/maximize.svg');
-  maximizeIcon.classList.add('w-5', 'h-5');
-
-  maximizeButton.appendChild(maximizeIcon);
-
-
-  sendButton.parentElement.insertBefore(maximizeButton, sendButton);
-
-
-  maximizeButton.addEventListener('click', () => {
-    openCanvasEditor();
-  });
 
   function adjustInputSize() {
     if (inputDiv.innerText.trim().length > 0) {
@@ -68,9 +75,7 @@ import '../assets/components/canvasEditor.css';
     }
   }
 
-
   adjustInputSize();
-
 
   inputDiv.addEventListener('input', () => {
     adjustInputSize();

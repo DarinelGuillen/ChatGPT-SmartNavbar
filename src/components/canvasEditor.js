@@ -31,7 +31,7 @@ export function openCanvasEditor() {
 
 
   const headerIcon = document.createElement('img');
-  headerIcon.src = chrome.runtime.getURL('assets/icons/maximize.svg');
+  headerIcon.src = chrome.runtime.getURL('assets/icons/square.svg');
   headerIcon.classList.add('canvas-header-icon');
   header.appendChild(headerIcon);
 
@@ -58,6 +58,11 @@ export function openCanvasEditor() {
   const mainContent = document.createElement('div');
   mainContent.classList.add('canvas-main-content');
 
+
+  const lineNumbers = document.createElement('div');
+  lineNumbers.classList.add('canvas-line-numbers');
+
+
   const textArea = document.createElement('textarea');
   textArea.classList.add('canvas-textarea');
   textArea.spellcheck = false;
@@ -65,6 +70,7 @@ export function openCanvasEditor() {
   const promptText = getTextFromPromptTextarea();
   textArea.value = promptText;
 
+  mainContent.appendChild(lineNumbers);
   mainContent.appendChild(textArea);
 
   canvasEditor.appendChild(mainContent);
@@ -99,7 +105,7 @@ export function openCanvasEditor() {
 
   document.body.appendChild(canvasEditor);
 
-  initializeCanvasEditor(textArea);
+  initializeCanvasEditor(textArea, lineNumbers);
 }
 
 function closeCanvasEditor() {
@@ -135,6 +141,11 @@ function initializeCanvasEditor(textArea, lineNumbers) {
       lineNumberElement.textContent = lineNumber;
 
 
+      if (isCurrentLine(index, textArea)) {
+        lineNumberElement.classList.add('current-line');
+      }
+
+
       if (lineText.trim().endsWith('<>')) {
         if (insideCollapsible) {
 
@@ -152,53 +163,81 @@ function initializeCanvasEditor(textArea, lineNumbers) {
     });
   };
 
+  const isCurrentLine = (lineIndex, textArea) => {
+    const selectionStart = textArea.selectionStart;
+    const textBeforeCursor = textArea.value.substr(0, selectionStart);
+    const currentLineIndex = textBeforeCursor.split('\n').length - 1;
+    return lineIndex === currentLineIndex;
+  };
 
   textArea.addEventListener('input', updateContent);
+  textArea.addEventListener('scroll', () => {
+    lineNumbers.scrollTop = textArea.scrollTop;
+  });
+
+  textArea.addEventListener('click', updateContent);
+  textArea.addEventListener('keyup', updateContent);
+
   updateContent();
+
+
+  function addCollapseIcon(lineNumberElement, startIndex, textArea, collapsedSections) {
+    const collapseIcon = document.createElement('img');
+    collapseIcon.src = chrome.runtime.getURL('assets/icons/chevron-down.svg');
+    collapseIcon.classList.add('collapse-icon');
+
+    collapseIcon.addEventListener('click', () => {
+      collapseSection(startIndex, textArea, collapsedSections);
+    });
+
+    lineNumberElement.appendChild(collapseIcon);
+  }
+
+  function addExpandIcon(lineNumberElement, startIndex, endIndex, textArea, collapsedSections) {
+    const expandIcon = document.createElement('img');
+    expandIcon.src = chrome.runtime.getURL('assets/icons/chevron-up.svg');
+    expandIcon.classList.add('expand-icon');
+
+    expandIcon.addEventListener('click', () => {
+      expandSection(startIndex, endIndex, textArea, collapsedSections);
+    });
+
+    lineNumberElement.appendChild(expandIcon);
+  }
+
+  function collapseSection(startIndex, textArea, collapsedSections) {
+    const lines = textArea.value.split('\n');
+    const endIndex = lines.findIndex((line, idx) => idx > startIndex && line.trim().endsWith('<>'));
+    if (endIndex === -1) return;
+
+    const collapsedContent = lines.slice(startIndex + 1, endIndex);
+    collapsedSections[startIndex] = collapsedContent;
+
+    lines.splice(startIndex + 1, endIndex - startIndex - 1, '[COLLAPSED TEXT]');
+    textArea.value = lines.join('\n');
+
+
+    const newCursorPosition = lines.slice(0, startIndex + 2).join('\n').length;
+    textArea.setSelectionRange(newCursorPosition, newCursorPosition);
+
+    textArea.focus();
+
+
+    updateContent();
+  }
+
+  function expandSection(startIndex, endIndex, textArea, collapsedSections) {
+    if (!collapsedSections[startIndex]) return;
+
+    const lines = textArea.value.split('\n');
+    lines.splice(startIndex + 1, 1, ...collapsedSections[startIndex]);
+    delete collapsedSections[startIndex];
+    textArea.value = lines.join('\n');
+
+    textArea.focus();
+
+
+    updateContent();
+  }
 }
 
-function addCollapseIcon(lineNumberElement, startIndex, textArea, collapsedSections) {
-  const collapseIcon = document.createElement('img');
-  collapseIcon.src = chrome.runtime.getURL('assets/icons/chevron-down.svg');
-  collapseIcon.classList.add('collapse-icon');
-
-  collapseIcon.addEventListener('click', () => {
-    collapseSection(startIndex, textArea, collapsedSections);
-  });
-
-  lineNumberElement.appendChild(collapseIcon);
-}
-
-function addExpandIcon(lineNumberElement, startIndex, endIndex, textArea, collapsedSections) {
-  const expandIcon = document.createElement('img');
-  expandIcon.src = chrome.runtime.getURL('assets/icons/chevron-up.svg');
-  expandIcon.classList.add('collapse-icon');
-
-  expandIcon.addEventListener('click', () => {
-    expandSection(startIndex, endIndex, textArea, collapsedSections);
-  });
-
-  lineNumberElement.appendChild(expandIcon);
-}
-
-function collapseSection(startIndex, textArea, collapsedSections) {
-  const lines = textArea.value.split('\n');
-  const endIndex = lines.findIndex((line, idx) => idx > startIndex && line.trim().endsWith('<>'));
-  if (endIndex === -1) return;
-
-  const collapsedContent = lines.slice(startIndex + 1, endIndex);
-  collapsedSections[startIndex] = collapsedContent;
-
-
-  lines.splice(startIndex + 1, endIndex - startIndex - 1, '[COLLAPSED TEXT]');
-  textArea.value = lines.join('\n');
-}
-
-function expandSection(startIndex, endIndex, textArea, collapsedSections) {
-  if (!collapsedSections[startIndex]) return;
-
-  const lines = textArea.value.split('\n');
-  lines.splice(startIndex + 1, 1, ...collapsedSections[startIndex]);
-  delete collapsedSections[startIndex];
-  textArea.value = lines.join('\n');
-}

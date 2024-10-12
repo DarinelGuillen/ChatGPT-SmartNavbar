@@ -91,15 +91,37 @@
 .canvas-main-content {
   flex: 1;
   position: relative;
-  padding: 1rem;
+  display: flex;
   overflow: hidden;
   z-index: 2; /* Por encima del patrón de cuadrícula */
 }
 
+/* Contenedor de números de línea */
+.canvas-line-numbers {
+  width: 50px;
+  background-color: #1f2937;
+  color: rgba(255, 255, 255, 0.3);
+  overflow-y: auto;
+  padding-top: 1.5rem;
+  text-align: right;
+  font-size: 1rem;
+  line-height: 1.5;
+  font-family: monospace;
+  z-index: 2;
+}
+
+.line-number {
+  padding-right: 0.5rem;
+  position: relative;
+}
+
+.line-number.current-line {
+  color: #ffffff;
+}
+
 /* Estilos del textarea */
 .canvas-textarea {
-  width: 100%;
-  height: 100%;
+  flex: 1;
   padding: 1.5rem;
   font-family: monospace;
   font-size: 1rem;
@@ -112,6 +134,16 @@
   overflow-y: auto;
   z-index: 2;
   position: relative;
+}
+
+/* Íconos de colapsar/expandir */
+.collapse-icon, .expand-icon {
+  position: absolute;
+  left: -20px;
+  top: 0;
+  cursor: pointer;
+  width: 1rem;
+  height: 1rem;
 }
 
 /* Estilos del pie de página */
