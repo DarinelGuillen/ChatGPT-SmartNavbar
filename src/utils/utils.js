@@ -1,21 +1,19 @@
+// src/utils/utils.js
+
 let previewTooltip;
 
 export function showPromptPreview(content, anchorElement) {
-
   if (!previewTooltip) {
     previewTooltip = document.createElement('div');
     previewTooltip.classList.add('prompt-preview-tooltip');
     document.body.appendChild(previewTooltip);
   }
 
-
   previewTooltip.textContent = content.substring(0, 100) + (content.length > 100 ? '...' : '');
-
 
   const rect = anchorElement.getBoundingClientRect();
   previewTooltip.style.top = `${rect.bottom + window.scrollY + 5}px`;
   previewTooltip.style.left = `${rect.left + window.scrollX}px`;
-
 
   previewTooltip.classList.add('visible');
 }
@@ -69,11 +67,15 @@ export function replaceTextInDiv(el, option, triggerKey) {
       sel.removeAllRanges();
       sel.addRange(newRange);
     }
+
+    // Disparar evento input
+    const event = new Event('input', { bubbles: true });
+    el.dispatchEvent(event);
   }
 }
 
 export function waitForElement(selector) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const element = document.querySelector(selector);
     if (element) {
       return resolve(element);
@@ -99,14 +101,74 @@ export function escapeRegExp(string) {
 }
 
 export function getTextFromPromptTextarea() {
-  const promptTextarea = document.querySelector('#prompt-textarea');
-  return promptTextarea ? promptTextarea.value || promptTextarea.innerText : '';
+  const promptTextarea = document.getElementById('prompt-textarea');
+  if (promptTextarea) {
+    const text = getPlainTextFromContentEditable(promptTextarea);
+    console.log('Texto obtenido del promptTextarea:', text);
+    return text;
+  }
+  return '';
+}
+
+function getPlainTextFromContentEditable(element) {
+  let text = '';
+  const childNodes = element.childNodes;
+
+  for (const node of childNodes) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      text += node.textContent;
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      if (node.tagName === 'BR') {
+        text += '\n';
+      } else if (node.tagName === 'P' || node.tagName === 'DIV') {
+        const childText = getPlainTextFromContentEditable(node);
+        text += childText + '\n';
+      } else {
+        text += node.textContent;
+      }
+    }
+  }
+
+  return text;
 }
 
 export function setTextToPromptTextarea(text) {
-  const promptTextarea = document.querySelector('#prompt-textarea');
+  const promptTextarea = document.getElementById('prompt-textarea');
   if (promptTextarea) {
-    promptTextarea.value = text;
-    promptTextarea.innerText = text;
+    promptTextarea.focus();
+
+    // Limpiamos el contenido existente
+    promptTextarea.innerHTML = '';
+
+    // Dividimos el texto en líneas y creamos un <p> por línea
+    const lines = text.split('\n');
+    for (const line of lines) {
+      const p = document.createElement('p');
+      if (line === '') {
+        p.appendChild(document.createElement('br'));
+      } else {
+        p.textContent = line;
+      }
+      promptTextarea.appendChild(p);
+    }
+
+    // Movemos el cursor al final
+    moveCaretToEnd(promptTextarea);
+
+    // Disparamos el evento input
+    const event = new Event('input', { bubbles: true });
+    promptTextarea.dispatchEvent(event);
+
+    console.log('Texto establecido en promptTextarea:', text);
   }
+}
+
+function moveCaretToEnd(element) {
+  const range = document.createRange();
+  range.selectNodeContents(element);
+  range.collapse(false);
+
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
 }

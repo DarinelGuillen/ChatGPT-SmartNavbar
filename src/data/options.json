@@ -4,13 +4,13 @@
     "category": "Desarrollo",
     "options": [
       {
-        "id": "Depuración Avanzada",
-        "option": "Opción 1: Depuración Avanzada.\n\tDescripción:\n\t\tEsta opción ofrece técnicas avanzadas para la depuración del código.\n\t\tIncluye:\n\t\t\t- Depuración paso a paso.\n\t\t\t- Uso de breakpoints condicionales.\n\t\t\t- Análisis de rendimiento.\n\tBeneficios:\n\t\t- Identificación rápida de errores.\n\t\t- Optimización del rendimiento del código.",
+        "id": "DepuracionAvanzada",
+        "option": "Opción 1: Depuración Avanzada.\nDescripción:\n\tEsta opción ofrece técnicas avanzadas para la depuración del código.\nIncluye:\n\t- Depuración paso a paso.\n\t- Uso de breakpoints condicionales.\n\t- Análisis de rendimiento.\nBeneficios:\n\t- Identificación rápida de errores.\n\t- Optimización del rendimiento del código.",
         "isVisible": true
       },
       {
-        "id": "Optimización de Código",
-        "option": "Opción 2: Optimización de Código.\n\tDescripción:\n\t\tMejora la eficiencia y rendimiento de tu aplicación.\n\t\tIncluye:\n\t\t\t- Refactorización de código.\n\t\t\t- Reducción de la complejidad algorítmica.\n\t\t\t- Minimización de recursos utilizados.\n\tBeneficios:\n\t\t- Aplicaciones más rápidas.\n\t\t- Mejor experiencia de usuario.",
+        "id": "OptimizacionCodigo",
+        "option": "Opción 2: Optimización de Código.\nDescripción:\n\tMejora la eficiencia y rendimiento de tu aplicación.\nIncluye:\n\t- Refactorización de código.\n\t- Reducción de la complejidad algorítmica.\n\t- Minimización de recursos utilizados.\nBeneficios:\n\t- Aplicaciones más rápidas.\n\t- Mejor experiencia de usuario.",
         "isVisible": true
       }
     ],
@@ -22,13 +22,13 @@
     "category": "Mejora de Código",
     "options": [
       {
-        "id": "Añadir Comentarios Detallados",
-        "option": "Opción 1: Añadir Comentarios Detallados.\n\tDescripción:\n\t\tFacilita la comprensión del código para futuros desarrolladores.\n\t\tIncluye:\n\t\t\t- Comentarios de función.\n\t\t\t- Explicaciones de lógica compleja.\n\tBeneficios:\n\t\t- Mantenimiento más sencillo.\n\t\t- Facilita la colaboración en equipo.",
+        "id": "ComentariosDetallados",
+        "option": "Opción 1: Añadir Comentarios Detallados.\nDescripción:\n\tFacilita la comprensión del código para futuros desarrolladores.\nIncluye:\n\t- Comentarios de función.\n\t- Explicaciones de lógica compleja.\nBeneficios:\n\t- Mantenimiento más sencillo.\n\t- Facilita la colaboración en equipo.",
         "isVisible": true
       },
       {
-        "id": "Convertir a TypeScript",
-        "option": "Usuario escribiendo\n\tSalto de línea                  - Muchos espacios\n\t\t- Opción\nOtro salto, ejemplo...",
+        "id": "ConvertirTypeScript",
+        "option": "Opción 2: Convertir a TypeScript.\nDescripción:\n\tConvierte el código JavaScript a TypeScript para un mejor control de tipos y menos errores.\nIncluye:\n\t- Tipado estático.\n\t- Refactorización de archivos .js a .ts.\nBeneficios:\n\t- Mayor estabilidad en el código.\n\t- Prevención de errores en tiempo de compilación.",
         "isVisible": true
       }
     ],

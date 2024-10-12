@@ -1,9 +1,8 @@
-
+// src/components/canvasEditor.js
 
 import { getTextFromPromptTextarea, setTextToPromptTextarea } from '../utils/utils.js';
 
 export function openCanvasEditor() {
-
   let canvasOverlay = document.getElementById('canvas-overlay');
   if (!canvasOverlay) {
     canvasOverlay = document.createElement('div');
@@ -14,10 +13,15 @@ export function openCanvasEditor() {
     canvasOverlay.classList.remove('hidden');
   }
 
-
   let canvasEditor = document.getElementById('canvas-editor');
   if (canvasEditor) {
     canvasEditor.classList.remove('hidden');
+
+    // **Actualizar el contenido del textArea con el texto más reciente**
+    const textArea = canvasEditor.querySelector('.canvas-textarea');
+    const promptText = getTextFromPromptTextarea();
+    textArea.value = promptText;
+
     return;
   }
 
@@ -25,22 +29,18 @@ export function openCanvasEditor() {
   canvasEditor.id = 'canvas-editor';
   canvasEditor.classList.add('canvas-editor');
 
-
   const header = document.createElement('div');
   header.classList.add('canvas-header');
-
 
   const headerIcon = document.createElement('img');
   headerIcon.src = chrome.runtime.getURL('assets/icons/square.svg');
   headerIcon.classList.add('canvas-header-icon');
   header.appendChild(headerIcon);
 
-
   const title = document.createElement('div');
   title.classList.add('canvas-title');
   title.textContent = 'Combai editing form';
   header.appendChild(title);
-
 
   const closeIcon = document.createElement('img');
   closeIcon.src = chrome.runtime.getURL('assets/icons/maximize.svg');
@@ -48,20 +48,25 @@ export function openCanvasEditor() {
   closeIcon.addEventListener('click', () => {
     const text = getTextFromCanvas();
     setTextToPromptTextarea(text);
+
+    // **Disparar evento input para actualizar el dropdown**
+    const promptTextarea = document.getElementById('prompt-textarea');
+    if (promptTextarea) {
+      const event = new Event('input', { bubbles: true });
+      promptTextarea.dispatchEvent(event);
+      promptTextarea.focus();
+    }
     closeCanvasEditor();
   });
   header.appendChild(closeIcon);
 
   canvasEditor.appendChild(header);
 
-
   const mainContent = document.createElement('div');
   mainContent.classList.add('canvas-main-content');
 
-
   const lineNumbers = document.createElement('div');
   lineNumbers.classList.add('canvas-line-numbers');
-
 
   const textArea = document.createElement('textarea');
   textArea.classList.add('canvas-textarea');
@@ -75,27 +80,37 @@ export function openCanvasEditor() {
 
   canvasEditor.appendChild(mainContent);
 
-
   const footer = document.createElement('div');
   footer.classList.add('canvas-footer');
 
   const insertTextButton = document.createElement('button');
   insertTextButton.classList.add('insert-text-button');
-
+  insertTextButton.setAttribute('type', 'button'); // Evita que actúe como botón de envío
 
   const insertTextIcon = document.createElement('img');
   insertTextIcon.src = chrome.runtime.getURL('assets/icons/file-text.svg');
   insertTextIcon.classList.add('insert-text-icon');
   insertTextButton.appendChild(insertTextIcon);
 
-
   const buttonText = document.createElement('span');
   buttonText.textContent = 'Insert Text';
   insertTextButton.appendChild(buttonText);
 
-  insertTextButton.addEventListener('click', () => {
+  insertTextButton.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
     const text = getTextFromCanvas();
     setTextToPromptTextarea(text);
+
+    // **Disparar evento input para actualizar el dropdown**
+    const promptTextarea = document.getElementById('prompt-textarea');
+    if (promptTextarea) {
+      const inputEvent = new Event('input', { bubbles: true });
+      promptTextarea.dispatchEvent(inputEvent);
+      promptTextarea.focus();
+    }
+
     closeCanvasEditor();
   });
 
@@ -113,9 +128,22 @@ function closeCanvasEditor() {
   const canvasOverlay = document.getElementById('canvas-overlay');
   if (canvasEditor) {
     canvasEditor.classList.add('hidden');
+    // **Limpiar el contenido del editor al cerrarlo**
+    const textArea = canvasEditor.querySelector('.canvas-textarea');
+    if (textArea) {
+      textArea.value = '';
+    }
   }
   if (canvasOverlay) {
     canvasOverlay.classList.add('hidden');
+  }
+
+  // **Enfocar el div target y disparar evento input**
+  const promptTextarea = document.getElementById('prompt-textarea');
+  if (promptTextarea) {
+    const event = new Event('input', { bubbles: true });
+    promptTextarea.dispatchEvent(event);
+    promptTextarea.focus();
   }
 }
 
@@ -140,19 +168,15 @@ function initializeCanvasEditor(textArea, lineNumbers) {
       lineNumberElement.classList.add('line-number');
       lineNumberElement.textContent = lineNumber;
 
-
       if (isCurrentLine(index, textArea)) {
         lineNumberElement.classList.add('current-line');
       }
 
-
       if (lineText.trim().endsWith('<>')) {
         if (insideCollapsible) {
-
           insideCollapsible = false;
           addExpandIcon(lineNumberElement, collapsibleStartIndex, index, textArea, collapsedSections);
         } else {
-
           insideCollapsible = true;
           collapsibleStartIndex = index;
           addCollapseIcon(lineNumberElement, collapsibleStartIndex, textArea, collapsedSections);
@@ -179,7 +203,6 @@ function initializeCanvasEditor(textArea, lineNumbers) {
   textArea.addEventListener('keyup', updateContent);
 
   updateContent();
-
 
   function addCollapseIcon(lineNumberElement, startIndex, textArea, collapsedSections) {
     const collapseIcon = document.createElement('img');
@@ -216,12 +239,10 @@ function initializeCanvasEditor(textArea, lineNumbers) {
     lines.splice(startIndex + 1, endIndex - startIndex - 1, '[COLLAPSED TEXT]');
     textArea.value = lines.join('\n');
 
-
     const newCursorPosition = lines.slice(0, startIndex + 2).join('\n').length;
     textArea.setSelectionRange(newCursorPosition, newCursorPosition);
 
     textArea.focus();
-
 
     updateContent();
   }
@@ -236,8 +257,6 @@ function initializeCanvasEditor(textArea, lineNumbers) {
 
     textArea.focus();
 
-
     updateContent();
   }
 }
-

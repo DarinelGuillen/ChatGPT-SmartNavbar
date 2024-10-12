@@ -1,3 +1,4 @@
+
 import { waitForElement, escapeRegExp } from '../utils/utils.js';
 import { loadCategories } from '../data/dataLoader.js';
 import { getTriggerKey } from '../data/storage.js';
@@ -33,35 +34,74 @@ import '../assets/components/canvasEditor.css';
   const inputDiv = await waitForElement('#prompt-textarea');
   const dropdownElements = createDropdown(inputDiv);
 
-  // Seleccionar el contenedor del botón de enviar
-  const targetButtonContainer = await waitForElement('.flex.items-end.gap-1\\.5.pl-4.md\\:gap-2');
 
-  if (targetButtonContainer) {
-    // Crear el contenedor para el botón de maximizar
-    const maximizeButtonContainer = document.createElement('div');
-    maximizeButtonContainer.classList.add('flex', 'items-center');
+  let maximizeButtonContainer;
+  let maximizeButton;
 
-    // Crear el botón de maximizar
-    const maximizeButton = document.createElement('button');
-    maximizeButton.classList.add('flex', 'items-center', 'justify-center', 'h-8', 'w-8', 'rounded-full', 'text-token-text-primary', 'dark:text-white', 'focus-visible:outline-black', 'dark:focus-visible:outline-white', 'mb-1');
-    maximizeButton.setAttribute('aria-label', 'Abrir editor');
 
-    const maximizeIcon = document.createElement('img');
-    maximizeIcon.src = chrome.runtime.getURL('assets/icons/maximize.svg');
-    maximizeIcon.classList.add('w-5', 'h-5');
+  function createExpandButton() {
 
-    maximizeButton.appendChild(maximizeIcon);
-    maximizeButtonContainer.appendChild(maximizeButton);
+    if (maximizeButtonContainer && document.contains(maximizeButtonContainer)) {
+      return;
+    }
 
-    // Insertar el contenedor del botón de maximizar antes del contenedor del botón de enviar
-    targetButtonContainer.insertBefore(maximizeButtonContainer, targetButtonContainer.firstChild);
 
-    // Agregar evento de clic para abrir el editor
-    maximizeButton.addEventListener('click', () => {
-      openCanvasEditor();
-    });
-  } else {
-    console.error('Contenedor del botón de enviar no encontrado. No se puede insertar el botón de maximizar.');
+    const targetButtonContainer = document.querySelector('.flex.items-end.gap-1\\.5.pl-4.md\\:gap-2');
+    if (targetButtonContainer) {
+
+      maximizeButtonContainer = document.createElement('div');
+      maximizeButtonContainer.classList.add('flex', 'items-center');
+
+
+      maximizeButton = document.createElement('button');
+      maximizeButton.classList.add(
+        'flex', 'items-center', 'justify-center', 'h-8', 'w-8', 'rounded-full',
+        'text-token-text-primary', 'dark:text-white', 'focus-visible:outline-black',
+        'dark:focus-visible:outline-white', 'mb-1'
+      );
+      maximizeButton.setAttribute('aria-label', 'Abrir editor');
+      maximizeButton.setAttribute('type', 'button');
+
+      const maximizeIcon = document.createElement('img');
+      maximizeIcon.src = chrome.runtime.getURL('assets/icons/maximize.svg');
+      maximizeIcon.classList.add('w-5', 'h-5');
+
+      maximizeButton.appendChild(maximizeIcon);
+      maximizeButtonContainer.appendChild(maximizeButton);
+
+
+      targetButtonContainer.insertBefore(maximizeButtonContainer, targetButtonContainer.firstChild);
+
+
+      maximizeButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        openCanvasEditor();
+      });
+    } else {
+      console.error('Contenedor del botón de enviar no encontrado. No se puede insertar el botón de maximizar.');
+    }
+  }
+
+
+  createExpandButton();
+
+
+  function insertComponents() {
+    if (!document.contains(navbarElements.navbar)) {
+      const targetDiv = document.querySelector(targetDivSelector);
+      if (targetDiv) {
+        const children = targetDiv.children;
+        if (children.length >= 3) {
+          targetDiv.insertBefore(navbarElements.navbar, children[2]);
+        } else {
+          targetDiv.appendChild(navbarElements.navbar);
+        }
+      }
+    }
+
+
+    createExpandButton();
   }
 
   const sendButton = await waitForElement('button[data-testid="send-button"]');
@@ -101,13 +141,6 @@ import '../assets/components/canvasEditor.css';
       dropdownManager.updateDropdown(state.selectedCategory, state.escapedTriggerKey);
     }
   });
-
-  const children = targetDiv.children;
-  if (children.length >= 3) {
-    targetDiv.insertBefore(navbarElements.navbar, children[2]);
-  } else {
-    targetDiv.appendChild(navbarElements.navbar);
-  }
 
   navbarElements.navbar.style.flexGrow = '1';
 
@@ -155,7 +188,7 @@ import '../assets/components/canvasEditor.css';
     const { navbar, buttonsContainer, indicator } = navbarElements;
     buttonsContainer.innerHTML = '';
 
-    const visibleCategories = state.categories.filter(cat => cat.isVisible);
+    const visibleCategories = state.categories.filter((cat) => cat.isVisible);
 
     visibleCategories.forEach((category, index) => {
       const button = document.createElement('button');
@@ -213,4 +246,41 @@ import '../assets/components/canvasEditor.css';
       dropdownIndicator,
     };
   }
+
+  function insertComponents() {
+    if (!document.contains(navbarElements.navbar)) {
+      const targetDiv = document.querySelector(targetDivSelector);
+      if (targetDiv) {
+        const children = targetDiv.children;
+        if (children.length >= 3) {
+          targetDiv.insertBefore(navbarElements.navbar, children[2]);
+        } else {
+          targetDiv.appendChild(navbarElements.navbar);
+        }
+      }
+    }
+
+    if (!document.contains(maximizeButtonContainer)) {
+      const targetButtonContainer = document.querySelector('.flex.items-end.gap-1\\.5.pl-4.md\\:gap-2');
+      if (targetButtonContainer) {
+        targetButtonContainer.insertBefore(maximizeButtonContainer, targetButtonContainer.firstChild);
+      }
+    }
+
+    state.updateNavbarSelection();
+  }
+
+  insertComponents();
+
+  const observerConfig = { childList: true, subtree: true };
+  const observer = new MutationObserver((mutationsList, observer) => {
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'childList') {
+        if (!document.contains(navbarElements.navbar) || !document.contains(maximizeButtonContainer)) {
+          insertComponents();
+        }
+      }
+    }
+  });
+  observer.observe(document.body, observerConfig);
 })();
