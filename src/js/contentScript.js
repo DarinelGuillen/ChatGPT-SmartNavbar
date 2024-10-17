@@ -3,7 +3,7 @@ import { waitForElement, escapeRegExp } from '../utils/utils.js';
 import { loadCategories } from '../data/dataLoader.js';
 import { getTriggerKey } from '../data/storage.js';
 import { initializeEventHandlers } from '../eventHandlers/eventHandlers.js';
-import { initializeDropdown } from '../components/Dropdown.js';
+import { initializeDropdown } from '../components/dropdown.js';
 import { createNavbar, updateNavbarSelection } from '../components/Navbar.js';
 import { openModal } from '../components/Modal.js';
 import { openCanvasEditor } from '../components/canvasEditor.js';

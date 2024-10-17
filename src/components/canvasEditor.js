@@ -17,7 +17,7 @@ export function openCanvasEditor() {
   if (canvasEditor) {
     canvasEditor.classList.remove('hidden');
 
-    // **Actualizar el contenido del textArea con el texto más reciente**
+    // Actualizar el contenido del textArea con el texto más reciente
     const textArea = canvasEditor.querySelector('.canvas-textarea');
     const promptText = getTextFromPromptTextarea();
     textArea.value = promptText;
@@ -49,7 +49,7 @@ export function openCanvasEditor() {
     const text = getTextFromCanvas();
     setTextToPromptTextarea(text);
 
-    // **Disparar evento input para actualizar el dropdown**
+    // Disparar evento input para actualizar el dropdown en el input target
     const promptTextarea = document.getElementById('prompt-textarea');
     if (promptTextarea) {
       const event = new Event('input', { bubbles: true });
@@ -85,7 +85,7 @@ export function openCanvasEditor() {
 
   const insertTextButton = document.createElement('button');
   insertTextButton.classList.add('insert-text-button');
-  insertTextButton.setAttribute('type', 'button'); // Evita que actúe como botón de envío
+  insertTextButton.setAttribute('type', 'button');
 
   const insertTextIcon = document.createElement('img');
   insertTextIcon.src = chrome.runtime.getURL('assets/icons/file-text.svg');
@@ -103,7 +103,7 @@ export function openCanvasEditor() {
     const text = getTextFromCanvas();
     setTextToPromptTextarea(text);
 
-    // **Disparar evento input para actualizar el dropdown**
+    // Disparar evento input para actualizar el dropdown en el input target
     const promptTextarea = document.getElementById('prompt-textarea');
     if (promptTextarea) {
       const inputEvent = new Event('input', { bubbles: true });
@@ -120,6 +120,7 @@ export function openCanvasEditor() {
 
   document.body.appendChild(canvasEditor);
 
+  // Inicializar el editor de canvas sin el menú desplegable
   initializeCanvasEditor(textArea, lineNumbers);
 }
 
@@ -128,7 +129,7 @@ function closeCanvasEditor() {
   const canvasOverlay = document.getElementById('canvas-overlay');
   if (canvasEditor) {
     canvasEditor.classList.add('hidden');
-    // **Limpiar el contenido del editor al cerrarlo**
+    // Limpiar el contenido del editor al cerrarlo
     const textArea = canvasEditor.querySelector('.canvas-textarea');
     if (textArea) {
       textArea.value = '';
@@ -138,7 +139,7 @@ function closeCanvasEditor() {
     canvasOverlay.classList.add('hidden');
   }
 
-  // **Enfocar el div target y disparar evento input**
+  // Enfocar el div target y disparar evento input
   const promptTextarea = document.getElementById('prompt-textarea');
   if (promptTextarea) {
     const event = new Event('input', { bubbles: true });

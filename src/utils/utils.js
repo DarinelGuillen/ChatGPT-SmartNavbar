@@ -1,4 +1,4 @@
-// src/utils/utils.js
+
 
 let previewTooltip;
 
@@ -9,7 +9,8 @@ export function showPromptPreview(content, anchorElement) {
     document.body.appendChild(previewTooltip);
   }
 
-  previewTooltip.textContent = content.substring(0, 100) + (content.length > 100 ? '...' : '');
+  previewTooltip.textContent =
+    content.substring(0, 100) + (content.length > 100 ? '...' : '');
 
   const rect = anchorElement.getBoundingClientRect();
   previewTooltip.style.top = `${rect.bottom + window.scrollY + 5}px`;
@@ -25,53 +26,113 @@ export function hidePromptPreview() {
 }
 
 export function replaceTextInDiv(el, option, triggerKey) {
-  const escapedTriggerKey = escapeRegExp(triggerKey);
-  const sel = window.getSelection();
-  if (sel.rangeCount === 0) return;
+  if (el.isContentEditable) {
+    const sel = window.getSelection();
+    if (!sel.rangeCount) return;
 
-  const range = sel.getRangeAt(0);
-  const text = el.innerText;
-  const regex = new RegExp(escapedTriggerKey + '.*$', 'i');
-  const match = text.match(regex);
+    const range = sel.getRangeAt(0);
 
-  if (match) {
-    const before = text.substring(0, match.index);
-    const after = text.substring(match.index + match[0].length);
 
-    // Escapa caracteres especiales de HTML
-    const escapedOption = option
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
+    const position = findTriggerKeyPosition(el, triggerKey, range);
+    if (!position) return;
 
-    // Reemplaza \n por <br> y \t por espacios no separables (&nbsp;)
-    const formattedOption = escapedOption
-      .replace(/\n/g, '<br>')
-      .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
 
-    el.innerHTML = before + formattedOption + '<br>' + after;
+    const { container: startContainer, offset: startOffset } = position;
+    const endContainer = range.endContainer;
+    const endOffset = range.endOffset;
 
-    el.focus();
+    const replaceRange = document.createRange();
+    replaceRange.setStart(startContainer, startOffset);
+    replaceRange.setEnd(endContainer, endOffset);
+
+
+    replaceRange.deleteContents();
+
+
+    const fragment = createOptionFragment(option);
+
+    replaceRange.insertNode(fragment);
+
+
+    sel.removeAllRanges();
     const newRange = document.createRange();
-
-    const lastNode = el.lastChild;
-    if (lastNode) {
-      if (lastNode.nodeType === Node.TEXT_NODE) {
-        const offset = lastNode.length;
-        newRange.setStart(lastNode, offset);
-      } else {
-        newRange.setStartAfter(lastNode);
-      }
-      newRange.collapse(true);
-
-      sel.removeAllRanges();
-      sel.addRange(newRange);
+    let lastChild = fragment.lastChild;
+    if (lastChild && lastChild.nodeType === Node.TEXT_NODE) {
+      newRange.setStart(lastChild, lastChild.textContent.length);
+    } else if (lastChild) {
+      newRange.setStartAfter(lastChild);
+    } else {
+      newRange.setStart(startContainer, startOffset);
     }
+    newRange.collapse(true);
+    sel.addRange(newRange);
 
-    // Disparar evento input
+
+    const event = new Event('input', { bubbles: true });
+    el.dispatchEvent(event);
+  } else if (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') {
+    const cursorPosition = el.selectionStart;
+    const textBeforeCursor = el.value.substring(0, cursorPosition);
+    const triggerKeyIndex = textBeforeCursor.lastIndexOf(triggerKey);
+    if (triggerKeyIndex === -1) return;
+
+    const beforeText = el.value.substring(0, triggerKeyIndex);
+    const afterText = el.value.substring(el.selectionEnd);
+
+    el.value = beforeText + option + afterText;
+
+
+    const newCursorPosition = (beforeText + option).length;
+    el.selectionStart = el.selectionEnd = newCursorPosition;
+
+
     const event = new Event('input', { bubbles: true });
     el.dispatchEvent(event);
   }
+}
+
+function findTriggerKeyPosition(el, triggerKey, caretRange) {
+
+  const preCaretRange = document.createRange();
+  preCaretRange.setStart(el, 0);
+  preCaretRange.setEnd(caretRange.endContainer, caretRange.endOffset);
+
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
+  let node;
+  let offset = 0;
+
+  let triggerNode = null;
+  let triggerOffset = 0;
+  while ((node = walker.nextNode())) {
+    const nodeText = node.textContent;
+    const triggerKeyIndex = nodeText.lastIndexOf(triggerKey);
+    if (triggerKeyIndex !== -1 && offset + triggerKeyIndex <= preCaretRange.toString().length) {
+      triggerNode = node;
+      triggerOffset = triggerKeyIndex;
+    }
+    offset += nodeText.length;
+  }
+
+  if (triggerNode) {
+    return { container: triggerNode, offset: triggerOffset };
+  } else {
+    return null;
+  }
+}
+
+function createOptionFragment(option) {
+  const fragment = document.createDocumentFragment();
+  const lines = option.split('\n');
+
+  lines.forEach((line, index) => {
+    if (index > 0) {
+      fragment.appendChild(document.createElement('br'));
+    }
+    const textNode = document.createTextNode(line);
+    fragment.appendChild(textNode);
+  });
+
+  return fragment;
 }
 
 export function waitForElement(selector) {
@@ -104,7 +165,6 @@ export function getTextFromPromptTextarea() {
   const promptTextarea = document.getElementById('prompt-textarea');
   if (promptTextarea) {
     const text = getPlainTextFromContentEditable(promptTextarea);
-    console.log('Texto obtenido del promptTextarea:', text);
     return text;
   }
   return '';
@@ -137,10 +197,10 @@ export function setTextToPromptTextarea(text) {
   if (promptTextarea) {
     promptTextarea.focus();
 
-    // Limpiamos el contenido existente
+
     promptTextarea.innerHTML = '';
 
-    // Dividimos el texto en líneas y creamos un <p> por línea
+
     const lines = text.split('\n');
     for (const line of lines) {
       const p = document.createElement('p');
@@ -152,14 +212,12 @@ export function setTextToPromptTextarea(text) {
       promptTextarea.appendChild(p);
     }
 
-    // Movemos el cursor al final
+
     moveCaretToEnd(promptTextarea);
 
-    // Disparamos el evento input
+
     const event = new Event('input', { bubbles: true });
     promptTextarea.dispatchEvent(event);
-
-    console.log('Texto establecido en promptTextarea:', text);
   }
 }
 

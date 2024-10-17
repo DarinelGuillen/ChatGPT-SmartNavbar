@@ -9,7 +9,7 @@
   height: 100%;
   display: none; /* Hidden by default */
   background-color: rgba(0, 0, 0, 0.75);
-  z-index: 9997;
+  z-index: 8000;
   align-items: center;
   justify-content: center;
   padding: 20px;
@@ -251,7 +251,7 @@
   display: none; /* Hidden by default */
   align-items: center;
   justify-content: center;
-  z-index: 9998; /* Superior al modal principal */
+  z-index: 8001; /* Superior al modal principal */
 }
 
 /* Show Dialog Overlay */

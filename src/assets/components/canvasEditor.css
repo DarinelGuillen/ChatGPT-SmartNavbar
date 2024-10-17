@@ -8,7 +8,7 @@
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 9999;
+  z-index: 5000;
 }
 
 /* Contenedor principal del editor */
@@ -22,7 +22,7 @@
   background-color: #1f2937; /* Fondo gris oscuro */
   border-radius: 0.5rem; /* Bordes redondeados */
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5); /* Sombra */
-  z-index: 10000;
+  z-index: 5001;
   display: flex;
   flex-direction: column;
   overflow: hidden; /* Para evitar desbordamientos */
