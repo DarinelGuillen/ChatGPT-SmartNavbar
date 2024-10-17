@@ -50,19 +50,15 @@ export function replaceTextInDiv(el, option, triggerKey) {
 
 
     const fragment = createOptionFragment(option);
-
     replaceRange.insertNode(fragment);
 
 
     sel.removeAllRanges();
     const newRange = document.createRange();
-    let lastChild = fragment.lastChild;
-    if (lastChild && lastChild.nodeType === Node.TEXT_NODE) {
-      newRange.setStart(lastChild, lastChild.textContent.length);
-    } else if (lastChild) {
-      newRange.setStartAfter(lastChild);
+    if (fragment.lastChild) {
+      newRange.setStartAfter(fragment.lastChild);
     } else {
-      newRange.setStart(startContainer, startOffset);
+      newRange.setStartAfter(replaceRange.endContainer);
     }
     newRange.collapse(true);
     sel.addRange(newRange);
@@ -106,7 +102,10 @@ function findTriggerKeyPosition(el, triggerKey, caretRange) {
   while ((node = walker.nextNode())) {
     const nodeText = node.textContent;
     const triggerKeyIndex = nodeText.lastIndexOf(triggerKey);
-    if (triggerKeyIndex !== -1 && offset + triggerKeyIndex <= preCaretRange.toString().length) {
+    if (
+      triggerKeyIndex !== -1 &&
+      offset + triggerKeyIndex <= preCaretRange.toString().length
+    ) {
       triggerNode = node;
       triggerOffset = triggerKeyIndex;
     }

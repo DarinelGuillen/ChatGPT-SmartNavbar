@@ -32,14 +32,10 @@ export function openCanvasEditor() {
   const header = document.createElement('div');
   header.classList.add('canvas-header');
 
-  const headerIcon = document.createElement('img');
-  headerIcon.src = chrome.runtime.getURL('assets/icons/square.svg');
-  headerIcon.classList.add('canvas-header-icon');
-  header.appendChild(headerIcon);
 
   const title = document.createElement('div');
   title.classList.add('canvas-title');
-  title.textContent = 'Combai editing form';
+  title.textContent = 'Canva Editor';
   header.appendChild(title);
 
   const closeIcon = document.createElement('img');
@@ -69,7 +65,7 @@ export function openCanvasEditor() {
   lineNumbers.classList.add('canvas-line-numbers');
 
   const textArea = document.createElement('textarea');
-  textArea.classList.add('canvas-textarea');
+  textArea.classList.add('canvas-textarea', 'hide-scrollbar');
   textArea.spellcheck = false;
 
   const promptText = getTextFromPromptTextarea();
