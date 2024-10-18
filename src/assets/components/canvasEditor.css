@@ -51,7 +51,7 @@
 .canvas-header {
   display: flex;
   align-items: center;
-  padding: 1rem;
+  padding: 0.3rem;
   background-color: #111827; /* Fondo más oscuro */
   border-bottom: 1px solid #374151; /* Línea inferior */
   z-index: 2; /* Por encima del patrón de cuadrícula */
