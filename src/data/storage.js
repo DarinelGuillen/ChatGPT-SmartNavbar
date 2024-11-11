@@ -1,8 +1,8 @@
-
-
 export function saveCategories(categories) {
   return new Promise((resolve) => {
-    chrome.storage.local.set({ categories }, () => {
+
+    const categoriesToSave = categories.filter(cat => cat.category !== 'Todos' && cat.id !== 'all');
+    chrome.storage.local.set({ categories: categoriesToSave }, () => {
       resolve();
     });
   });

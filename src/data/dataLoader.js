@@ -2,7 +2,7 @@ import { getCategories } from './storage.js';
 
 export async function loadCategories() {
   let categories = await getCategories();
-
+  categories = categories.filter(cat => cat.category !== 'Todos' && cat.id !== 'all');
   categories = JSON.parse(JSON.stringify(categories));
 
   categories.sort((a, b) => {
@@ -23,18 +23,18 @@ export async function loadCategories() {
 
   const allCategory = {
     category: 'Todos',
-    options: []
+    options: visibleCategories.reduce((acc, cat) => {
+      if (Array.isArray(cat.options)) {
+        const visibleOptions = cat.options.filter(opt => opt.isVisible);
+        return acc.concat(visibleOptions);
+      }
+      return acc;
+    }, [])
   };
 
-  allCategory.options = visibleCategories.reduce((acc, cat) => {
-    if (Array.isArray(cat.options)) {
-      const visibleOptions = cat.options.filter(opt => opt.isVisible);
-      return acc.concat(visibleOptions);
-    }
-    return acc;
-  }, []);
-
-  visibleCategories.unshift(allCategory);
+  if (!visibleCategories.some(cat => cat.category === 'Todos')) {
+    visibleCategories.unshift(allCategory);
+  }
 
   return visibleCategories;
 }
