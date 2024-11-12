@@ -1,6 +1,6 @@
-/* canvasEditor.css */
 
-/* Fondo semi-transparente detrás del editor */
+
+
 .canvas-overlay {
   position: fixed;
   top: 0;
@@ -11,31 +11,31 @@
   z-index: 5000;
 }
 
-/* Contenedor principal del editor */
+
 .canvas-editor {
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); /* Centrar el componente */
+  transform: translate(-50%, -50%); 
   width: 90%;
   height: 85%;
-  background-color: #1f2937; /* Fondo gris oscuro */
-  border-radius: 0.5rem; /* Bordes redondeados */
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5); /* Sombra */
+  background-color: #1f2937; 
+  border-radius: 0.5rem; 
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5); 
   z-index: 5001;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* Para evitar desbordamientos */
+  overflow: hidden; 
 }
 
-/* Estilos del encabezado */
+
 .canvas-header {
   display: flex;
   align-items: center;
   padding: 0.5rem;
-  background-color: #111827; /* Fondo más oscuro */
-  border-bottom: 1px solid #374151; /* Línea inferior */
-  z-index: 2; /* Por encima del patrón de cuadrícula */
+  background-color: #111827; 
+  border-bottom: 1px solid #374151; 
+  z-index: 2; 
 }
 
 .canvas-title {
@@ -57,20 +57,28 @@
   transform: rotate(45deg) scale(1.1);
 }
 
-/* Área principal de contenido */
+
 .canvas-main-content {
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  z-index: 2; /* Por encima del patrón de cuadrícula */
+  z-index: 2; 
 }
 
-/* Navegación de pestañas */
+
 .canvas-tab-nav {
   display: flex;
+  align-items: center;
   background-color: #1f2937;
   border-bottom: 1px solid #374151;
+  padding: 0 0.5rem;
+  overflow-x: auto;
+}
+
+.canvas-tab-container {
+  display: flex;
+  align-items: center;
 }
 
 .canvas-tab-button {
@@ -80,6 +88,7 @@
   border: none;
   cursor: pointer;
   font-size: 1rem;
+  transition: background-color 0.2s;
 }
 
 .canvas-tab-button.active {
@@ -90,13 +99,26 @@
   background-color: #2d3748;
 }
 
+.canvas-tab-close-button {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0 0.5rem;
+}
+
+.canvas-tab-close-button:hover {
+  color: #ff0000;
+}
+
 .canvas-add-tab-button {
-  padding: 0.5rem 1rem;
+  padding: 0.5rem;
   background-color: #1f2937;
   color: #ffffff;
   border: none;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 1.5rem;
   margin-left: auto;
 }
 
@@ -104,40 +126,27 @@
   background-color: #2d3748;
 }
 
-/* Contenedor de contenido de pestañas */
+
 .canvas-tab-content-container {
   flex: 1;
   overflow: auto;
   position: relative;
 }
 
-/* Contenido de pestañas */
+
 .canvas-tab-content {
   height: 100%;
   padding: 1rem;
-  display: flex;
-  flex-direction: column;
 }
 
 .hidden {
   display: none;
 }
 
-/* Título de la pestaña */
-.canvas-tab-title-input {
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  padding: 0.5rem;
-  background-color: #2d3748;
-  color: #ffffff;
-  border: 1px solid #4a5568;
-  border-radius: 0.25rem;
-}
 
-/* Área de texto de la pestaña */
 .canvas-tab-textarea {
-  flex: 1;
+  width: 100%;
+  height: calc(100% - 1rem);
   padding: 0.5rem;
   font-family: monospace;
   font-size: 1rem;
@@ -148,22 +157,38 @@
   resize: none;
 }
 
-/* Estilos del pie de página */
+
+.canvas-tab-title-input {
+  font-size: 0.9rem;
+  padding: 0.2rem 0.4rem;
+  border: 1px solid #718096;
+  border-radius: 4px;
+  background-color: #1a202c;
+  color: #e2e8f0;
+}
+
+.canvas-tab-title-input:focus {
+  outline: none;
+  border-color: #4FD1C5;
+  background-color: #2a2f3b;
+}
+
+
 .canvas-footer {
   padding: 1rem;
   display: flex;
-  justify-content: center; /* Centrar el botón */
+  justify-content: center; 
   z-index: 2;
 }
 
-/* Botón 'Insert Text' */
+
 .insert-text-button {
   display: flex;
   align-items: center;
-  background-color: #2563eb; /* Color azul */
+  background-color: #2563eb; 
   color: #ffffff;
   padding: 0.5rem 1.5rem;
-  border-radius: 9999px; /* Bordes totalmente redondeados */
+  border-radius: 9999px; 
   cursor: pointer;
   transition: background-color 0.2s;
   font-size: 1rem;
@@ -172,7 +197,7 @@
 }
 
 .insert-text-button:hover {
-  background-color: #1d4ed8; /* Color azul más oscuro al pasar el ratón */
+  background-color: #1d4ed8; 
 }
 
 .insert-text-icon {

@@ -179,10 +179,10 @@ function initializeCanvasEditor(promptText) {
   if (sections.length === 0) {
     // Si no hay secciones, mostrar ejemplo con 4 pestañas
     sections = [
-      { title: 'ExampleTab1', content: 'This is example content for tab 1.' },
-      { title: 'ExampleTab2', content: 'This is example content for tab 2.' },
-      { title: 'ExampleTab3', content: 'This is example content for tab 3.' },
-      { title: 'ExampleTab4', content: 'This is example content for tab 4.' },
+      { id: '1', title: 'Objetivo', content: 'Definir el objetivo principal del proyecto.' },
+      { id: '2', title: 'Contexto', content: 'Proporcionar información relevante sobre el entorno del proyecto.' },
+      { id: '3', title: 'Notas', content: 'Agregar notas adicionales y observaciones importantes.' },
+      { id: '4', title: 'Recursos', content: 'Listar los recursos necesarios para el proyecto.' },
     ];
   }
 
@@ -194,23 +194,23 @@ function initializeCanvasEditor(promptText) {
   });
 
   // Activar la primera pestaña por defecto
-  activateTab(0);
+  activateTab(sections[0].id);
 }
 
 function parsePromptText(promptText) {
   const sections = [];
   const parts = promptText.split('--').filter(part => part.trim() !== '');
 
-  parts.forEach(part => {
+  parts.forEach((part, index) => {
     const firstSpaceIndex = part.indexOf(' ');
     if (firstSpaceIndex !== -1) {
       const title = part.substring(0, firstSpaceIndex).trim();
       const content = part.substring(firstSpaceIndex + 1).trim();
-      sections.push({ title, content });
+      sections.push({ id: String(index + 1), title, content });
     } else {
       // Si no hay espacio, todo es título y contenido vacío
       const title = part.trim();
-      sections.push({ title, content: '' });
+      sections.push({ id: String(index + 1), title, content: '' });
     }
   });
   return sections;
@@ -221,36 +221,47 @@ function createTab(title, content, index) {
   const tabNav = canvasEditor.querySelector('.canvas-tab-nav');
   const tabContentContainer = canvasEditor.querySelector('.canvas-tab-content-container');
 
+  const tabId = canvasEditor.sections[index].id;
+
+  // Crear contenedor de la pestaña
+  const tabContainer = document.createElement('div');
+  tabContainer.classList.add('canvas-tab-container');
+
   // Crear botón de pestaña
   const tabButton = document.createElement('button');
   tabButton.classList.add('canvas-tab-button');
   tabButton.textContent = title;
-  tabButton.dataset.index = index;
+  tabButton.dataset.index = tabId;
+
+  // Hacer título editable al hacer doble clic
+  tabButton.addEventListener('dblclick', () => {
+    editTabTitle(tabButton, tabId);
+  });
 
   tabButton.addEventListener('click', () => {
-    activateTab(index);
+    activateTab(tabId);
   });
+
+  // Botón 'x' para eliminar pestaña
+  const closeButton = document.createElement('button');
+  closeButton.classList.add('canvas-tab-close-button');
+  closeButton.innerHTML = '&times;';
+  closeButton.addEventListener('click', (event) => {
+    event.stopPropagation();
+    removeTab(tabId);
+  });
+
+  tabContainer.appendChild(tabButton);
+  tabContainer.appendChild(closeButton);
 
   // Insertar antes del botón '+'
   const addTabButton = tabNav.querySelector('.canvas-add-tab-button');
-  tabNav.insertBefore(tabButton, addTabButton);
+  tabNav.insertBefore(tabContainer, addTabButton);
 
   // Crear área de contenido de pestaña
   const tabContent = document.createElement('div');
   tabContent.classList.add('canvas-tab-content');
-  tabContent.dataset.index = index;
-
-  const titleInput = document.createElement('input');
-  titleInput.classList.add('canvas-tab-title-input');
-  titleInput.type = 'text';
-  titleInput.value = title;
-
-  titleInput.addEventListener('input', () => {
-    // Actualizar texto del botón de pestaña al cambiar título
-    tabButton.textContent = titleInput.value;
-    // Actualizar el título en la sección
-    canvasEditor.sections[index].title = titleInput.value;
-  });
+  tabContent.dataset.index = tabId;
 
   const textArea = document.createElement('textarea');
   textArea.classList.add('canvas-tab-textarea');
@@ -261,13 +272,12 @@ function createTab(title, content, index) {
     canvasEditor.sections[index].content = textArea.value;
   });
 
-  tabContent.appendChild(titleInput);
   tabContent.appendChild(textArea);
 
   tabContentContainer.appendChild(tabContent);
 }
 
-function activateTab(index) {
+function activateTab(tabId) {
   const canvasEditor = document.getElementById('canvas-editor');
   const tabNav = canvasEditor.querySelector('.canvas-tab-nav');
   const tabContentContainer = canvasEditor.querySelector('.canvas-tab-content-container');
@@ -277,7 +287,7 @@ function activateTab(index) {
   const tabContents = tabContentContainer.querySelectorAll('.canvas-tab-content');
 
   tabButtons.forEach(button => {
-    if (parseInt(button.dataset.index) === index) {
+    if (button.dataset.index === tabId) {
       button.classList.add('active');
     } else {
       button.classList.remove('active');
@@ -285,7 +295,7 @@ function activateTab(index) {
   });
 
   tabContents.forEach(content => {
-    if (parseInt(content.dataset.index) === index) {
+    if (content.dataset.index === tabId) {
       content.classList.remove('hidden');
     } else {
       content.classList.add('hidden');
@@ -298,13 +308,65 @@ function addNewTab() {
   const sections = canvasEditor.sections;
 
   const newIndex = sections.length;
+  const newId = String(newIndex + 1);
   const newTitle = `Nueva Pestaña ${newIndex + 1}`;
   const newContent = '';
 
-  sections.push({ title: newTitle, content: newContent });
+  sections.push({ id: newId, title: newTitle, content: newContent });
 
   createTab(newTitle, newContent, newIndex);
-  activateTab(newIndex);
+  activateTab(newId);
+}
+
+function editTabTitle(tabButton, tabId) {
+  const canvasEditor = document.getElementById('canvas-editor');
+  const index = canvasEditor.sections.findIndex(section => section.id === tabId);
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = tabButton.textContent;
+  input.classList.add('canvas-tab-title-input');
+
+  input.addEventListener('blur', () => {
+    tabButton.textContent = input.value;
+    canvasEditor.sections[index].title = input.value;
+    tabButton.style.display = 'inline-block';
+    input.remove();
+  });
+
+  input.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      input.blur();
+    }
+  });
+
+  tabButton.style.display = 'none';
+  tabButton.parentElement.insertBefore(input, tabButton);
+  input.focus();
+}
+
+function removeTab(tabId) {
+  const canvasEditor = document.getElementById('canvas-editor');
+  const tabNav = canvasEditor.querySelector('.canvas-tab-nav');
+  const tabContentContainer = canvasEditor.querySelector('.canvas-tab-content-container');
+
+  // Remover la pestaña de las secciones
+  canvasEditor.sections = canvasEditor.sections.filter(section => section.id !== tabId);
+
+  // Remover elementos del DOM
+  const tabContainer = tabNav.querySelector(`.canvas-tab-container > .canvas-tab-button[data-index="${tabId}"]`).parentElement;
+  tabContainer.remove();
+
+  const tabContent = tabContentContainer.querySelector(`.canvas-tab-content[data-index="${tabId}"]`);
+  tabContent.remove();
+
+  // Activar otra pestaña si es necesario
+  if (canvasEditor.sections.length > 0) {
+    activateTab(canvasEditor.sections[0].id);
+  } else {
+    // Si no hay pestañas, añadir una nueva
+    addNewTab();
+  }
 }
 
 function getTextFromTabs() {
