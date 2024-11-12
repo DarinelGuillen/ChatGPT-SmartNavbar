@@ -16,16 +16,16 @@
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); 
-  width: 90%;
-  height: 85%;
-  background-color: #1f2937; 
-  border-radius: 0.5rem; 
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5); 
+  transform: translate(-50%, -50%);
+  width: 98%;
+  height: 98%;
+  background-color: #1f2937;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5);
   z-index: 5001;
   display: flex;
   flex-direction: column;
-  overflow: hidden; 
+  overflow: hidden;
 }
 
 
@@ -33,9 +33,9 @@
   display: flex;
   align-items: center;
   padding: 0.5rem;
-  background-color: #111827; 
-  border-bottom: 1px solid #374151; 
-  z-index: 2; 
+  background-color: #111827;
+  border-bottom: 1px solid #374151;
+  z-index: 2;
 }
 
 .canvas-title {
@@ -63,7 +63,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  z-index: 2; 
+  z-index: 2;
 }
 
 
@@ -136,7 +136,7 @@
 
 .canvas-tab-content {
   height: 100%;
-  padding: 1rem;
+  padding: 0.4rem;
 }
 
 .hidden {
@@ -175,9 +175,9 @@
 
 
 .canvas-footer {
-  padding: 1rem;
+  padding: 0.2rem;
   display: flex;
-  justify-content: center; 
+  justify-content: center;
   z-index: 2;
 }
 
@@ -185,10 +185,10 @@
 .insert-text-button {
   display: flex;
   align-items: center;
-  background-color: #2563eb; 
+  background-color: #2563eb;
   color: #ffffff;
   padding: 0.5rem 1.5rem;
-  border-radius: 9999px; 
+  border-radius: 9999px;
   cursor: pointer;
   transition: background-color 0.2s;
   font-size: 1rem;
@@ -197,7 +197,7 @@
 }
 
 .insert-text-button:hover {
-  background-color: #1d4ed8; 
+  background-color: #1d4ed8;
 }
 
 .insert-text-icon {

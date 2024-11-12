@@ -34,5 +34,38 @@
     ],
     "isVisible": true,
     "isPredefined": true
-  }
+  },
+    {
+      "id": 3,
+      "category": "Templates Tabs",
+      "options": [
+        {
+          "id": "DeveloperTemplate",
+          "option": "--Objetivo Definir el objetivo principal del proyecto.\n--Contexto Proporcionar información relevante sobre el entorno del proyecto.\n--Notas Agregar notas adicionales y observaciones importantes.\n--Recursos Listar los recursos necesarios para el proyecto.",
+          "description": "Plantilla básica para desarrolladores que incluye secciones para objetivo, contexto, notas y recursos.",
+          "isVisible": true
+        },
+        {
+          "id": "ProjectProposal",
+          "option": "--Introducción Proporcionar una breve introducción del proyecto.\n--Alcance Detallar el alcance y límites del proyecto.\n--Metodología Describir la metodología a utilizar.\n--Cronograma Presentar un cronograma estimado.",
+          "description": "Plantilla para propuestas de proyecto con secciones clave para una presentación completa.",
+          "isVisible": true
+        },
+        {
+          "id": "MeetingAgenda",
+          "option": "--Asunto Indicar el asunto de la reunión.\n--Fecha Fecha y hora programada.\n--Participantes Lista de participantes.\n--Puntos a Tratar Enumerar los temas a discutir.",
+          "description": "Plantilla para agendas de reuniones, asegurando que todos los puntos importantes estén cubiertos.",
+          "isVisible": true
+        },
+        {
+          "id": "ResearchOutline",
+          "option": "--Título Especificar el título de la investigación.\n--Resumen Resumen breve del tema.\n--Objetivos Enumerar los objetivos principales.\n--Metodología Describir el enfoque de investigación.",
+          "description": "Plantilla para delinear proyectos de investigación con secciones clave para organizar ideas.",
+          "isVisible": true
+        }
+      ],
+      "isVisible": true,
+      "isPredefined": true
+    }
+
 ]
