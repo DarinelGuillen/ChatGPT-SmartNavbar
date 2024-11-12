@@ -17,11 +17,9 @@ export function openCanvasEditor() {
   if (canvasEditor) {
     canvasEditor.classList.remove('hidden');
 
-    // Actualizar el contenido del textArea con el texto más reciente
-    const textArea = canvasEditor.querySelector('.canvas-textarea');
+    // Actualizar el contenido con el texto más reciente
     const promptText = getTextFromPromptTextarea();
-    textArea.value = promptText;
-
+    initializeCanvasEditor(promptText);
     return;
   }
 
@@ -32,17 +30,16 @@ export function openCanvasEditor() {
   const header = document.createElement('div');
   header.classList.add('canvas-header');
 
-
   const title = document.createElement('div');
   title.classList.add('canvas-title');
-  title.textContent = 'Canva Editor';
+  title.textContent = 'Canvas Editor';
   header.appendChild(title);
 
   const closeIcon = document.createElement('img');
-  closeIcon.src = chrome.runtime.getURL('assets/icons/maximize.svg');
+  closeIcon.src = chrome.runtime.getURL('assets/icons/close.svg');
   closeIcon.classList.add('canvas-close-icon');
   closeIcon.addEventListener('click', () => {
-    const text = getTextFromCanvas();
+    const text = getTextFromTabs();
     setTextToPromptTextarea(text);
 
     // Disparar evento input para actualizar el dropdown en el input target
@@ -61,18 +58,27 @@ export function openCanvasEditor() {
   const mainContent = document.createElement('div');
   mainContent.classList.add('canvas-main-content');
 
-  const lineNumbers = document.createElement('div');
-  lineNumbers.classList.add('canvas-line-numbers');
+  // Crear navegación de pestañas
+  const tabNav = document.createElement('div');
+  tabNav.classList.add('canvas-tab-nav');
 
-  const textArea = document.createElement('textarea');
-  textArea.classList.add('canvas-textarea', 'hide-scrollbar');
-  textArea.spellcheck = false;
+  // Crear botón '+' para añadir nuevas pestañas
+  const addTabButton = document.createElement('button');
+  addTabButton.classList.add('canvas-add-tab-button');
+  addTabButton.textContent = '+';
+  addTabButton.addEventListener('click', () => {
+    addNewTab();
+  });
 
-  const promptText = getTextFromPromptTextarea();
-  textArea.value = promptText;
+  // Insertar botón '+' en la navegación de pestañas
+  tabNav.appendChild(addTabButton);
 
-  mainContent.appendChild(lineNumbers);
-  mainContent.appendChild(textArea);
+  // Crear contenedor de contenido de pestañas
+  const tabContentContainer = document.createElement('div');
+  tabContentContainer.classList.add('canvas-tab-content-container');
+
+  mainContent.appendChild(tabNav);
+  mainContent.appendChild(tabContentContainer);
 
   canvasEditor.appendChild(mainContent);
 
@@ -96,7 +102,7 @@ export function openCanvasEditor() {
     event.preventDefault();
     event.stopPropagation();
 
-    const text = getTextFromCanvas();
+    const text = getTextFromTabs();
     setTextToPromptTextarea(text);
 
     // Disparar evento input para actualizar el dropdown en el input target
@@ -116,8 +122,9 @@ export function openCanvasEditor() {
 
   document.body.appendChild(canvasEditor);
 
-  // Inicializar el editor de canvas sin el menú desplegable
-  initializeCanvasEditor(textArea, lineNumbers);
+  // Inicializar el editor de canvas con el contenido
+  const promptText = getTextFromPromptTextarea();
+  initializeCanvasEditor(promptText);
 }
 
 function closeCanvasEditor() {
@@ -126,9 +133,13 @@ function closeCanvasEditor() {
   if (canvasEditor) {
     canvasEditor.classList.add('hidden');
     // Limpiar el contenido del editor al cerrarlo
-    const textArea = canvasEditor.querySelector('.canvas-textarea');
-    if (textArea) {
-      textArea.value = '';
+    const tabContentContainer = canvasEditor.querySelector('.canvas-tab-content-container');
+    if (tabContentContainer) {
+      tabContentContainer.innerHTML = '';
+    }
+    const tabNav = canvasEditor.querySelector('.canvas-tab-nav');
+    if (tabNav) {
+      tabNav.innerHTML = '';
     }
   }
   if (canvasOverlay) {
@@ -144,116 +155,166 @@ function closeCanvasEditor() {
   }
 }
 
-function getTextFromCanvas() {
-  const textArea = document.querySelector('.canvas-textarea');
-  return textArea ? textArea.value : '';
-}
+function initializeCanvasEditor(promptText) {
+  const canvasEditor = document.getElementById('canvas-editor');
+  if (!canvasEditor) return;
 
-function initializeCanvasEditor(textArea, lineNumbers) {
-  let collapsedSections = {};
+  const tabNav = canvasEditor.querySelector('.canvas-tab-nav');
+  const tabContentContainer = canvasEditor.querySelector('.canvas-tab-content-container');
 
-  const updateContent = () => {
-    const lines = textArea.value.split('\n');
-    lineNumbers.innerHTML = '';
+  // Limpiar contenido previo
+  tabNav.innerHTML = '';
+  tabContentContainer.innerHTML = '';
 
-    let insideCollapsible = false;
-    let collapsibleStartIndex = null;
+  // Crear botón '+' para añadir nuevas pestañas
+  const addTabButton = document.createElement('button');
+  addTabButton.classList.add('canvas-add-tab-button');
+  addTabButton.textContent = '+';
+  addTabButton.addEventListener('click', () => {
+    addNewTab();
+  });
+  tabNav.appendChild(addTabButton);
 
-    lines.forEach((lineText, index) => {
-      const lineNumber = index + 1;
-      const lineNumberElement = document.createElement('div');
-      lineNumberElement.classList.add('line-number');
-      lineNumberElement.textContent = lineNumber;
+  let sections = parsePromptText(promptText);
+  if (sections.length === 0) {
+    // Si no hay secciones, mostrar ejemplo con 4 pestañas
+    sections = [
+      { title: 'ExampleTab1', content: 'This is example content for tab 1.' },
+      { title: 'ExampleTab2', content: 'This is example content for tab 2.' },
+      { title: 'ExampleTab3', content: 'This is example content for tab 3.' },
+      { title: 'ExampleTab4', content: 'This is example content for tab 4.' },
+    ];
+  }
 
-      if (isCurrentLine(index, textArea)) {
-        lineNumberElement.classList.add('current-line');
-      }
+  // Almacenar secciones en canvasEditor para uso posterior
+  canvasEditor.sections = sections;
 
-      if (lineText.trim().endsWith('<>')) {
-        if (insideCollapsible) {
-          insideCollapsible = false;
-          addExpandIcon(lineNumberElement, collapsibleStartIndex, index, textArea, collapsedSections);
-        } else {
-          insideCollapsible = true;
-          collapsibleStartIndex = index;
-          addCollapseIcon(lineNumberElement, collapsibleStartIndex, textArea, collapsedSections);
-        }
-      }
-
-      lineNumbers.appendChild(lineNumberElement);
-    });
-  };
-
-  const isCurrentLine = (lineIndex, textArea) => {
-    const selectionStart = textArea.selectionStart;
-    const textBeforeCursor = textArea.value.substr(0, selectionStart);
-    const currentLineIndex = textBeforeCursor.split('\n').length - 1;
-    return lineIndex === currentLineIndex;
-  };
-
-  textArea.addEventListener('input', updateContent);
-  textArea.addEventListener('scroll', () => {
-    lineNumbers.scrollTop = textArea.scrollTop;
+  sections.forEach((section, index) => {
+    createTab(section.title, section.content, index);
   });
 
-  textArea.addEventListener('click', updateContent);
-  textArea.addEventListener('keyup', updateContent);
+  // Activar la primera pestaña por defecto
+  activateTab(0);
+}
 
-  updateContent();
+function parsePromptText(promptText) {
+  const sections = [];
+  const parts = promptText.split('--').filter(part => part.trim() !== '');
 
-  function addCollapseIcon(lineNumberElement, startIndex, textArea, collapsedSections) {
-    const collapseIcon = document.createElement('img');
-    collapseIcon.src = chrome.runtime.getURL('assets/icons/chevron-down.svg');
-    collapseIcon.classList.add('collapse-icon');
+  parts.forEach(part => {
+    const firstSpaceIndex = part.indexOf(' ');
+    if (firstSpaceIndex !== -1) {
+      const title = part.substring(0, firstSpaceIndex).trim();
+      const content = part.substring(firstSpaceIndex + 1).trim();
+      sections.push({ title, content });
+    } else {
+      // Si no hay espacio, todo es título y contenido vacío
+      const title = part.trim();
+      sections.push({ title, content: '' });
+    }
+  });
+  return sections;
+}
 
-    collapseIcon.addEventListener('click', () => {
-      collapseSection(startIndex, textArea, collapsedSections);
-    });
+function createTab(title, content, index) {
+  const canvasEditor = document.getElementById('canvas-editor');
+  const tabNav = canvasEditor.querySelector('.canvas-tab-nav');
+  const tabContentContainer = canvasEditor.querySelector('.canvas-tab-content-container');
 
-    lineNumberElement.appendChild(collapseIcon);
-  }
+  // Crear botón de pestaña
+  const tabButton = document.createElement('button');
+  tabButton.classList.add('canvas-tab-button');
+  tabButton.textContent = title;
+  tabButton.dataset.index = index;
 
-  function addExpandIcon(lineNumberElement, startIndex, endIndex, textArea, collapsedSections) {
-    const expandIcon = document.createElement('img');
-    expandIcon.src = chrome.runtime.getURL('assets/icons/chevron-up.svg');
-    expandIcon.classList.add('expand-icon');
+  tabButton.addEventListener('click', () => {
+    activateTab(index);
+  });
 
-    expandIcon.addEventListener('click', () => {
-      expandSection(startIndex, endIndex, textArea, collapsedSections);
-    });
+  // Insertar antes del botón '+'
+  const addTabButton = tabNav.querySelector('.canvas-add-tab-button');
+  tabNav.insertBefore(tabButton, addTabButton);
 
-    lineNumberElement.appendChild(expandIcon);
-  }
+  // Crear área de contenido de pestaña
+  const tabContent = document.createElement('div');
+  tabContent.classList.add('canvas-tab-content');
+  tabContent.dataset.index = index;
 
-  function collapseSection(startIndex, textArea, collapsedSections) {
-    const lines = textArea.value.split('\n');
-    const endIndex = lines.findIndex((line, idx) => idx > startIndex && line.trim().endsWith('<>'));
-    if (endIndex === -1) return;
+  const titleInput = document.createElement('input');
+  titleInput.classList.add('canvas-tab-title-input');
+  titleInput.type = 'text';
+  titleInput.value = title;
 
-    const collapsedContent = lines.slice(startIndex + 1, endIndex);
-    collapsedSections[startIndex] = collapsedContent;
+  titleInput.addEventListener('input', () => {
+    // Actualizar texto del botón de pestaña al cambiar título
+    tabButton.textContent = titleInput.value;
+    // Actualizar el título en la sección
+    canvasEditor.sections[index].title = titleInput.value;
+  });
 
-    lines.splice(startIndex + 1, endIndex - startIndex - 1, '[COLLAPSED TEXT]');
-    textArea.value = lines.join('\n');
+  const textArea = document.createElement('textarea');
+  textArea.classList.add('canvas-tab-textarea');
+  textArea.value = content;
 
-    const newCursorPosition = lines.slice(0, startIndex + 2).join('\n').length;
-    textArea.setSelectionRange(newCursorPosition, newCursorPosition);
+  textArea.addEventListener('input', () => {
+    // Actualizar el contenido en la sección
+    canvasEditor.sections[index].content = textArea.value;
+  });
 
-    textArea.focus();
+  tabContent.appendChild(titleInput);
+  tabContent.appendChild(textArea);
 
-    updateContent();
-  }
+  tabContentContainer.appendChild(tabContent);
+}
 
-  function expandSection(startIndex, endIndex, textArea, collapsedSections) {
-    if (!collapsedSections[startIndex]) return;
+function activateTab(index) {
+  const canvasEditor = document.getElementById('canvas-editor');
+  const tabNav = canvasEditor.querySelector('.canvas-tab-nav');
+  const tabContentContainer = canvasEditor.querySelector('.canvas-tab-content-container');
 
-    const lines = textArea.value.split('\n');
-    lines.splice(startIndex + 1, 1, ...collapsedSections[startIndex]);
-    delete collapsedSections[startIndex];
-    textArea.value = lines.join('\n');
+  // Desactivar todas las pestañas y ocultar sus contenidos
+  const tabButtons = tabNav.querySelectorAll('.canvas-tab-button');
+  const tabContents = tabContentContainer.querySelectorAll('.canvas-tab-content');
 
-    textArea.focus();
+  tabButtons.forEach(button => {
+    if (parseInt(button.dataset.index) === index) {
+      button.classList.add('active');
+    } else {
+      button.classList.remove('active');
+    }
+  });
 
-    updateContent();
-  }
+  tabContents.forEach(content => {
+    if (parseInt(content.dataset.index) === index) {
+      content.classList.remove('hidden');
+    } else {
+      content.classList.add('hidden');
+    }
+  });
+}
+
+function addNewTab() {
+  const canvasEditor = document.getElementById('canvas-editor');
+  const sections = canvasEditor.sections;
+
+  const newIndex = sections.length;
+  const newTitle = `Nueva Pestaña ${newIndex + 1}`;
+  const newContent = '';
+
+  sections.push({ title: newTitle, content: newContent });
+
+  createTab(newTitle, newContent, newIndex);
+  activateTab(newIndex);
+}
+
+function getTextFromTabs() {
+  const canvasEditor = document.getElementById('canvas-editor');
+  const sections = canvasEditor.sections;
+
+  let text = '';
+  sections.forEach(section => {
+    text += `--${section.title} ${section.content}\n`;
+  });
+
+  return text.trim();
 }

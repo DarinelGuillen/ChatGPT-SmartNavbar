@@ -28,48 +28,18 @@
   overflow: hidden; /* Para evitar desbordamientos */
 }
 
-/* Patrón de cuadrícula y animación de fondo */
-.canvas-editor::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
-  background-size: 50px 50px;
-  opacity: 0.1;
-  animation: gridMove 10s linear infinite;
-  z-index: 1;
-}
-
-@keyframes gridMove {
-  0% { background-position: 0 0; }
-  100% { background-position: 50px 50px; }
-}
-
 /* Estilos del encabezado */
 .canvas-header {
   display: flex;
   align-items: center;
-  padding: 0.3rem;
+  padding: 0.5rem;
   background-color: #111827; /* Fondo más oscuro */
   border-bottom: 1px solid #374151; /* Línea inferior */
   z-index: 2; /* Por encima del patrón de cuadrícula */
 }
 
-.canvas-header-icon {
-  width: 2rem;
-  height: 2rem;
-  margin-right: 1rem;
-  transition: transform 0.3s;
-}
-
-.canvas-header-icon:hover {
-  transform: rotate(45deg) scale(1.1);
-}
-
 .canvas-title {
-  font-weight: 300;
+  font-weight: 500;
   font-size: 1.5rem;
   color: #ffffff;
   flex-grow: 1;
@@ -90,60 +60,92 @@
 /* Área principal de contenido */
 .canvas-main-content {
   flex: 1;
-  position: relative;
   display: flex;
+  flex-direction: column;
   overflow: hidden;
   z-index: 2; /* Por encima del patrón de cuadrícula */
 }
 
-/* Contenedor de números de línea */
-.canvas-line-numbers {
-  width: 50px;
+/* Navegación de pestañas */
+.canvas-tab-nav {
+  display: flex;
   background-color: #1f2937;
-  color: rgba(255, 255, 255, 0.3);
-  overflow-y: auto;
-  padding-top: 1.5rem;
-  text-align: right;
-  font-size: 1rem;
-  line-height: 1.5;
-  font-family: monospace;
-  z-index: 2;
+  border-bottom: 1px solid #374151;
 }
 
-.line-number {
-  padding-right: 0.5rem;
-  position: relative;
-}
-
-.line-number.current-line {
+.canvas-tab-button {
+  padding: 0.5rem 1rem;
+  background-color: #1f2937;
   color: #ffffff;
-}
-
-/* Estilos del textarea */
-.canvas-textarea {
-  flex: 1;
-  padding: 1.5rem;
-  font-family: monospace;
-  font-size: 1rem;
-  line-height: 1.5;
-  color: #ffffff;
-  background-color: transparent; /* Fondo transparente para mostrar el patrón */
   border: none;
-  outline: none;
-  resize: none;
-  overflow-y: auto;
-  z-index: 2;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.canvas-tab-button.active {
+  background-color: #374151;
+}
+
+.canvas-tab-button:hover {
+  background-color: #2d3748;
+}
+
+.canvas-add-tab-button {
+  padding: 0.5rem 1rem;
+  background-color: #1f2937;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-left: auto;
+}
+
+.canvas-add-tab-button:hover {
+  background-color: #2d3748;
+}
+
+/* Contenedor de contenido de pestañas */
+.canvas-tab-content-container {
+  flex: 1;
+  overflow: auto;
   position: relative;
 }
 
-/* Íconos de colapsar/expandir */
-.collapse-icon, .expand-icon {
-  position: absolute;
-  left: -20px;
-  top: 0;
-  cursor: pointer;
-  width: 1rem;
-  height: 1rem;
+/* Contenido de pestañas */
+.canvas-tab-content {
+  height: 100%;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Título de la pestaña */
+.canvas-tab-title-input {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  background-color: #2d3748;
+  color: #ffffff;
+  border: 1px solid #4a5568;
+  border-radius: 0.25rem;
+}
+
+/* Área de texto de la pestaña */
+.canvas-tab-textarea {
+  flex: 1;
+  padding: 0.5rem;
+  font-family: monospace;
+  font-size: 1rem;
+  color: #ffffff;
+  background-color: #2d3748;
+  border: 1px solid #4a5568;
+  border-radius: 0.25rem;
+  resize: none;
 }
 
 /* Estilos del pie de página */
