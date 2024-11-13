@@ -1,4 +1,4 @@
-// src/js/contentScript.js
+
 
 import { waitForElement, escapeRegExp } from '../utils/utils.js';
 import { loadCategories } from '../data/dataLoader.js';
@@ -30,7 +30,7 @@ import '../assets/components/canvasEditor.css';
   const targetDivSelector = '.draggable.no-draggable-children.sticky.top-0.p-3.mb-1\\.5.flex.items-center.justify-between.z-10.h-header-height.font-semibold.bg-token-main-surface-primary.max-md\\:hidden';
   const targetDiv = await waitForElement(targetDivSelector);
 
-  let dropdownManager = null; // Inicializar como null
+  let dropdownManager = null;
 
   const inputDivSelector = '#prompt-textarea';
   let inputDiv = await waitForElement(inputDivSelector);
@@ -43,37 +43,53 @@ import '../assets/components/canvasEditor.css';
       return;
     }
 
-    const targetButtonContainer = document.querySelector('.flex.items-end.gap-1\\.5.pl-4.md\\:gap-2');
-    if (targetButtonContainer) {
-      maximizeButtonContainer = document.createElement('div');
-      maximizeButtonContainer.classList.add('flex', 'items-center');
 
-      maximizeButton = document.createElement('button');
-      maximizeButton.classList.add(
-        'flex', 'items-center', 'justify-center', 'h-8', 'w-8', 'rounded-full',
-        'text-token-text-primary', 'dark:text-white', 'focus-visible:outline-black',
-        'dark:focus-visible:outline-white', 'mb-1'
-      );
-      maximizeButton.setAttribute('aria-label', 'Abrir editor');
-      maximizeButton.setAttribute('type', 'button');
+    const mainContainer = document.querySelector('#composer-background');
 
-      const maximizeIcon = document.createElement('img');
-      maximizeIcon.src = chrome.runtime.getURL('assets/icons/maximize.svg');
-      maximizeIcon.classList.add('w-5', 'h-5');
 
-      maximizeButton.appendChild(maximizeIcon);
-      maximizeButtonContainer.appendChild(maximizeButton);
+    maximizeButtonContainer = document.createElement('div');
+    maximizeButtonContainer.classList.add('flex', 'items-center');
+    maximizeButtonContainer.style.position = 'absolute';
 
-      targetButtonContainer.insertBefore(maximizeButtonContainer, targetButtonContainer.firstChild);
 
-      maximizeButton.addEventListener('click', (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        openCanvasEditor();
-      });
+    maximizeButton = document.createElement('button');
+    maximizeButton.classList.add(
+      'flex', 'items-center', 'justify-center', 'h-10', 'w-10', 'rounded-full',
+      'bg-black', 'text-white', 'dark:bg-white', 'dark:text-black',
+      'focus-visible:outline-none'
+    );
+    maximizeButton.setAttribute('aria-label', 'Abrir editor');
+    maximizeButton.setAttribute('type', 'button');
+
+    const maximizeIcon = document.createElement('img');
+    maximizeIcon.src = chrome.runtime.getURL('assets/icons/maximize.svg');
+    maximizeIcon.classList.add('w-5', 'h-5');
+
+    maximizeButton.appendChild(maximizeIcon);
+    maximizeButtonContainer.appendChild(maximizeButton);
+
+
+    if (mainContainer) {
+
+      maximizeButtonContainer.style.top = '10px';
+      maximizeButtonContainer.style.right = '-50px';
+      mainContainer.style.position = 'relative';
+      mainContainer.appendChild(maximizeButtonContainer);
     } else {
-      console.error('Contenedor del botón de enviar no encontrado. No se puede insertar el botón de maximizar.');
+
+      maximizeButtonContainer.style.position = 'fixed';
+      maximizeButtonContainer.style.bottom = '30px';
+      maximizeButtonContainer.style.left = '30px'; 
+      maximizeButtonContainer.style.zIndex = '1000';
+      document.body.appendChild(maximizeButtonContainer);
     }
+
+
+    maximizeButton.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      openCanvasEditor();
+    });
   }
 
   createExpandButton();
@@ -128,12 +144,12 @@ import '../assets/components/canvasEditor.css';
 
   let dropdownElements = createDropdownElements(inputDiv);
 
-  // Insertar el dropdown en el body
+
   document.body.appendChild(dropdownElements.dropdownContainer);
 
   function initializeDropdownManager(currentInputDiv) {
     if (dropdownManager) {
-      // Si ya existe un dropdownManager, limpiarlo
+
       dropdownManager = null;
     }
 
@@ -145,7 +161,7 @@ import '../assets/components/canvasEditor.css';
     dropdownManager = newDropdownManager;
   }
 
-  // Inicializar el dropdownManager inicialmente
+
   initializeDropdownManager(inputDiv);
 
   function insertComponents() {
@@ -179,7 +195,7 @@ import '../assets/components/canvasEditor.css';
 
     for (const mutation of mutationsList) {
       if (mutation.type === 'childList') {
-        // Verificar si el inputDiv ha sido agregado o removido
+
         mutation.addedNodes.forEach((node) => {
           if (node.matches && node.matches(inputDivSelector)) {
             inputDiv = node;
@@ -196,13 +212,13 @@ import '../assets/components/canvasEditor.css';
     }
 
     if (inputDivChanged) {
-      // Re-inicializar el dropdownManager con el nuevo inputDiv
+
       if (inputDiv) {
         initializeDropdownManager(inputDiv);
       }
     }
 
-    // Reinserta componentes si son eliminados
+
     for (const mutation of mutationsList) {
       if (mutation.type === 'childList') {
         const navbarExists = document.contains(navbarElements.navbar);
